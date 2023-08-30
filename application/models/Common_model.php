@@ -804,6 +804,28 @@ public function delete_one_active_record_noncompany($table,$pkey,$edit){
 			
 		}
 
+
+		public function get_country_name($country_id,$company){
+			$this->db->select("*");
+			$this->db->from('country_master_lang');
+			//$this->db->where('company_id',$company);
+			$this->db->where('country_id',$country_id);
+			$query = $this->db->get();
+			$result=$query->result();
+			if($result){
+
+				foreach($result as $row){
+
+					return $row->lang_country_name;
+				
+				}
+			}
+			else{
+				return '';
+			}
+			
+		}
+
 		public function view_date($date,$company){
 			if($date!='' && $date!='0000-00-00'){
 				return date_format(date_create($date),'d-M-Y');

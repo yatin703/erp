@@ -1096,22 +1096,17 @@ class Sales_quote extends CI_Controller
             $customer_result=$this->common_model->select_one_active_record('address_category_details',$this->session->userdata['logged_in']['company_id'],'adr_category_id',$customer_no);
             if($customer_result==TRUE){
               foreach($customer_result as $customer_row){
-                $address = $customer_row->address;
-                $city = $customer_row->city;
-                $statee = $customer_row->state;
+                $address  = $customer_row->address;
+                $city     = $customer_row->city;
+                $statee   = $customer_row->state;
+                $countryy = $customer_row->country;
               }
             }
 
             $state=$this->common_model->get_state_name($statee,$this->session->userdata['logged_in']['company_id']);
 
-            $country_result=$this->common_model->select_one_active_record('address_category_details',$this->session->userdata['logged_in']['company_id'],'country',$customer_no);
-            if($country_result==TRUE){
-              foreach($country_result as $country_row){
-                $countryy = $country_row->country;
-              }
-            }
-
             $country=$this->common_model->get_country_name($countryy,$this->session->userdata['logged_in']['company_id']);
+            //echo $this->db->last_query();
 
             $sales_quote_customer_contact_details=$this->common_model->select_one_record_with_company('address_category_contact_details',$this->session->userdata['logged_in']['company_id'],'address_category_contact_id',$this->input->post('pm_1'));
               foreach ($sales_quote_customer_contact_details as $key => $sales_quote_customer_contact_details_row) {
@@ -1121,7 +1116,32 @@ class Sales_quote extends CI_Controller
               }
 
             $credit_days = $this->input->post('credit_days');
-          
+
+            $sleeve_dia_result=$this->common_model->select_one_active_record('sleeve_diameter_master',$this->session->userdata['logged_in']['company_id'],'sleeve_id',$sleeve_dia);
+              if($sleeve_dia_result==TRUE){
+                foreach($sleeve_dia_result as $sleeve_dia_row){
+                  $sleeve_diaa=$sleeve_dia_row->sleeve_diameter;
+                }
+              }
+
+             $cap_type_          = $cap_type;
+             $special_ink_       = ($special_ink== 'YES' ? 'YES' : '-');
+             $tube_layer_        = ($this->input->post('layer')== '1' ? 'MONO LAYER' : ($this->input->post('layer')== '7' ? 'SPRING': ($this->input->post('layer')== '5' ? 'MULTI LAYER': ($this->input->post('layer')== '2' ? '2 LAYER': ($this->input->post('layer')== '3' ? '3 LAYER': '-')) ) ));
+             $cap_color_         = strtoupper($cap_color);
+             $shoulder_foil_     = ($this->input->post('shoulder_foil')== 'YES' ? 'YES' : '-');
+             $tube_color_        = strtoupper($tube_color);
+             $cap_finishes_      = $cap_finishes;
+             $cap_foil_          = ($cap_foil== 'YES' ? 'YES' : '-');
+             $print_type_        = $this->input->post('print_type');
+             $cap_dia_           = strtoupper($cap_dia);
+             $cap_shrink_sleeve_ = ($this->input->post('cap_shrink_sleeve') == 'YES' ? 'YES' : '-');
+             $tube_lacquer_      = strtoupper ($this->input->post('tube_lacquer'));
+             $cap_orifice_       = $cap_orifice;
+             $cap_metalization_  = ($cap_metalization== 'YES' ? 'YES' : '-');
+             $shoulder_          = $shoulder;
+             $tube_foil_         = ($this->input->post('tube_foil')== 'YES' ? 'YES' : '-');
+             $shoulder_orifice_  = $shoulder_orifice;
+             $shoulder_color_    = $shoulder_color;
         
             $filename = base_url('assets/img/logo.png');
             $smtp_user=$this->config->item('smtp_user');
@@ -1186,15 +1206,15 @@ class Sales_quote extends CI_Controller
                 <td><i>FOR 30 DAYS</i></td>
                 </tr>  
                <tr class="heading">
-                <td colspan="3">
+                <td colspan="3" width="50%">
                   <b>BILLING</b>
                 </td> 
-                <td colspan="3">
+                <td colspan="3" width="50%">
                   <b>SHIPPING</b>
                 </td>               
                 </tr>
 
-                 <tr class="item last">
+                <tr class="item last">
                 <td ><b>BILL TO</b></td>
                 <td style="border-right:1px solid #D9d9d9;">'.$bill_to .'
                 </td>
@@ -1249,7 +1269,133 @@ class Sales_quote extends CI_Controller
                 </tr> 
                     
                             
-               </table> 
+               </table>
+               <br/>
+               <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;">
+                <tr class="heading">
+                  <td width="100%" colspan="7" style="border-bottom:1px solid #D9d9d9;"><b>PRODUCT SPECIFICATION</td>
+                </tr>
+
+                <tr class="heading">
+                  <td width="33%" colspan="2" ><b>TUBE</td>
+                  <td width="1%" style="border-right:1px solid #D9d9d9;" ></td>
+                   <td width="33%" colspan="2" style="border-right:1px solid #D9d9d9;"><b>CAP</td>
+                   <td width="33%" colspan="2"><b>DECORATIVE ELEMENTS</td>   
+                </tr>
+
+                <tr class="item">
+                  <td width="15%"><b>TUBE DIA X LENGTH</b></td>
+                  <td width="1%"></td>
+                  <td width="17%"style="border-right:1px solid #D9d9d9;">'.$sales_quote_master_row->sleeve_diameter.' X '.$this->input->post('sleeve_length').'MM</td>
+                  <td width="15%"><b>CAP TYPE</b></td>
+                  <td width="18%" style="border-right:1px solid #D9d9d9;">'.$cap_type_.'</td>
+                  <td width="15%" ><b>SPECIAL INK</b></td>
+                  <td width="18%" >'.$special_ink_.'</td>
+                </tr>
+
+                <tr class="item">
+                  <td width="15%"><b>TUBE LAYER</b></td>
+                  <td width="1%"></td>
+                  <td width="17%"style="border-right:1px solid #D9d9d9;">'.$tube_layer_.'</td>
+                  <td width="15%"><b>CAP COLOR</b></td>
+                  <td width="18%"style="border-right:1px solid #D9d9d9;">'.$cap_color_.'</td>
+                  <td width="15%"><b>SHOULDER FOIL</b></td>
+                  <td width="18%">'.$shoulder_foil_.'</td>
+                </tr>
+
+                <tr class="item">
+                  <td width="15%"><b>TUBE COLOR</b></td>
+                  <td width="1%"></td>
+                  <td width="17%"style="border-right:1px solid #D9d9d9;">'.$tube_color_ .'</td>
+                  <td width="15%"><b>CAP FINISH</b></td>
+                  <td width="18%"style="border-right:1px solid #D9d9d9;">'.$cap_finishes_.'</td>
+                  <td width="15%"><b>CAP FOIL</b></td>
+                  <td width="18%">'.$cap_foil_ .'</td>
+                </tr>
+
+                <tr class="item">
+                  <td width="15%"><b>TUBE PRINT TYPE</b></td>
+                  <td width="1%"></td>
+                  <td width="17%" style="border-right:1px solid #D9d9d9;">'.$tube_color_ .'</td>
+                  <td width="15%"><b>CAP DIA</b></td>
+                  <td width="18%"style="border-right:1px solid #D9d9d9;">'.$cap_dia_.'</td>
+                  <td width="15%"><b>CAP SHRINK SLEEVE</b></td>
+                  <td width="18%">'.$cap_shrink_sleeve_.'</td>
+                </tr>
+
+                <tr class="item">
+                  <td width="15%"><b>TUBE LACQUER </b></td>
+                  <td width="1%"></td>
+                  <td width="17%" style="border-right:1px solid #D9d9d9;">'.$tube_lacquer_ .'</td>
+                  <td width="15%"><b>CAP ORIFICE</b></td>
+                  <td width="18%" style="border-right:1px solid #D9d9d9;">'.$cap_orifice_.'</td>
+                  <td width="15%"><b>CAP METALIZATION</b></td>
+                  <td width="18%">'.$cap_metalization_.'</td>
+                  
+                </tr>
+
+                <tr class="item">
+                  <td width="15%"><b>SHOULDER </b></td>
+                  <td width="1%"></td>
+                  <td width="17%" style="border-right:1px solid #D9d9d9;">'.$shoulder_.'</td>
+                  <td width="15%"><b></b></td>
+                  <td width="18%" style="border-right:1px solid #D9d9d9;"></td>
+                  <td width="15%"><b>TUBE FOIL</b></td>
+                  <td width="18%">'.$tube_foil_.'</td>
+                </tr>
+
+                <tr class="item">
+                  <td width="15%"><b>SHOULDER ORIFACE </b></td>
+                  <td width="1%"></td>
+                  <td width="17%" style="border-right:1px solid #D9d9d9;">'.$shoulder_orifice_.'</td>
+                  <td width="15%"><b></b></td>
+                  <td width="18%" style="border-right:1px solid #D9d9d9;"> </td>
+                  <td width="15%"><b></b></td>
+                  <td width="18%"></td>
+                </tr>
+
+                <tr class="item last">
+                  <td width="15%"><b>SHOULDER COLOR </b></td>
+                  <td width="1%"></td>
+                  <td width="17%" style="border-right:1px solid #D9d9d9;">'.$shoulder_color_.'</td>
+                  <td width="15%"><b></b></td>
+                  <td width="18%">  </td>
+                  <td width="15%"></td>
+                  <td width="18%"><?php  ?></td>
+                </tr>
+              </table>
+
+               <br/>
+               <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;">
+                    <tr class="heading">
+                        <td colspan="7"><b>TERMS AND CONDITIONS </b></td>
+                    </tr>
+                    <td width="5%"  style="font-size: 11px; text-transform: uppercase;line-height: 15px;border-right:1px solid #D9d9d9;">
+                    <ol>
+                      <li>The above Rates are basic rate/ex-factory.</li>
+                      <li>Supply will be done from Silvassa Factory.</li>
+                      <li><b>Excise duty shall be charged @ I GST of 18% </b></li>
+                      <li><b>Delivery Lead Time: 4-6 Weeks from date of PO or Receipt of artwork approval whichever is Later </b></li>
+                      <li>Freight: On Parties A/c.</li>
+                      <li>Quotation Validity: 60 Days.</li>
+                      <li>Compatibility & Stability of the tube is not our responsibility.</li>
+                      <li>*Tubes are manufactured under Air Conditioner rooms.</li>
+                      <li><b> 10% +/- variation in the ordered quantity is to be accepted.</b></li>
+                      <li>Rates are subject to change depending upon change in the final artwork.</li>
+                      <li>Insurance – On Parties Account.</li>
+                      <li>Preferable Transporter to be suggested by Party.</li>
+                    </ol>
+                  </td>
+                </table>
+                <br/> 
+
+                <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;">
+                  <tr class="heading">
+                    <td colspan="7"><b>IF YOU HAVE ANY QUESTIONS CONCERNING THIS QUOTATION CONTACT OR E-MAIL US : SALES@3D-NEOPAC.COM </b>
+                    </td>
+                  </tr>
+                </table>
+
                </div>
               </div>
             </div>
