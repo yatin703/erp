@@ -1,0 +1,1 @@
+ <div id="loading" style="left:40%;top:20%;position:fixed;z-index:7;background:white;padding:20px;color:#000;font-size:13px;width:20%;border-radius:3px;"><img src="<?php echo base_url('assets/img/loading.gif');?>"> Loading...</div><div id="cover" style="position:fixed; top:0; left:0; background:rgba(0,0,0,0.6); z-index:5; width:100%; height:100%;" > </div>

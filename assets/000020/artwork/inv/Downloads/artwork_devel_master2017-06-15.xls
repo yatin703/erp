@@ -1,0 +1,23 @@
+
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:x="urn:schemas-microsoft-com:office:excel"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-type" content="text/html;charset=utf-8" />
+<style id="Classeur1_16681_Styles">
+</style>
+
+</head>
+<body>
+
+<div id="Classeur1_16681" align=center x:publishsource="Excel">
+
+<table x:str border=0 cellpadding=0 cellspacing=0 width=100% style="border-collapse: collapse">
+<tr><td class=xl2216681 nowrap><b>company_id</b></td><td class=xl2216681 nowrap><b>ad_id</b></td><td class=xl2216681 nowrap><b>version_no</b></td><td class=xl2216681 nowrap><b>ad_date</b></td><td class=xl2216681 nowrap><b>adr_company_id</b></td><td class=xl2216681 nowrap><b>article_no</b></td><td class=xl2216681 nowrap><b>pending_flag</b></td><td class=xl2216681 nowrap><b>final_approval_flag</b></td><td class=xl2216681 nowrap><b>approval_date</b></td><td class=xl2216681 nowrap><b>approved_by</b></td><td class=xl2216681 nowrap><b>user_id</b></td><td class=xl2216681 nowrap><b>mat_sent_date</b></td><td class=xl2216681 nowrap><b>CAD_program</b></td><td class=xl2216681 nowrap><b>mat_sent_net</b></td><td class=xl2216681 nowrap><b>mat_sent_cd</b></td><td class=xl2216681 nowrap><b>cd_ref</b></td><td class=xl2216681 nowrap><b>mat_sent_courier</b></td><td class=xl2216681 nowrap><b>courier_ref</b></td><td class=xl2216681 nowrap><b>archive</b></td><td class=xl2216681 nowrap><b>courier_ref_date</b></td><td class=xl2216681 nowrap><b>property_id</b></td><td class=xl2216681 nowrap><b>artwork_image_nm</b></td><td class=xl2216681 nowrap><b>other_info</b></td><td class=xl2216681 nowrap><b>referred_by</b></td><td class=xl2216681 nowrap><b>customer_article_no</b></td></tr><tr><td class=xl2216681 nowrap>000020</td><td class=xl2216681 nowrap>AW4019</td><td class=xl2216681 nowrap>1</td><td class=xl2216681 nowrap>2017-06-13</td><td class=xl2216681 nowrap>51</td><td class=xl2216681 nowrap>PSM-000-5105</td><td class=xl2216681 nowrap>0</td><td class=xl2216681 nowrap>0</td><td class=xl2216681 nowrap>NULL</td><td class=xl2216681 nowrap>NULL</td><td class=xl2216681 nowrap>EMP163</td><td class=xl2216681 nowrap>0000-00-00</td><td class=xl2216681 nowrap></td><td class=xl2216681 nowrap>0</td><td class=xl2216681 nowrap>0</td><td class=xl2216681 nowrap></td><td class=xl2216681 nowrap>0</td><td class=xl2216681 nowrap></td><td class=xl2216681 nowrap>0</td><td class=xl2216681 nowrap>0000-00-00</td><td class=xl2216681 nowrap>1</td><td class=xl2216681 nowrap></td><td class=xl2216681 nowrap></td><td class=xl2216681 nowrap>NAZNEEN</td><td class=xl2216681 nowrap></td></tr>
+</table>
+</div>
+</body>
+</html>

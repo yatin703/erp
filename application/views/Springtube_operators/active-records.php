@@ -1,0 +1,33 @@
+
+<div class="record_form_design">
+	<h3>Active Records</h3>
+	<div class="record_inner_design">
+			<table class="record_table_design_without_fixed">
+				<tr>
+					<th>Id</th>
+					<th>Operator Name</th>
+					<th>Process</th>
+					<th>Status</th>
+					<th>Action</th>
+				</tr>
+				<?php if($springtube_operator_master==FALSE){
+					echo "<tr><td colspan='12'>No Active Records Found</td></tr>";
+				}else{
+							$i=($this->uri->segment(3)=='' ? 1 : $this->uri->segment(3));
+							foreach($springtube_operator_master as $row){
+								echo "<tr>
+									<td>".$row->operator_id."</td>
+									<td>".strtoupper($row->operator_name)."</td>
+									<td>".strtoupper($row->process_name)."</td>
+									<td>".($row->archive==1 ? 'Inactive' :'Active')."</td>
+									<td><a href=".base_url('index.php/'.$this->router->fetch_class().'/modify/'.$row->operator_id.'').">Modify</a><a href=".base_url('index.php/'.$this->router->fetch_class().'/delete/'.$row->operator_id.'')."> | Delete</a>
+
+									</td>
+							</tr>";
+							}
+						}?>
+							
+						</table>
+						<div class="pagination"><?php echo $this->pagination->create_links();?></div>	
+	</div>
+</div>

@@ -1,0 +1,293 @@
+
+                    	<table id="myTable" class="tablesorter">
+                        	<thead>
+                                <tr>
+                                    <th style="width:2%">No</th>
+																		<th style="width:10%">ADR DATE</th>
+																		<th style="width:3%">ARTWORK</th>
+																		<th style="width:2%">VER</th>
+																		<th style="width:6%">OLD AW REF</th>
+																		<th style="width:12%">APPROVAL STATUS &amp; DATE</th>
+																		<th style="width:10%">CUSTOMER</th>
+																		<th style="width:6%">ARTICLE CODE</th>
+																		<th style="width:20%">PRODUCT/ITEM NAME</th>
+																		<th style="width:3%">DIA</th>
+																		<th style="width:5%">LENGTH</th>
+																		<th style="width:5%">SLEEVE COLOR</th>
+																		<th style="width:5%">PRINT TYPE</th>
+																		<th style="width:3%">PRINT UPTO NECK?</th>
+																		<th style="width:5%">HOT FOIL?</th>
+																		<th style="width:5%">LAQUARE TYPE</th>
+																		
+                                </tr>
+                            </thead>
+                            <tbody><tr>
+																			<td>1</td>
+																			<!--<td>192.168.0.55192.168.0.9</td>-->
+																			<td>04-Apr-2017</td>
+																			<td class="a"><b><a class="artwork" href="#">AW3882</a></b></td>
+																			<td class="version">1<img src="images/pdf_deactive.png" alt="pdf not available"></td>
+																			<td></td>
+																			<td> NOT APPROVED</td>
+																			<td>3D PACKAGING FZE</td>
+																			<td>PSP-000-1083</td>
+																			<td>TUBE SERUM UNIVERSEL 5 ML  (209776) </td>
+																			<td>19 Ø</td>
+																			<td>55</td>
+																			<td>Standard White</td>
+																			<td>OFFSET</td>
+																			<td>NO</td>
+																			<td></td>
+																			<td>GLOSS</td>
+																			
+																	</tr><tr>
+																			<td>2</td>
+																			<!--<td>192.168.0.55192.168.0.9</td>-->
+																			<td>04-Apr-2017</td>
+																			<td class="a"><b><a class="artwork" href="#">AW3883</a></b></td>
+																			<td class="version">1<img src="images/pdf_deactive.png" alt="pdf not available"></td>
+																			<td></td>
+																			<td> NOT APPROVED</td>
+																			<td>3D PACKAGING FZE</td>
+																			<td>PSP-000-1084</td>
+																			<td>TUBE LAIT DEMAQUILLANT 8 ML  (209775) </td>
+																			<td>19 Ø</td>
+																			<td>55</td>
+																			<td>Standard White</td>
+																			<td>OFFSET</td>
+																			<td>NO</td>
+																			<td></td>
+																			<td>GLOSS</td>
+																			
+																	</tr><tr>
+																			<td>3</td>
+																			<!--<td>192.168.0.55192.168.0.9</td>-->
+																			<td>04-Apr-2017</td>
+																			<td class="a"><b><a class="artwork" href="#">AW3884</a></b></td>
+																			<td class="version">1<img src="images/pdf_deactive.png" alt="pdf not available"></td>
+																			<td></td>
+																			<td> NOT APPROVED</td>
+																			<td>3D PACKAGING FZE</td>
+																			<td>PSP-000-1085</td>
+																			<td>TUBE GEL DESALTERANT 5ML  (209774)</td>
+																			<td>19 Ø</td>
+																			<td>55</td>
+																			<td>Standard White</td>
+																			<td>OFFSET</td>
+																			<td>NO</td>
+																			<td></td>
+																			<td>GLOSS</td>
+																			
+																	</tr><tr>
+																			<td>4</td>
+																			<!--<td>192.168.0.55192.168.0.9</td>-->
+																			<td>04-Apr-2017</td>
+																			<td class="a"><b><a class="artwork" href="#">AW3885</a></b></td>
+																			<td class="version">1<img src="images/pdf_deactive.png" alt="pdf not available"></td>
+																			<td></td>
+																			<td> NOT APPROVED</td>
+																			<td>3D PACKAGING FZE</td>
+																			<td>PSP-000-1086</td>
+																			<td> TUBE CREME HYDRATANTE 5ML (209773)</td>
+																			<td>19 Ø</td>
+																			<td>55</td>
+																			<td>Standard White</td>
+																			<td>OFFSET</td>
+																			<td>NO</td>
+																			<td></td>
+																			<td>GLOSS</td>
+																			
+																	</tr><tr>
+																			<td>5</td>
+																			<!--<td>192.168.0.55192.168.0.9</td>-->
+																			<td>04-Apr-2017</td>
+																			<td class="a"><b><a class="artwork" href="#">AW3886</a></b></td>
+																			<td class="version">1<img src="images/pdf_deactive.png" alt="pdf not available"></td>
+																			<td></td>
+																			<td> NOT APPROVED</td>
+																			<td>3D PACKAGING FZE</td>
+																			<td>PSP-000-1087</td>
+																			<td>TUBE MEDACNYL CREME MOUSSANTE NET VISAGE 8ML (209772)</td>
+																			<td>19 Ø</td>
+																			<td>55</td>
+																			<td>Standard White</td>
+																			<td>OFFSET</td>
+																			<td>NO</td>
+																			<td></td>
+																			<td>GLOSS</td>
+																			
+																	</tr><tr>
+																			<td>6</td>
+																			<!--<td>192.168.0.55192.168.0.9</td>-->
+																			<td>04-Apr-2017</td>
+																			<td class="a"><b><a class="artwork" href="#">AW3887</a></b></td>
+																			<td class="version">1<img src="images/pdf_deactive.png" alt="pdf not available"></td>
+																			<td></td>
+																			<td> NOT APPROVED</td>
+																			<td>3D PACKAGING FZE</td>
+																			<td>PSP-000-1088</td>
+																			<td>TUBE MEDACNYL FUILDE TEINTE ANTI IMPERFECTION BEIGE CLAIR 5 ML (209771)</td>
+																			<td>19 Ø</td>
+																			<td>55</td>
+																			<td>Standard White</td>
+																			<td>OFFSET</td>
+																			<td>NO</td>
+																			<td></td>
+																			<td>GLOSS</td>
+																			
+																	</tr><tr>
+																			<td>7</td>
+																			<!--<td>192.168.0.55192.168.0.9</td>-->
+																			<td>04-Apr-2017</td>
+																			<td class="a"><b><a class="artwork" href="#">AW3888</a></b></td>
+																			<td class="version">1<img src="images/pdf_deactive.png" alt="pdf not available"></td>
+																			<td></td>
+																			<td> NOT APPROVED</td>
+																			<td>3D PACKAGING FZE</td>
+																			<td>PSP-000-1089</td>
+																			<td>TUBE MEDACNYL FUILDE TEINTE ANTI IMPERFECTION DORE NAT 5ML (209770)</td>
+																			<td>19 Ø</td>
+																			<td>55</td>
+																			<td>Standard White</td>
+																			<td>OFFSET</td>
+																			<td>NO</td>
+																			<td></td>
+																			<td>GLOSS</td>
+																			
+																	</tr><tr>
+																			<td>8</td>
+																			<!--<td>192.168.0.55192.168.0.9</td>-->
+																			<td>04-Apr-2017</td>
+																			<td class="a"><b><a class="artwork" href="#">AW3889</a></b></td>
+																			<td class="version">1<img src="images/pdf_deactive.png" alt="pdf not available"></td>
+																			<td></td>
+																			<td> NOT APPROVED</td>
+																			<td>3D PACKAGING FZE</td>
+																			<td>PSP-000-1090</td>
+																			<td>TUBE MEDACNYL CREME NUIT 5 ML (209769)</td>
+																			<td>19 Ø</td>
+																			<td>55</td>
+																			<td>Standard White</td>
+																			<td>OFFSET</td>
+																			<td>NO</td>
+																			<td></td>
+																			<td>GLOSS</td>
+																			
+																	</tr><tr>
+																			<td>9</td>
+																			<!--<td>192.168.0.55192.168.0.9</td>-->
+																			<td>04-Apr-2017</td>
+																			<td class="a"><b><a class="artwork" href="#">AW3890</a></b></td>
+																			<td class="version">1<img src="images/pdf_deactive.png" alt="pdf not available"></td>
+																			<td></td>
+																			<td> NOT APPROVED</td>
+																			<td>3D PACKAGING FZE</td>
+																			<td>PSP-000-1091</td>
+																			<td>TUBE MEDACNYLFLUIDE SOLAIRE 5 ML (209768)</td>
+																			<td>19 Ø</td>
+																			<td>55</td>
+																			<td>Standard White</td>
+																			<td>OFFSET</td>
+																			<td>NO</td>
+																			<td></td>
+																			<td>GLOSS</td>
+																			
+																	</tr><tr>
+																			<td>10</td>
+																			<!--<td>192.168.0.55192.168.0.9</td>-->
+																			<td>04-Apr-2017</td>
+																			<td class="a"><b><a class="artwork" href="#">AW3891</a></b></td>
+																			<td class="version">1<img src="images/pdf_deactive.png" alt="pdf not available"></td>
+																			<td></td>
+																			<td> NOT APPROVED</td>
+																			<td>3D PACKAGING FZE</td>
+																			<td>PSP-000-1092</td>
+																			<td>TUBE PHOTOMED SPF 50 CREME INVISIBLE 5 ML  (209767)</td>
+																			<td>19 Ø</td>
+																			<td>55</td>
+																			<td>Standard White</td>
+																			<td>OFFSET</td>
+																			<td>NO</td>
+																			<td></td>
+																			<td>GLOSS</td>
+																			
+																	</tr><tr>
+																			<td>11</td>
+																			<!--<td>192.168.0.55192.168.0.9</td>-->
+																			<td>04-Apr-2017</td>
+																			<td class="a"><b><a class="artwork" href="#">AW3892</a></b></td>
+																			<td class="version">1<img src="images/pdf_deactive.png" alt="pdf not available"></td>
+																			<td></td>
+																			<td> NOT APPROVED</td>
+																			<td>3D PACKAGING FZE</td>
+																			<td>PSP-000-1093</td>
+																			<td>TUBE PHOTOMED SPF 50 FLUIDE TEINTE BEIGE NAT 5 ML (209766)</td>
+																			<td>19 Ø</td>
+																			<td>55</td>
+																			<td>Standard White</td>
+																			<td>OFFSET</td>
+																			<td>NO</td>
+																			<td></td>
+																			<td>GLOSS</td>
+																			
+																	</tr><tr>
+																			<td>12</td>
+																			<!--<td>192.168.0.55192.168.0.9</td>-->
+																			<td>04-Apr-2017</td>
+																			<td class="a"><b><a class="artwork" href="#">AW3893</a></b></td>
+																			<td class="version">1<img src="images/pdf_deactive.png" alt="pdf not available"></td>
+																			<td></td>
+																			<td> NOT APPROVED</td>
+																			<td>3D PACKAGING FZE</td>
+																			<td>PSP-000-1094</td>
+																			<td>TUBE PHOTOMED SPF 50 FLUIDE TEINTE BEIGE CLAIR 5ML (209765)</td>
+																			<td>19 Ø</td>
+																			<td>55</td>
+																			<td>Standard White</td>
+																			<td>OFFSET</td>
+																			<td>NO</td>
+																			<td></td>
+																			<td>GLOSS</td>
+																			
+																	</tr><tr>
+																			<td>13</td>
+																			<!--<td>192.168.0.55192.168.0.9</td>-->
+																			<td>04-Apr-2017</td>
+																			<td class="a"><b><a class="artwork" href="#">AW3894</a></b></td>
+																			<td class="version">1<img src="images/pdf_deactive.png" alt="pdf not available"></td>
+																			<td></td>
+																			<td> NOT APPROVED</td>
+																			<td>3D PACKAGING FZE</td>
+																			<td>PSP-000-1095</td>
+																			<td>TUBE PHOTOMED SPF 50 FLUIDE TEINTE CARAMEL 5 ML (209764)</td>
+																			<td>19 Ø</td>
+																			<td>55</td>
+																			<td>Standard White</td>
+																			<td>OFFSET</td>
+																			<td>NO</td>
+																			<td></td>
+																			<td>GLOSS</td>
+																			
+																	</tr><tr>
+																			<td>14</td>
+																			<!--<td>192.168.0.55192.168.0.9</td>-->
+																			<td>04-Apr-2017</td>
+																			<td class="a"><b><a class="artwork" href="#">AW3895</a></b></td>
+																			<td class="version">1<img src="images/pdf_deactive.png" alt="pdf not available"></td>
+																			<td></td>
+																			<td> NOT APPROVED</td>
+																			<td>3D PACKAGING FZE</td>
+																			<td>PSP-000-1096</td>
+																			<td>TUBE PHOTOMED SPF 50 SPECIAL ANTI-TACHES 5 ML (209763)</td>
+																			<td>19 Ø</td>
+																			<td>55</td>
+																			<td>Standard White</td>
+																			<td>OFFSET</td>
+																			<td>NO</td>
+																			<td></td>
+																			<td>GLOSS</td>
+																			
+																	</tr></tbody>
+                        </table>
+												<div style="clear: both"></div>
+                     

@@ -1,0 +1,5 @@
+SELECT reserved_quantity_manu.*,sum(reserved_quantity_manu.amt_manual),article_name_info.article_group_id FROM `reserved_quantity_manu` LEFT JOIN article_name_info  ON  
+reserved_quantity_manu.article_no=article_name_info.article_no AND
+reserved_quantity_manu.company_id=article_name_info.company_id
+where reserved_quantity_manu.manu_order_no='JOB-18-19-2750' 
+GROUP BY article_name_info.article_group_id

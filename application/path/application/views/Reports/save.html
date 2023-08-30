@@ -1,0 +1,160 @@
+
+				<?php
+					setlocale(LC_MONETARY, 'en_IN');
+					if($sales_invoice_summary==FALSE){
+
+					}else{
+						echo '<table class="ui sortable selectable celled table" style="font-size:9px;">
+					        	<thead>
+								   <tr>
+								    	<th colspan="17"><a class="ui orange label">DELIVERED TO CUSTOMER</a> <a class="ui olive label"><i class="calendar icon"></i>'.$this->common_model->view_date('2019-04-01',$this->session->userdata['logged_in']['company_id']).'  TO '.$this->common_model->view_date(date('Y-m-d'),$this->session->userdata['logged_in']['company_id']).'</a></th>
+								  </tr>
+								  <tr>
+					        			<th></th>
+					        			<th>DIAMETER</th>
+					        			<th colspan="3" class="center aligned">SCREEN+FLEXO</th>
+					        			<th colspan="3" class="center aligned">OFFSET</th>
+					        			<th colspan="3" class="center aligned">LABEL</th>
+					        			<th colspan="3" class="center aligned">DIGITAL</th>
+					        			<th colspan="3"  class="center aligned">TOTAL</th>
+					        		</tr>
+					        		<tr>
+					        			<th>SR NO</th>
+					        			<th></th>
+					        			<th class="active right aligned">QUANTITY</th>
+					        			<th class="right aligned">VALUE</th>
+					        			<th class="right aligned">AVG PRICE</th>
+					        			<th class="right aligned">QUANTITY</th>
+					        			<th class="right aligned">VALUE</th>
+					        			<th class="right aligned">AVG PRICE</th>
+					        			<th class="right aligned">QUANTITY</th>
+					        			<th class="right aligned">VALUE</th>
+					        			<th class="right aligned">AVG PRICE</th>
+					        			<th class="right aligned">QUANTITY</th>
+					        			<th class="right aligned">VALUE</th>
+					        			<th class="right aligned">AVG PRICE</th>
+					        			<th class="right aligned">QUANTITY</th>
+					        			<th class="right aligned">VALUE</th>
+					        			<th class="right aligned">AVG PRICE</th>
+					        			
+					        		</tr>
+					        	</thead>';
+					
+					 $count=1;
+					 $last_count=0;
+					 $total_sales_dia_quantity=0;
+					 $total_sales_screen_flexo_quantity=0;
+					 $total_sales_screen_flexo_value=0;
+					 $total_sales_screen_flexo_avg=0;
+					 $total_sales_offset_quantity=0;
+					 $total_sales_offset_value=0;
+					 $total_sales_offset_avg=0;
+					 $total_sales_label_quantity=0;
+					 $total_sales_label_value=0;
+					 $total_sales_label_avg=0;
+					 $total_sales_digital_quantity=0;
+					 $total_sales_digital_value=0;
+					 $total_sales_digital_avg=0;
+					 $total_sales_total_quantity=0;
+					 $total_sales_total_value=0;
+					 $total_sales_total_avg=0;
+					foreach($sales_invoice_summary as $sales_invoice_summary_row){
+
+					$total_sales_dia_quantity=$sales_invoice_summary_row->SCREEN_FLEXO+$sales_invoice_summary_row->OFFSET+$sales_invoice_summary_row->LABEL+$sales_invoice_summary_row->DIGITAL;
+
+					$total_sales_dia_value=$sales_invoice_summary_row->SCREEN_FLEXO_VALUE+$sales_invoice_summary_row->OFFSET_VALUE+$sales_invoice_summary_row->LABEL_VALUE+$sales_invoice_summary_row->DIGITAL_VALUE;
+
+					$sales_screen_flexo_avg_price=0;
+					$sales_screen_flexo_avg_price=($sales_invoice_summary_row->SCREEN_FLEXO_VALUE!=0 ? $sales_invoice_summary_row->SCREEN_FLEXO_VALUE/$sales_invoice_summary_row->SCREEN_FLEXO : 0);
+
+					$sales_offset_avg_price=0;
+					$sales_offset_avg_price=($sales_invoice_summary_row->OFFSET_VALUE!=0 ? $sales_invoice_summary_row->OFFSET_VALUE/$sales_invoice_summary_row->OFFSET : 0);
+
+					$sales_label_avg_price=0;
+					$sales_label_avg_price=($sales_invoice_summary_row->LABEL_VALUE!=0 ? $sales_invoice_summary_row->LABEL_VALUE/$sales_invoice_summary_row->LABEL : 0);
+
+					$sales_digital_avg_price=0;
+					$sales_digital_avg_price=($sales_invoice_summary_row->DIGITAL_VALUE!=0 ? $sales_invoice_summary_row->DIGITAL_VALUE/$sales_invoice_summary_row->DIGITAL : 0);
+					
+					$sales_total_avg_price=0;
+					$sales_total_avg_price=($total_sales_dia_value!=0 ? $total_sales_dia_value/$total_sales_dia_quantity : 0);
+
+						if($count==1){
+							//$from_date=strtoupper($coex_order->sales_month)." ".$coex_order->sales_year;
+						}
+						echo "<tr>
+								<td>$count</td>
+								<td>$sales_invoice_summary_row->sleeve_dia</td>
+								<td class='negative right aligned'>".money_format('%!.0n',$sales_invoice_summary_row->SCREEN_FLEXO)."</td>
+								<td class='negative right aligned'>".money_format('%.0n',$sales_invoice_summary_row->SCREEN_FLEXO_VALUE)."</td>
+								<td class='negative right aligned'>&#8377;".round($sales_screen_flexo_avg_price,2)."</td>
+							
+								<td  class='right aligned'>".money_format('%!.0n',$sales_invoice_summary_row->OFFSET)."</td>
+								<td class='right aligned'>".money_format('%.0n',$sales_invoice_summary_row->OFFSET_VALUE)."</td>
+								<td class='right aligned'>&#8377;".round($sales_offset_avg_price,2)."</td>
+								
+								<td  class='positive right aligned'>".money_format('%!.0n',$sales_invoice_summary_row->LABEL)."</td>
+								<td class='positive right aligned'>".money_format('%.0n',$sales_invoice_summary_row->LABEL_VALUE)."</td>
+								<td class='positive right aligned'>&#8377;".round($sales_label_avg_price,2)."</td>
+								
+								<td  class='warning right aligned'>".money_format('%!.0n',$sales_invoice_summary_row->DIGITAL)."</td>
+								<td class='warning right aligned'>".money_format('%.0n',$sales_invoice_summary_row->DIGITAL_VALUE)."</td>
+								<td class='warning right aligned'>&#8377;".round($sales_digital_avg_price,2)."</td>
+
+								<td  class='right aligned'>".money_format('%!.0n',$total_sales_dia_quantity)."</td>
+								<td class='right aligned'>".money_format('%!.0n',$total_sales_dia_value)."</td>
+								<td class='right aligned'>&#8377;".round($sales_total_avg_price,2)."</td>
+								
+					        </tr>";
+
+					       $total_sales_screen_flexo_quantity+=$sales_invoice_summary_row->SCREEN_FLEXO;
+					       $total_sales_screen_flexo_value+=$sales_invoice_summary_row->SCREEN_FLEXO_VALUE;
+					       $total_sales_offset_quantity+=$sales_invoice_summary_row->OFFSET;
+					       $total_sales_offset_value+=$sales_invoice_summary_row->OFFSET_VALUE;
+					       $total_sales_label_quantity+=$sales_invoice_summary_row->LABEL;
+					       $total_sales_label_value+=$sales_invoice_summary_row->LABEL_VALUE;
+					       $total_sales_digital_quantity+=$sales_invoice_summary_row->DIGITAL;
+					       $total_sales_digital_value+=$sales_invoice_summary_row->DIGITAL_VALUE;
+
+					       $total_sales_total_quantity=$total_sales_screen_flexo_quantity+$total_sales_offset_quantity+$total_sales_label_quantity+$total_sales_digital_quantity;
+					       $total_sales_total_value=$total_sales_screen_flexo_value+$total_sales_offset_value+$total_sales_label_value+$total_sales_digital_value;
+
+					       $total_sales_screen_flexo_avg=($total_sales_screen_flexo_value!=0 ? ($total_sales_screen_flexo_value/$total_sales_screen_flexo_quantity) : 0);
+					       $total_sales_offset_avg=($total_sales_offset_value!=0 ? ($total_sales_offset_value/$total_sales_offset_quantity) : 0);
+					       $total_sales_label_avg=($total_sales_label_value!=0 ? ($total_sales_label_value/$total_sales_label_quantity) : 0);
+					       $total_sales_digital_avg=($total_sales_digital_value!=0 ? ($total_sales_digital_value/$total_sales_digital_quantity) : 0);
+					       $total_sales_total_avg=($total_sales_total_value!=0 ? ($total_sales_total_value/$total_sales_total_quantity) : 0);
+
+					       $count++;
+					       if($last_count==0){
+							//$to_date=strtoupper($row_coex->sales_month)." ".$row_coex->sales_year;
+							}
+					    }
+
+					    echo "<thead>
+							    <tr>
+							    	<th>TOTAL</th>
+							    	<th></th>
+							    	<th class='right aligned'>".money_format('%!.0n',$total_sales_screen_flexo_quantity)."</th>
+							    	<th class='right aligned'>".money_format('%.0n',$total_sales_screen_flexo_value)."</th>
+									<th class='right aligned'>&#8377;".round($total_sales_screen_flexo_avg,2)."</th>
+							    	<th class='right aligned'>".money_format('%!.0n',$total_sales_offset_quantity)."</th>
+							    	<th class='right aligned'>".money_format('%.0n',$total_sales_offset_value)."</th>
+									<th class='right aligned'>&#8377;".round($total_sales_offset_avg,2)."</th>
+							    	<th class='right aligned'>".money_format('%!.0n',$total_sales_label_quantity)."</th>
+							    	<th class='right aligned'>".money_format('%.0n',$total_sales_label_value)."</th>
+									<th class='right aligned'>&#8377;".round($total_sales_label_avg,2)."</th>
+							    	<th class='right aligned'>".money_format('%!.0n',$total_sales_digital_quantity)."</th>
+							    	<th class='right aligned'>".money_format('%.0n',$total_sales_digital_value)."</th>
+									<th class='right aligned'>&#8377;".round($total_sales_digital_avg,2)."</th>
+							    	<th class='right aligned'>".money_format('%!.0n',$total_sales_total_quantity)."</th>
+							    	<th class='right aligned'>".money_format('%.0n',$total_sales_total_value)."</th>
+									<th class='right aligned'>&#8377;".round($total_sales_total_avg,2)."</th>
+
+							  	</tr>
+							  </thead>";
+
+						echo '</table>';
+
+					}
+				?>

@@ -1,0 +1,7 @@
+SELECT YEAR(order_date), MONTHNAME (order_date),count(*),
+sum(if(for_export=0,1,0)) as Local,sum(if(for_export=0,total_amount,0)) as Local_value,
+sum(if(for_export=0 AND for_sampling=1,1,0)) as Local_sample,sum(if(for_export=0 AND for_sampling=1,total_amount,0)) as Local_sample_value,
+
+sum(if(for_export=1,1,0)) as Export,sum(if(for_export=1,total_amount,0)) as Export_value, 
+sum(if(for_export=1 AND for_sampling=1,1,0)) as Export_sample,sum(if(for_export=1 AND for_sampling=1,total_amount,0)) as Export_sample_value 
+FROM `order_master`  where final_approval_flag='1' group By YEAR(order_date), MONTH(order_date) order by order_date desc
