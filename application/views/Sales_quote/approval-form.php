@@ -37,6 +37,16 @@
 			});
 		});
 
+		// if($("#customer").val()!=''){
+		// 	$("#loading").show(); $("#cover").show();
+		// 	$('#loading').html('<img src="<?php echo base_url('assets/img/loading.gif');?>"> Loading...');
+		// 	$.ajax({type: "POST",url: "<?php echo base_url('index.php/ajax/purchase_manager');?>",data: {customer : $("#customer").val()},cache: false,success: function(html){
+		// 		setTimeout(function () {$("#loading").hide();$("#cover").hide();},200);
+		// 		$("#pm_1").html(html);
+		// 		} 
+		// 	});
+		// }
+
 		$("#print_type").change(function(event) {
 
 		  $("#loading").show();
@@ -277,7 +287,8 @@
 								
 			if($("#_5k_quoted_contr").val()!='' && $("#_5k_cost").val()!=''){
 					
-						
+						//var less_than_10k_quoted_contr=$("#less_than_10k_quoted_contr").val();
+						//alert(parseInt(less_than_10k_quoted_contr).toFixed(1));
 
 						var _5k_quoted_price= parseFloat($("#_5k_quoted_contr").val()) + parseFloat($("#_5k_cost").val());
 						$("#_5k_quoted_price").val(_5k_quoted_price.toFixed(2));
@@ -339,7 +350,29 @@
 					
 			}
 		});
+  /* //-------------- Total packing cost addition
+   $("#customer_category").blur(function(){		
 
+   		//var customer_flag = $("#customer_flag").html().split('.');
+   		//alert(customer_flag[1]);
+   		var packing_bopp_tape = parseFloat($("#packing_bopp_tape").text()) ;
+
+   		var other_packing_material = parseFloat($("#other_packing_material").text()) ;
+					
+		var packing_stickers = parseFloat($("#packing_stickers").text()) ;
+
+		var packing_corrugated_sheet = parseFloat($("#packing_corrugated_sheet").text()) ;
+
+		var packing_shrink_flim = parseFloat($("#packing_shrink_flim").text()) ;
+
+		var total_packing = packing_bopp_tape + other_packing_material + packing_stickers + packing_corrugated_sheet + packing_shrink_flim;
+		//alert(total_packing);
+
+		$("#total_packing").val(total_packing);
+		$("#total_packing").html(total_packing);
+					
+			
+		});*/
 
   //----------------------------  layer 1 RM cost--------------------------
 		
@@ -3169,7 +3202,23 @@
 		<?php if(isset($note)){ echo "<p class='alert alert-success'>$note</p>";}?>
 		<?php if(isset($error)){ echo "<p class='alert alert-error'>$error</p>";}?>
 		
-		<?php foreach($sales_quote_master as $row);
+		<?php foreach($sales_quote_master as $row):
+			/*$customer_name='';
+			$customer_category_result=$this->common_model->select_one_active_record('address_category_master',$this->session->userdata['logged_in']['company_id'],'adr_category_id',$row->customer_no);
+
+			foreach ($customer_category_result as $key => $customer_category_row) {
+				$customer_name=$customer_category_row->category_name."//".$customer_category_row->adr_category_id;
+			}
+
+			*/
+			/*
+			$customer_name='';
+			$sales_quote_customer_master_result=$this->common_model->select_one_active_record('sales_quote_customer_master',$this->session->userdata['logged_in']['company_id'],'customer_id',$row->customer_no);
+
+			foreach ($sales_quote_customer_master_result as $key => $sales_quote_customer_master_row) {
+				$customer_name=$sales_quote_customer_master_row->customer_name."//".$sales_quote_customer_master_row->customer_id;
+			}
+				*/
 
 
 		 ?>	

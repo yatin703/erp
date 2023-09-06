@@ -10,6 +10,7 @@
 		<table class="record_table_design_without_fixed">
 			<tr>
 				<th>Id</th>
+				<th>Action</th>
 				<th>Customer</th>
 				<th>Main Group</th>
 				<th>Sub Group</th>
@@ -20,14 +21,15 @@
 				<th>UOM</th>
 				<th>HSN/SAC No.</th>
 				<th>HSN/SAC Desc</th>
+				<th>Spec.</th>
 				<th>Type</th>
 				<th>IGST</th>
 				<th>CGST</th>
-				<th>UGST</th>
+				<th>UTGST</th>
 				<th>Status</th>
 				<th>Created By</th>
 				<th>Date</th>
-				<th>Action</th>
+
 			</tr>
 			<?php if ($article == FALSE) {
 				echo "<tr><td colspan='7'>No Active Records Found</td></tr>";
@@ -38,10 +40,20 @@
 
 					$hsn_no = '';
 					$hsn_desc = '';
+					$spec_item_flag = '';
 
 					echo "<tr>
-									<td>" . $i . "</td>
-									<td>" . $this->common_model->get_parent_name($row->article_no, $this->session->userdata['logged_in']['company_id']) . "</td>
+					<td>" . $i . "</td>
+					<td>";
+					foreach ($formrights as $formrights_row) {
+						echo ($formrights_row->view == 1 ? '' : '');
+						echo ($formrights_row->copy == 1 ? '' : '');
+						echo ($formrights_row->modify == 1 ? '<a href="' . base_url('index.php/' . $this->router->fetch_class() . '/modify/' . $row->article_no . '') . '"><i class="edit icon"></i></a> ' : '');
+						echo ($row->archive <> 1 && $formrights_row->delete == 1 ? '<a href="' . base_url('index.php/' . $this->router->fetch_class() . '/delete/' . $row->article_no . '') . '" ><i class="trash icon"></i></a> ' : '');
+						$i++;
+					}
+					echo "</>";
+					echo	"<td>" . $this->common_model->get_parent_name($row->article_no, $this->session->userdata['logged_in']['company_id']) . "</td>
 									<td>" . strtoupper($row->main_group) . "</td>
 									<td>" . strtoupper($row->sub_group) . "</td>
 									<td>" . strtoupper($row->second_sub_group) . "</td>
@@ -61,24 +73,16 @@
 										<td>" . $hsn_desc . "</td>";
 
 
-					echo "<td>" . $hsn_no . "</td>
-							<td>" . $hsn_desc . "</td>
-										<td>" . $hsn_desc . "</td>";
-
+					echo "<td>" . strtoupper($row->spec_item_flag) . "</td>";
+					echo "<td>" . strtoupper($row->type_of_supply) . "</td>
+										<td>" . $row->igst . "</td>
+										<td>" . $row->cgst . "</td>
+										<td>" . $row->utgst . "</td>";
 
 					echo "<td>" . ($row->archive == 1 ? 'INACTIVE' : 'ACTIVE') . "</td>
-									<td>" . ($row->user_id != '' ? $this->common_model->get_user_name($row->user_id, $this->session->userdata['logged_in']['company_id']) : "") . "</td>
-									<td>" . ($row->created_date == '0000-00-00 00:00:00' ? "" : substr($row->created_date, 0, 10)) . "</td>
-									<td>";
-					foreach ($formrights as $formrights_row) {
-						echo ($formrights_row->view == 1 ? '' : '');
-						echo ($formrights_row->copy == 1 ? '' : '');
-						echo ($formrights_row->modify == 1 ? '<a href="' . base_url('index.php/' . $this->router->fetch_class() . '/modify/' . $row->article_no . '') . '"><i class="edit icon"></i></a> ' : '');
-						echo ($row->archive <> 1 && $formrights_row->delete == 1 ? '<a href="' . base_url('index.php/' . $this->router->fetch_class() . '/delete/' . $row->article_no . '') . '" ><i class="trash icon"></i></a> ' : '');
-						$i++;
-					}
-					echo "</td>
-							</tr>";
+										<td>" . ($row->user_id != '' ? $this->common_model->get_user_name($row->user_id, $this->session->userdata['logged_in']['company_id']) : "") . "</td>
+										<td>" . ($row->created_date == '0000-00-00 00:00:00' ? "" : substr($row->created_date, 0, 10)) . "</td>
+									</tr>";
 				}
 			} ?>
 

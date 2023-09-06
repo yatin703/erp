@@ -1066,332 +1066,421 @@ class Sales_quote extends CI_Controller
                 }
 
 
-          if($result_sales_quote_master!=''){
-        
-          $data['company']=$this->common_model->select_one_active_record('company_master',$this->session->userdata['logged_in']['company_id'],'company_id',$this->session->userdata['logged_in']['company_id']);
-        
-          $data['company_details']=$this->common_model->select_one_active_record('company_system_parameters',$this->session->userdata['logged_in']['company_id'],'company_id',$this->session->userdata['logged_in']['company_id']);
-          
-          $data['sales_quote_master']=$this->sales_quote_model->select_one_active_record_where('sales_quote_master',$this->session->userdata['logged_in']['company_id'],'sales_quote_master.quotation_no',$sales_quotation_no,'sales_quote_revision.version_no',$version_no);
-          
-            $version_noo = $version_no;
-            if($version_noo==''){
-              $version_nooo ='';
-            }else{
-               $version_nooo = 'REV'.$version_noo;
-            }
-             
-            $sales_quote_date         = date('Y-m-d');
-            $user_id = $this->session->userdata['logged_in']['user_id'];
-            $prepared_by              = $this->common_model->get_user_name($user_id,$this->session->userdata['logged_in']['company_id']);
+                if ($result_sales_quote_master != '') {
 
-             
-            $customer_result=$this->common_model->select_one_active_record('address_category_master',$this->session->userdata['logged_in']['company_id'],'adr_category_id',$customer_no);
-            if($customer_result==TRUE){
-              foreach($customer_result as $customer_row){
-                $bill_to = $customer_row->category_name;
-              }
-            }
+                  $version_noo = $version_no;
+                  if ($version_noo == '') {
+                    $version_nooo = '';
+                  } else {
+                    $version_nooo = 'REV' . $version_noo;
+                  }
 
-            $customer_result=$this->common_model->select_one_active_record('address_category_details',$this->session->userdata['logged_in']['company_id'],'adr_category_id',$customer_no);
-            if($customer_result==TRUE){
-              foreach($customer_result as $customer_row){
-                $address  = $customer_row->address;
-                $city     = $customer_row->city;
-                $statee   = $customer_row->state;
-                $countryy = $customer_row->country;
-              }
-            }
+                  $sales_quote_date         = date('Y-m-d');
+                  $user_id = $this->session->userdata['logged_in']['user_id'];
+                  $prepared_by              = $this->common_model->get_user_name($user_id, $this->session->userdata['logged_in']['company_id']);
 
-            $state=$this->common_model->get_state_name($statee,$this->session->userdata['logged_in']['company_id']);
 
-            $country=$this->common_model->get_country_name($countryy,$this->session->userdata['logged_in']['company_id']);
-            //echo $this->db->last_query();
+                  $customer_result = $this->common_model->select_one_active_record('address_category_master', $this->session->userdata['logged_in']['company_id'], 'adr_category_id', $customer_no);
+                  if ($customer_result == TRUE) {
+                    foreach ($customer_result as $customer_row) {
+                      $bill_to = $customer_row->category_name;
+                    }
+                  }
 
-            $sales_quote_customer_contact_details=$this->common_model->select_one_record_with_company('address_category_contact_details',$this->session->userdata['logged_in']['company_id'],'address_category_contact_id',$this->input->post('pm_1'));
-              foreach ($sales_quote_customer_contact_details as $key => $sales_quote_customer_contact_details_row) {
-                  $contact_name = $sales_quote_customer_contact_details_row->contact_name;
-                  $company_email = $sales_quote_customer_contact_details_row->company_email;
-                  $company_contact_no = $sales_quote_customer_contact_details_row->company_contact_no;
-              }
+                  $customer_result = $this->common_model->select_one_active_record('address_category_details', $this->session->userdata['logged_in']['company_id'], 'adr_category_id', $customer_no);
+                  if ($customer_result == TRUE) {
+                    foreach ($customer_result as $customer_row) {
+                      $address  = $customer_row->address;
+                      $city     = $customer_row->city;
+                      $statee   = $customer_row->state;
+                      $countryy = $customer_row->country;
+                    }
+                  }
+                  $state = $this->common_model->get_state_name($statee, $this->session->userdata['logged_in']['company_id']);
 
-            $credit_days = $this->input->post('credit_days');
+                  $country = $this->common_model->get_country_name($countryy, $this->session->userdata['logged_in']['company_id']);
+                  //echo $this->db->last_query();
 
-            $sleeve_dia_result=$this->common_model->select_one_active_record('sleeve_diameter_master',$this->session->userdata['logged_in']['company_id'],'sleeve_id',$sleeve_dia);
-              if($sleeve_dia_result==TRUE){
-                foreach($sleeve_dia_result as $sleeve_dia_row){
-                  $sleeve_diaa=$sleeve_dia_row->sleeve_diameter;
-                }
-              }
+                  $sales_quote_customer_contact_details = $this->common_model->select_one_record_with_company('address_category_contact_details', $this->session->userdata['logged_in']['company_id'], 'address_category_contact_id', $this->input->post('pm_1'));
+                  foreach ($sales_quote_customer_contact_details as $key => $sales_quote_customer_contact_details_row) {
+                    $contact_name = $sales_quote_customer_contact_details_row->contact_name;
+                    $company_email = $sales_quote_customer_contact_details_row->company_email;
+                    $company_contact_no = $sales_quote_customer_contact_details_row->company_contact_no;
+                  }
 
-             $cap_type_          = $cap_type;
-             $special_ink_       = ($special_ink== 'YES' ? 'YES' : '-');
-             $tube_layer_        = ($this->input->post('layer')== '1' ? 'MONO LAYER' : ($this->input->post('layer')== '7' ? 'SPRING': ($this->input->post('layer')== '5' ? 'MULTI LAYER': ($this->input->post('layer')== '2' ? '2 LAYER': ($this->input->post('layer')== '3' ? '3 LAYER': '-')) ) ));
-             $cap_color_         = strtoupper($cap_color);
-             $shoulder_foil_     = ($this->input->post('shoulder_foil')== 'YES' ? 'YES' : '-');
-             $tube_color_        = strtoupper($tube_color);
-             $cap_finishes_      = $cap_finishes;
-             $cap_foil_          = ($cap_foil== 'YES' ? 'YES' : '-');
-             $print_type_        = $this->input->post('print_type');
-             $cap_dia_           = strtoupper($cap_dia);
-             $cap_shrink_sleeve_ = ($this->input->post('cap_shrink_sleeve') == 'YES' ? 'YES' : '-');
-             $tube_lacquer_      = strtoupper ($this->input->post('tube_lacquer'));
-             $cap_orifice_       = $cap_orifice;
-             $cap_metalization_  = ($cap_metalization== 'YES' ? 'YES' : '-');
-             $shoulder_          = $shoulder;
-             $tube_foil_         = ($this->input->post('tube_foil')== 'YES' ? 'YES' : '-');
-             $shoulder_orifice_  = $shoulder_orifice;
-             $shoulder_color_    = $shoulder_color;
-        
-            $filename = base_url('assets/img/logo.png');
-            $smtp_user=$this->config->item('smtp_user');
-            $smtp_pass=$this->config->item('smtp_pass');
-            $config['protocol'] = 'smtp';
-            $config['smtp_host'] = 'ssl://smtp.googlemail.com';
-            $config['smtp_port'] = 465;
-            $config['smtp_timeout'] = 60;
-            $config['charset'] = 'utf-8';
-            $config['mailtype'] = 'html';
-            $config['validation'] = 'TRUE';
-            $config['smtp_user']= 'auto.mailer@3d-neopac.com';
-            $config['smtp_pass']='auto@2223';
-            $config['newline']= "\r\n";
-            $this->load->library('email', $config);
-            $this->email->from("auto.mailer@3d-neopac.com");
-            $this->email->to('ankit.shukla@3d-neopac.com');
-            //$this->email->cc($user_email);
-            //$this->email->cc('ankit.shukla@3d-neopac.com');
-            $this->email->subject("Sales Quote For ".$this->input->post('artwork_no')." Version ".$this->input->post('version_no')." ");
-            $this->email->attach($filename);
-            $cid = $this->email->attachment_cid($filename);
-            
-            
-      $html = '<!DOCTYPE>
+                  $credit_days = $this->input->post('credit_days');
+
+                  $sleeve_dia_result = $this->common_model->select_one_active_record('sleeve_diameter_master', $this->session->userdata['logged_in']['company_id'], 'sleeve_id', $sleeve_dia);
+                  if ($sleeve_dia_result == TRUE) {
+                    foreach ($sleeve_dia_result as $sleeve_dia_row) {
+                      $sleeve_diaa = $sleeve_dia_row->sleeve_diameter;
+                    }
+                  }
+
+                  $machine_id = $this->input->post('machine_type');
+                  $machine_name = '';
+
+                  if (!empty($machine_id)) {
+                    $company_id = $this->session->userdata['logged_in']['company_id'];
+
+
+                    $machine_type = $this->common_model->select_one_active_record('coex_machine_master', $company_id, 'machine_id', $machine_id);
+
+                    if ($machine_type != null) {
+
+                      $selected_machine_type = $this->input->post('machine_print_type_id');
+
+
+                      if ($selected_machine_type == $machine_id) {
+                        $machine_name = $machine_type->machine_name;
+                      }
+                    }
+                  }
+
+
+
+                  $cap_type_          = $cap_type;
+                  $special_ink_       = ($this->input->post('special_ink') == 'YES' ? 'YES' : '-');
+                  $tube_layer_        = ($this->input->post('layer') == '1' ? 'MONO LAYER' : ($this->input->post('layer') == '7' ? 'SPRING' : ($this->input->post('layer') == '5' ? 'MULTI LAYER' : ($this->input->post('layer') == '2' ? '2 LAYER' : ($this->input->post('layer') == '3' ? '3 LAYER' : '-')))));
+                  $cap_color_         = strtoupper($cap_color);
+                  $shoulder_foil_     = ($this->input->post('shoulder_foil') == 'YES' ? 'YES' : '-');
+                  $tube_color_        = strtoupper($tube_color);
+                  $cap_finishes_      = $cap_finish;
+                  $cap_foil_          = ($cap_foil == 'YES' ? 'YES' : '-');
+                  $print_type_        = $this->input->post('print_type');
+                  $cap_dia_           = strtoupper($cap_dia);
+                  $cap_shrink_sleeve_ = ($this->input->post('cap_shrink_sleeve') == 'YES' ? 'YES' : '-');
+                  $tube_lacquer_      = strtoupper($this->input->post('tube_lacquer'));
+                  $cap_orifice_       = $cap_orifice;
+                  $cap_metalization_  = ($cap_metalization == 'YES' ? 'YES' : '-');
+                  $shoulder_          = $shoulder;
+                  $tube_foil_         = ($this->input->post('tube_foil') == 'YES' ? 'YES' : '-');
+                  $shoulder_orifice_  = $shoulder_orifice;
+                  $shoulder_color_    = $shoulder_color;
+
+                  $freight_           = ($this->input->post('freight') == 0 ? 'NA' : 'ADDED IN UNIT RATE');
+
+                  $i = 1;
+                  $total_quantity = 0;
+                  $total_net_value = 0;
+                  $total_amount = 0;
+
+
+
+                  $filename = base_url('assets/img/logo.png');
+                  $smtp_user = $this->config->item('smtp_user');
+                  $smtp_pass = $this->config->item('smtp_pass');
+                  $config['protocol'] = 'smtp';
+                  $config['smtp_host'] = 'ssl://smtp.googlemail.com';
+                  $config['smtp_port'] = 465;
+                  $config['smtp_timeout'] = 60;
+                  $config['charset'] = 'utf-8';
+                  $config['mailtype'] = 'html';
+                  $config['validation'] = 'TRUE';
+                  $config['smtp_user'] = 'auto.mailer@3d-neopac.com';
+                  $config['smtp_pass'] = 'auto@2223';
+                  $config['newline'] = "\r\n";
+                  $this->load->library('email', $config);
+                  $this->email->from("auto.mailer@3d-neopac.com");
+                  $this->email->to('yatin.patel@3d-neopac.com');
+                  //$this->email->cc($user_email);
+                  //$this->email->cc('ankit.shukla@3d-neopac.com');
+                  $this->email->subject("Sales Quote  " . $sales_quotation_no . " Version " . $this->input->post('version_no') . " ");
+                  $this->email->attach($filename);
+                  $cid = $this->email->attachment_cid($filename);
+
+
+                  $html = '<!DOCTYPE>
               <html>
                <head><title>Sales Order</title>
-                <style>table {border:1px solid #ddd;border-collapse:collapse;font-size:10px;width:100%;color:black;font-family:verdana;}th {border:1px solid #ddd;text-align: left;background-color:#DFFCFC;font-weight:bold;font-size:11px;}td {border:1px solid #ddd;text-align: left;font-size:11px;}        .ui.teal.labels .label {background-color: #00b5ad!important;border-color: #00b5ad!important;color: #fff!important;}.invoice-box table {width: 100%;line-height: 12px;text-align: left;}.invoice-box table td {padding: 3px !important;}.invoice-box table tr td:nth-child(2) {text-align: center;}
+                <style>table {border:1px solid #ddd;border-collapse:collapse;font-size:10px;width:100%;color:black;font-family:verdana;}th {border:1px solid #ddd;text-align: left;background-color:#DFFCFC;font-weight:bold;font-size:10px;}td {border:1px solid #ddd;text-align: left;font-size:10px;}        .ui.teal.labels .label {background-color: #00b5ad!important;border-color: #00b5ad!important;color: #fff!important;}.invoice-box table {width: 100%;line-height: 12px;text-align: left;}.invoice-box table td {padding: 3px !important;}.invoice-box table tr td:nth-child(2) {text-align: center;}
                 </style>
                </head>         
                <body>
-               <div style="margin-top:5px;width:900px;margin:0px auto;background-color:#ddd;border:1px solid #ddd;font-family:verdana;">
-               <div style="padding:3px;background-color: #f5f5f5">  
+               <div style="margin-top:5px;width:875px;margin:0px auto;background-color:#ddd;border:1px solid #ddd;font-family:verdana;">
+               <div style="padding:3px;background-color: #ffffff">  
                <div style="margin-top:20px;>
                <table cellpadding="0" cellspacing="0" border="0">          
                 <tbody>
                  <tr>
                 <td class="title" width="5%">
                  <div style="text-align:center;"">
-                  <img src="cid:'.$cid.'" style="max-width:130px;height:30px;"><br/>
+                  <img src="cid:' . $cid . '" style="max-width:130px;height:30px;"><br/>
                   <span style="font-size:10px;"><b>3D TECHNOPACK PVT LTD</b><br/>
                   SURVEY NO 8/1, VILLAGE ATHAL, SILVASSA, DADRA NAGAR HAVELI, PIN : 396230, INDIA</span>
                  </div>
                 </td>
                  </tr>                      
                 </tbody>
-               </table>
-               <div class="ui teal labels" style="text-align: center;">
+                </table>
+
+                <div class="ui teal labels" style="text-align: center;">
                   <div class="ui label">SALES QUOTE</div>
-               </div>
-                 <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;">
-                <tr class="heading">
-                <td width=""><b>QUOTE NO</td>
-                <td width="" style="border-right:1px solid #D9d9d9;"><b>'.$sales_quotation_no.' '.$version_nooo.' </b></td>
-                <td width=""><b>QUOTE DATE</b></td>
-                <td width="">'.$sales_quote_date.'</td>                        
-                </tr>
-                <tr class="item last">
-                <td><b>PREPARED BY</b></td>
-                <td style="border-right:1px solid #D9d9d9;">'.$prepared_by .'</td>                        
-                <td><b>QUOTE VALIDITY</b></td>
-                <td><i>FOR 30 DAYS</i></td>
-                </tr>  
-               <tr class="heading">
-                <td colspan="3" width="50%">
-                  <b>BILLING</b>
-                </td> 
-                <td colspan="3" width="50%">
-                  <b>SHIPPING</b>
-                </td>               
-                </tr>
+                </div>
 
+                 <table width="100%" cellpadding="3" cellspacing="0" style="margin-top: 10px;">
+                  <tr class="heading">
+                    <td width="15%" style="background-color:#dffcfc;"><b>QUOTE NO</td>
+                    <td width="35%" style="background-color:#dffcfc;"><b>' . $sales_quotation_no . ' ' . $version_nooo . ' </b></td>
+                    <td width="15%" style="background-color:#dffcfc;"><b>QUOTE DATE</b></td>
+                    <td width="35%" style="background-color:#dffcfc;">' . $sales_quote_date . '</td>                        
+                  </tr>
+                  <tr class="item last">
+                    <td width="15%"><b>PREPARED BY</b></td>
+                    <td width="35%">' . $prepared_by . '</td>                        
+                    <td width="15%"><b>QUOTE VALIDITY</b></td>
+                    <td width="35%"><i>FOR 30 DAYS</i></td>
+                  </tr>  
+                  <tr class="heading">
+                    <td colspan="4" width="100%" style="background-color:#dffcfc;">
+                      <b>COUSTOMER DETAILS</b>
+                    </td>             
+                  </tr>
+                  <tr class="item last">
+                    <td width="15%"><b>BILL TO</b></td>
+                    <td width="35%">' . $bill_to . '
+                    </td>
+                    <td width="15%"><b>SHIP TO</b></td>
+                    <td width="35%">' . $contact_name . '</td>
+                  </tr>                
                 <tr class="item last">
-                <td ><b>BILL TO</b></td>
-                <td style="border-right:1px solid #D9d9d9;">'.$bill_to .'
-                </td>
-                <td><b>SHIP TO</b></td>
-                <td style="border-right:1px solid #D9d9d9;">SAME AS BILLING</td>
-                </tr>
-                <tr class="item last">
-                <td width="15%"><b>NAME</b></td>
-                <td style="border-right:1px solid #D9d9d9;">'.$contact_name.'</td>
-                <td ><b>NAME</b></td>
-                <td>-</td>
-                </tr>
-                  
-                <tr class="item last">
-                <td><b>CONTACT NO</b></td>
-                <td style="border-right:1px solid #D9d9d9;">'.$company_contact_no.'</td>
-                <td><b>CONTACT NO</b></td>
-                <td>-</td>
-                </tr>
-                
-                <tr class="item last">
-                <td><b>ADDRESS</b></td>
-                <td>'.$address.'</td>
-                <td><b>ADDRESS</b></td>
-                <td style="border-right:1px solid #D9d9d9;">-</td>
-                </tr>
-                
-                <tr class="item last">
-                <td><b>EMAIL</b></td>
-                <td style="border-right:1px solid #D9d9d9;">'.$company_email.'</td>
-                <td><b>EMAIL</b></td>
-                <td style="border-right:1px solid #D9d9d9;">-</td>           
+                <td width="15%"><b>CONTACT NO</b></td>
+                <td width="35%">' . $company_contact_no . '</td>
+                <td width="15%"><b>ADDRESS</b></td>
+                <td width="35%">' . $company_email . '</td>
                 </tr>
                 
                 <tr class="item last">
-                <td><b>STATE</b></td>
-                <td style="border-right:1px solid #D9d9d9;">'.$state.'</td>
-                <td><b>STATE</b></td>
-                <td>-</td>
+                <td width="15%"><b>PAYMENT TERM</b></td>
+                <td width="35%">' . $credit_days . ' Days</td>
+                <td width="15%"><b>Date of Enquiry</b></td>
+                <td width="35%">' . $this->input->post('enquiry_date') . '</td>
                 </tr>
-                
-                <tr class="item last">
-                <td><b>COUNTRY</b></td>
-                <td style="border-right:1px solid #D9d9d9;">'.$country.'</td>
-                <td><b>COUNTRY</b></td>
-                <td>-</td>
-                </tr>
-                
-                <tr class="item last">
-                <td><b>PAYMENT TERM</b></td>
-                <td style="border-right:1px solid #D9d9d9;">'.$credit_days.' Days</td>
-                </tr> 
-                    
-                            
                </table>
-               <br/>
-               <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;">
+                  
+               <table width="100%" cellpadding="3" cellspacing="0" style="margin-top: 10px;">
                 <tr class="heading">
-                  <td width="100%" colspan="7" style="border-bottom:1px solid #D9d9d9;"><b>PRODUCT SPECIFICATION</td>
+                  <td width="100%" colspan="7" style="background-color:#dffcfc !important;"><b>PRODUCT SPECIFICATION</td>
                 </tr>
 
                 <tr class="heading">
-                  <td width="33%" colspan="2" ><b>TUBE</td>
-                  <td width="1%" style="border-right:1px solid #D9d9d9;" ></td>
-                   <td width="33%" colspan="2" style="border-right:1px solid #D9d9d9;"><b>CAP</td>
-                   <td width="33%" colspan="2"><b>DECORATIVE ELEMENTS</td>   
+                  <td width="33%" colspan="2" style="background-color:#dffcfc;"><b>TUBE</td>
+                   <td width="33%" colspan="2" style="background-color:#dffcfc;"><b>CAP</td>
+                   <td width="34%" colspan="2" style="background-color:#dffcfc;"><b>DECORATIVE ELEMENTS</td>   
                 </tr>
 
                 <tr class="item">
                   <td width="15%"><b>TUBE DIA X LENGTH</b></td>
-                  <td width="1%"></td>
-                  <td width="17%"style="border-right:1px solid #D9d9d9;">'.$sales_quote_master_row->sleeve_diameter.' X '.$this->input->post('sleeve_length').'MM</td>
+                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $sleeve_diaa . ' X ' . $this->input->post('sleeve_length') . 'MM</td>
                   <td width="15%"><b>CAP TYPE</b></td>
-                  <td width="18%" style="border-right:1px solid #D9d9d9;">'.$cap_type_.'</td>
+                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $cap_type_ . '</td>
                   <td width="15%" ><b>SPECIAL INK</b></td>
-                  <td width="18%" >'.$special_ink_.'</td>
+                  <td width="19%" >' . $special_ink_ . '</td>
                 </tr>
 
                 <tr class="item">
                   <td width="15%"><b>TUBE LAYER</b></td>
-                  <td width="1%"></td>
-                  <td width="17%"style="border-right:1px solid #D9d9d9;">'.$tube_layer_.'</td>
+                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $tube_layer_ . '</td>
                   <td width="15%"><b>CAP COLOR</b></td>
-                  <td width="18%"style="border-right:1px solid #D9d9d9;">'.$cap_color_.'</td>
+                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $cap_color_ . '</td>
                   <td width="15%"><b>SHOULDER FOIL</b></td>
-                  <td width="18%">'.$shoulder_foil_.'</td>
+                  <td width="19%">' . $shoulder_foil_ . '</td>
                 </tr>
 
                 <tr class="item">
                   <td width="15%"><b>TUBE COLOR</b></td>
-                  <td width="1%"></td>
-                  <td width="17%"style="border-right:1px solid #D9d9d9;">'.$tube_color_ .'</td>
+                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $tube_color_ . '</td>
                   <td width="15%"><b>CAP FINISH</b></td>
-                  <td width="18%"style="border-right:1px solid #D9d9d9;">'.$cap_finishes_.'</td>
+                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $cap_finishes_ . '</td>
                   <td width="15%"><b>CAP FOIL</b></td>
-                  <td width="18%">'.$cap_foil_ .'</td>
+                  <td width="19%">' . $cap_foil_ . '</td>
                 </tr>
 
                 <tr class="item">
                   <td width="15%"><b>TUBE PRINT TYPE</b></td>
-                  <td width="1%"></td>
-                  <td width="17%" style="border-right:1px solid #D9d9d9;">'.$tube_color_ .'</td>
+                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $this->input->post('print_type') . '</td>
                   <td width="15%"><b>CAP DIA</b></td>
-                  <td width="18%"style="border-right:1px solid #D9d9d9;">'.$cap_dia_.'</td>
+                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $cap_dia_ . '</td>
                   <td width="15%"><b>CAP SHRINK SLEEVE</b></td>
-                  <td width="18%">'.$cap_shrink_sleeve_.'</td>
+                  <td width="19%">' . $cap_shrink_sleeve_ . '</td>
                 </tr>
 
                 <tr class="item">
                   <td width="15%"><b>TUBE LACQUER </b></td>
-                  <td width="1%"></td>
-                  <td width="17%" style="border-right:1px solid #D9d9d9;">'.$tube_lacquer_ .'</td>
+                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $tube_lacquer_ . '</td>
                   <td width="15%"><b>CAP ORIFICE</b></td>
-                  <td width="18%" style="border-right:1px solid #D9d9d9;">'.$cap_orifice_.'</td>
+                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $cap_orifice_ . '</td>
                   <td width="15%"><b>CAP METALIZATION</b></td>
-                  <td width="18%">'.$cap_metalization_.'</td>
+                  <td width="19%">' . $cap_metalization_ . '</td>
                   
                 </tr>
 
                 <tr class="item">
                   <td width="15%"><b>SHOULDER </b></td>
-                  <td width="1%"></td>
-                  <td width="17%" style="border-right:1px solid #D9d9d9;">'.$shoulder_.'</td>
+                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $shoulder_ . '</td>
                   <td width="15%"><b></b></td>
                   <td width="18%" style="border-right:1px solid #D9d9d9;"></td>
                   <td width="15%"><b>TUBE FOIL</b></td>
-                  <td width="18%">'.$tube_foil_.'</td>
+                  <td width="19%">' . $tube_foil_ . '</td>
                 </tr>
 
                 <tr class="item">
                   <td width="15%"><b>SHOULDER ORIFACE </b></td>
-                  <td width="1%"></td>
-                  <td width="17%" style="border-right:1px solid #D9d9d9;">'.$shoulder_orifice_.'</td>
+                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $shoulder_orifice_ . '</td>
                   <td width="15%"><b></b></td>
                   <td width="18%" style="border-right:1px solid #D9d9d9;"> </td>
                   <td width="15%"><b></b></td>
-                  <td width="18%"></td>
+                  <td width="19%"></td>
                 </tr>
 
                 <tr class="item last">
                   <td width="15%"><b>SHOULDER COLOR </b></td>
-                  <td width="1%"></td>
-                  <td width="17%" style="border-right:1px solid #D9d9d9;">'.$shoulder_color_.'</td>
+                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $shoulder_color_ . '</td>
                   <td width="15%"><b></b></td>
                   <td width="18%">  </td>
                   <td width="15%"></td>
-                  <td width="18%"><?php  ?></td>
+                  <td width="19%"><?php  ?></td>
                 </tr>
               </table>
 
-               <br/>
-               <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;">
-                    <tr class="heading">
-                        <td colspan="7"><b>TERMS AND CONDITIONS </b></td>
-                    </tr>
-                    <td width="5%"  style="font-size: 11px; text-transform: uppercase;line-height: 15px;border-right:1px solid #D9d9d9;">
-                    <ol>
-                      <li>The above Rates are basic rate/ex-factory.</li>
-                      <li>Supply will be done from Silvassa Factory.</li>
-                      <li><b>Excise duty shall be charged @ I GST of 18% </b></li>
-                      <li><b>Delivery Lead Time: 4-6 Weeks from date of PO or Receipt of artwork approval whichever is Later </b></li>
-                      <li>Freight: On Parties A/c.</li>
-                      <li>Quotation Validity: 60 Days.</li>
-                      <li>Compatibility & Stability of the tube is not our responsibility.</li>
-                      <li>*Tubes are manufactured under Air Conditioner rooms.</li>
-                      <li><b> 10% +/- variation in the ordered quantity is to be accepted.</b></li>
-                      <li>Rates are subject to change depending upon change in the final artwork.</li>
-                      <li>Insurance – On Parties Account.</li>
-                      <li>Preferable Transporter to be suggested by Party.</li>
-                    </ol>
-                  </td>
-                </table>
-                <br/> 
+              <table width="100%" cellpadding="6" cellspacing="0" style="margin-top: 10px;">
+              <tr class="heading">
+                <td width="100%" colspan="6" style="background-color:#dffcfc !important;"><b>Quotetion</td>
+              </tr>
 
-                <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;">
+              <tr class="heading">
+                <td width="20%" colspan="1" style="background-color:#dffcfc;"><b>Machine</td>
+                 <td width="20%" colspan="1" style="background-color:#dffcfc;"><b>Capacity</td>
+                 <td width="20%" colspan="1" style="background-color:#dffcfc;"><b>Speed</td>  
+                 <td width="20%" colspan="1" style="background-color:#dffcfc;"><b>Speed 90%</td>
+                 <td width="20%" colspan="1" style="background-color:#dffcfc;"><b>Setup Time</td>
+                 <td width="20%" colspan="1" style="background-color:#dffcfc;"><b>Contribution</td>
+
+              </tr>
+
+              <tr class="item">
+                <td width="15%">' . $machine_name . '</td>
+                <td width="15%">' . $this->input->post('capacity')  . '</td>
+                <td width="15%">' . $this->input->post('running_speed')  . '</td>
+                <td width="15%">' . $this->input->post('running_speed_90')  . '</td>
+                <td width="15%">' . $this->input->post('job_changeover')  . '</td>
+                <td width="15%">' . $this->input->post('min_contribution')  . '</td>
+
+     
+                
+              </tr>
+              <tr class="heading">
+                <td width="20%" colspan="1" style="background-color:#dffcfc;"><b>Quote For</td>
+                 <td width="20%" colspan="1" style="background-color:#dffcfc;"><b>Waste %	</td>
+                 <td width="20%" colspan="1" style="background-color:#dffcfc;"><b>Contr.</td>  
+                 <td width="20%" colspan="1" style="background-color:#dffcfc;"><b>Cost</td>
+                 <td width="33%" colspan="2" style="background-color:#dffcfc;"><b>Quoted Price</td>
+
+              </tr>
+
+              <tr class="item">
+                <td width="15%"> <b>5 K </b> </td>
+                <td width="15%">' . $this->input->post('_5k_waste')  . '</td>
+                <td width="15%">' . $this->input->post('_5k_quoted_contr') . '</td>
+                <td width="15%">' . $this->input->post('_5k_cost') . '</td>
+                <td width="15%" colspan="2">' . $this->input->post('_5k_quoted_price') . '</td>
+
+              </tr>
+              <tr class="item">
+              <td width="15%"><b> 10 K <b> </td>
+              <td width="15%">' . $this->input->post('_10k_waste')  . '</td>
+              <td width="15%">' . $this->input->post('_10k_quoted_contr') . '</td>
+              <td width="15%">' . $this->input->post('_10k_cost') . '</td>
+              <td width="15%" colspan="2">' . $this->input->post('_10k_quoted_price') . '</td>
+
+              <tr class="item">
+              <td width="15%"><b> 25 K <b> </td>
+              <td width="15%">' . $this->input->post('_25k_waste')  . '</td>
+              <td width="15%">' . $this->input->post('_25k_quoted_contr') . '</td>
+              <td width="15%">' . $this->input->post('_25k_cost') . '</td>
+              <td width="15%" colspan="2">' . $this->input->post('_25k_quoted_price') . '</td>
+
+              <tr class="item">
+              <td width="15%"><b> 50 K <b> </td>
+              <td width="15%">' . $this->input->post('_50k_waste')  . '</td>
+              <td width="15%">' . $this->input->post('_50k_quoted_contr') . '</td>
+              <td width="15%">' . $this->input->post('_50k_cost') . '</td>
+              <td width="15%" colspan="2">' . $this->input->post('_50k_quoted_price') . '</td>
+
+              <tr class="item">
+              <td width="15%"><b> 100 K <b> </td>
+              <td width="15%">' . $this->input->post('_100k_waste')  . '</td>
+              <td width="15%">' . $this->input->post('_100k_quoted_contr') . '</td>
+              <td width="15%">' . $this->input->post('_100k_cost') . '</td>
+              <td width="15%" colspan="2">' . $this->input->post('_100k_quoted_price') . '</td>
+
+              <tr class="item">
+              <td width="15%"><b> ' . $this->input->post('free_quantity') . ' <b> </td>
+              <td width="15%">' . $this->input->post('_free_quantity_waste') . '</td>
+              <td width="15%">' . $this->input->post('free_quoted_contr') . '</td>
+              <td width="15%">' . $this->input->post('free_cost') . '</td>
+              <td width="15%" colspan="2">' . $this->input->post('free_quoted_price') . '</td>
+
+            </tr>
+
+                  </table> 
+                  <table width="100%" cellpadding="3" cellspacing="0" style="margin-top: 10px;">
                   <tr class="heading">
-                    <td colspan="7"><b>IF YOU HAVE ANY QUESTIONS CONCERNING THIS QUOTATION CONTACT OR E-MAIL US : SALES@3D-NEOPAC.COM </b>
+                      <td width="6%" style="background-color:#dffcfc !important;padding: 5px"><b>SR NO</td>
+                      <td width="50%"  style="background-color:#dffcfc !important;padding: 5px" >PRODUCT NAME</td>
+                      <td width="17%" style="background-color:#dffcfc !important;padding: 5px">QUANTITY</td>
+                      <td width="17%" style="background-color:#dffcfc !important;padding: 5px">UNIT PRICE</td>                
+                      <td width="18%" style="background-color:#dffcfc !important;padding: 5px">NET AMOUNT</td>
+                  </tr>
+                 </table>';
+
+
+                  if ($_5k_flag == 1) {
+                    $html .= '<tr class="item">
+                            <td width="6%" style="padding: 5px">' . $i . '</td>
+                            <td width="50%" style="padding: 5px">' . strtoupper($this->input->post('product_name')) . '</td>
+                            <td width="17%" style="text-align:right !important;padding: 5px">5,000</td>                               
+                            <td width="17%" style="text-align:right !important;padding: 5px">&#8377;' . ($this->input->post('_5k_r1_price') <> 0 ? number_format($this->input->post('_5k_r1_price'), 2, '.', '') : '') . '</td>
+                            <td width="18%" style="text-align:right !important;padding: 5px">' . money_format('%.0n', (5000 * $this->input->post('_5k_r1_price'))) . '/-</td>    
+                        </tr>';
+                    $total_quantity += 5000;
+                    $total_net_value += (5000 * $this->input->post('_5k_r1_price'));
+                    $i++;
+                  }
+
+                  $total_quantity_  = money_format('%!.0n', $total_quantity);
+                  $total_net_value_ = money_format('%.0n', $total_net_value);
+                  $total_net_value__ = money_format('%.0n', ($total_net_value / 100) * 18);
+                  $total_net_value___ = money_format('%.0n', ($total_net_value + (($total_net_value / 100) * 18)));
+
+
+                  $html .=  '<tr class="item">
+                        <td width="6%"></td>
+                        <td width="50%" style="padding: 5px"><b>FREIGHT - ' . $freight_ . '</b></td>
+                        <td width="17%"> </td>
+                        <td width="17%"></td>
+                        <td width="18%"></td>
+                    </tr> 
+
+                    <tr class="item">
+                        <td width="56%" colspan="2" style="border-right:1px solid #D9d9d9;text-align: right;padding: 5px"><b>TOTAL</b></td>
+                        <td width="17%" style="border-right:1px solid #D9d9d9;text-align:right !important;padding: 5px"><b>' . $total_quantity_ . '</b></td>
+                        <td width="17%" style="border-right:1px solid #D9d9d9;text-align: right;padding: 5px"><b>NET AMOUNT</b></td>
+                        <td width="18%" style="text-align: right;padding: 5px"><b>' . $total_net_value_ . '/-</b></td>
+                    </tr>
+                    <tr class="item">
+                        <td colspan="4" style="border-right:1px solid #D9d9d9;text-align: right;padding: 5px" width="82%"><b>GST 18%</b></td>
+                        <td width="18%" style="text-align: right;padding: 5px"><b>' . $total_net_value__ . '/-</b></td>
+                    </tr>
+                    <tr class="item last">
+                        <td colspan="4" style="border-right:1px solid #D9d9d9;text-align: right;padding: 5px" width="82%"><b>GROSS AMOUNT</b></td>
+                        <td width="18%" style="text-align: right;padding: 5px"><b>' . $total_net_value___ . '/-</b></td>
+                    </tr>   
+                </table>
+             
+                <table width="100%" cellpadding="5" cellspacing="0">
+                  <tr class="heading">
+                    <td style="background-color:#dffcfc;"><b>IF YOU HAVE ANY QUESTIONS CONCERNING THIS QUOTATION CONTACT OR E-MAIL US : SALES@3D-NEOPAC.COM </b>
                     </td>
                   </tr>
                 </table>
@@ -1401,16 +1490,17 @@ class Sales_quote extends CI_Controller
             </div>
             </body>
           </html>';
-                 
-            $this->email->message($html);
-            $this->email->set_mailtype("html");
-          
-          if ($this->email->send()) {
-            $data['note']= 'File Uploaded Succesfully!';
-          }else{
-            $data['error']='Email send failed!';
-          } 
-        }
+
+                  $this->email->message($html);
+
+                  $this->email->set_mailtype("html");
+
+                  if ($this->email->send()) {
+                    $data['note'] = 'File Uploaded Succesfully!';
+                  } else {
+                    $data['error'] = 'Email send failed!';
+                  }
+                }
 
                 if ($result_sales_quote_master) {
                   $data['note'] = 'Data saved Successfully';
@@ -1933,6 +2023,7 @@ class Sales_quote extends CI_Controller
                   //Quote
                   'machine_print_type_id' => $this->input->post('machine_type'),
                   'job_changeover_time' => $this->input->post('job_changeover'),
+
 
                   '_5k_flag' => $_5k_flag,
                   '_5k_waste' => $this->input->post('_5k_waste'),

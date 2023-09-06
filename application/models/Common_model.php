@@ -1410,4 +1410,3 @@ WHERE extrusion_date='$from_date' ";
 
 
 }
-?>
