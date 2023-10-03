@@ -533,7 +533,7 @@ $config['protocol'] = 'smtp';
 $config['smtp_host'] = 'ssl://smtp.googlemail.com';
 $config['smtp_port'] = 465;
 $config['smtp_user'] = 'auto.mailer@3d-neopac.com';
-$config['smtp_pass'] = 'auto@2023';
+$config['smtp_pass'] = 'auto@202';
 
 
 

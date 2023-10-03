@@ -508,12 +508,12 @@ class Sales_order_item_parameterwise extends CI_Controller
   //           $this->form_validation->set_message('article_no', 'The {field} field is incorrect');
   //           return FALSE;
   //           }
-  //         } 
+  //         }
 
   //       }else{
   //         $this->form_validation->set_message('article_no', 'The {field} field is incorrect');
   //         return FALSE;
-  //       } 
+  //       }
 
   //     }
 
@@ -524,7 +524,7 @@ class Sales_order_item_parameterwise extends CI_Controller
   public function get_sales_data(){
 
 
-      //$this->load->model('common_model'); 
+      //$this->load->model('common_model');
       //$this->load->helper(array('form', 'url'));
       //$this->load->helper('download');
       //$this->load->library('PHPReport');
@@ -534,7 +534,7 @@ class Sales_order_item_parameterwise extends CI_Controller
       $from=$this->input->get('from_date');
       $to=$this->input->get('to_date');
       $company=$this->session->userdata['logged_in']['company_id'];
-      
+
       $data = $this->common_model->select_active_records_excel($table,$from,$to,$company);
       echo $this->db->last_query();
       $template = 'sales_order_book.xlsx';
@@ -557,18 +557,18 @@ class Sales_order_item_parameterwise extends CI_Controller
         )
       );
 
-      // define output directoy 
+      // define output directoy
       $output_file_dir = $templateDir;
 
       //Tp Save a copy to root folder of project directory un-comment below code:
       $filename = $output_file_dir  . "sales_order_book".date('d_m_y_h_i_s_a').".xlsx";
-      
+
       //download excel sheet with data in /tmp folder
       $result = $R->render('excel', $filename);
-      
+
       //To download Excel in local Machine un-comment below code:
       force_download($filename, NULL);
-      
+
 
   }*/
   public function jobcard_quantity_check($str)
@@ -938,7 +938,7 @@ class Sales_order_item_parameterwise extends CI_Controller
               $order_flag = 0;
 
               $data['production'] = $this->common_model->select_one_active_record('production_master', $this->session->userdata['logged_in']['company_id'], 'mp_pos_no', $this->uri->segment(3));
-
+              //echo $this->db->last_query();
               foreach ($data['production'] as $production_row) {
                 $production_row->sales_ord_no;
                 //$data['order_master']=$this->common_model->select_one_active_record('order_master',$this->session->userdata['logged_in']['company_id'],'order_no',$production_row->sales_ord_no);
@@ -969,7 +969,6 @@ class Sales_order_item_parameterwise extends CI_Controller
                 'work_proc_no' => '9',
                 'from_job_card' => '1',
                 'archive' => '0'
-
               );
               $data['purging'] = $this->common_model->select_one_active_record_nonlanguage_without_archives('material_manufacturing', $this->session->userdata['logged_in']['company_id'], $data_purging);
 
@@ -1257,8 +1256,8 @@ class Sales_order_item_parameterwise extends CI_Controller
                             $result_spring_width_calculation = $this->common_model->active_record_search('spring_width_calculation', $data, $this->session->userdata['logged_in']['company_id']);
                             if ($result_spring_width_calculation) {
                               foreach ($result_spring_width_calculation as $spring_width_calculation_row) {
-                                //echo $spring_width_calculation_row->slit_width; 
-                                //echo $spring_width_calculation_row->ups; 
+                                //echo $spring_width_calculation_row->slit_width;
+                                //echo $spring_width_calculation_row->ups;
                                 // echo $spring_width_calculation_row->distance_each_side;
                                 $film_width = $spring_width_calculation_row->slit_width + ($spring_width_calculation_row->distance_each_side * $spring_width_calculation_row->ups);
                                 //echo "<br/>";
@@ -1302,28 +1301,28 @@ class Sales_order_item_parameterwise extends CI_Controller
                                   $density = 1.19;
                                 }
 
-                                /*echo 'Layer='.$a; 
-                          echo "<br/>"; 
+                                /*echo 'Layer='.$a;
+                          echo "<br/>";
                           echo  'Length='.($length+2.5);
-                          echo "<br/>"; 
+                          echo "<br/>";
                           echo 'FIlm Width='.$film_width;
                           echo "<br/>";
                           echo 'Gauge='.$gauge;
-                          echo "<br/>"; 
+                          echo "<br/>";
                           echo 'Dencity='.$density;
                           echo "<br/>";
                           echo 'RM per sleeve= ';
                           */
                                 $rm_per_sleeve = (($length + 2.5) * $film_width * $gauge * $density) / 1000000;
-                                //echo "<br/>"; 
+                                //echo "<br/>";
                                 //echo 'RM per sleeve in kg= ';
                                 $rm_per_sleeve_in_kg = $rm_per_sleeve / 1000;
-                                //echo "<br/>"; 
-                                //echo "Total Rm="; 
+                                //echo "<br/>";
+                                //echo "Total Rm=";
 
                                 $rm_total = ($rm_per_sleeve_in_kg * $qty_to_be_printed);
                                 //echo "<br/>";
-                                //echo "Total Rm perc%"; 
+                                //echo "Total Rm perc%";
 
                                 $rm_qty = $rm_total * ($specification_film_details_row->mat_info / 100);
                                 //echo "<br/>";
@@ -2507,7 +2506,7 @@ class Sales_order_item_parameterwise extends CI_Controller
                         // For Royal Talent 40 Dia PSP 5 Ply Required---------
                         //$dia_numeric=$this->common_model->select_number_from_string($dia);
 
-                        //Changes done on 29-Dec-2020---Due to 5 Ply on mobille 
+                        //Changes done on 29-Dec-2020---Due to 5 Ply on mobille
 
                         $royal_talent_psps = array("PSP-000-1645", "PSP-000-0670", "PSP-000-0625", "PSP-000-0039", "PSP-000-0176");
 
@@ -2623,9 +2622,9 @@ class Sales_order_item_parameterwise extends CI_Controller
                           $liner_article_no = 'PM-PL-000-0009';
                           $liner_weight = 0.077;
                         } else {
-                          //$liner_article_no='PM-PL-000-0008'; 
+                          //$liner_article_no='PM-PL-000-0008';
                           $liner_article_no = 'PM-PL-000-0009';
-                          //$liner_weight=0.0275; 
+                          //$liner_weight=0.0275;
                           $liner_weight = 0.077;
                         }
                         $liner_qty = "";
@@ -4398,28 +4397,28 @@ class Sales_order_item_parameterwise extends CI_Controller
                                   $density = 1.19;
                                 }
 
-                                /*echo 'Layer='.$a; 
-                                echo "<br/>"; 
+                                /*echo 'Layer='.$a;
+                                echo "<br/>";
                                 echo  'Length='.($length+2.5);
-                                echo "<br/>"; 
+                                echo "<br/>";
                                 echo 'FIlm Width='.$film_width;
                                 echo "<br/>";
                                 echo 'Gauge='.$gauge;
-                                echo "<br/>"; 
+                                echo "<br/>";
                                 echo 'Dencity='.$density;
                                 echo "<br/>";
                                 echo 'RM per sleeve= ';
                                 */
                                 $rm_per_sleeve = (($length + 2.5) * $film_width * $gauge * $density) / 1000000;
-                                //echo "<br/>"; 
+                                //echo "<br/>";
                                 //echo 'RM per sleeve in kg= ';
                                 $rm_per_sleeve_in_kg = $rm_per_sleeve / 1000;
-                                //echo "<br/>"; 
-                                //echo "Total Rm="; 
+                                //echo "<br/>";
+                                //echo "Total Rm=";
 
                                 $rm_total = ($rm_per_sleeve_in_kg * $qty_to_be_printed);
                                 //echo "<br/>";
-                                //echo "Total Rm perc%"; 
+                                //echo "Total Rm perc%";
 
                                 $rm_qty = $rm_total * ($specification_film_details_row->mat_info / 100);
                                 //echo "<br/>";
@@ -4494,7 +4493,7 @@ class Sales_order_item_parameterwise extends CI_Controller
                 $this->load->view(ucwords($this->router->fetch_class()) . '/active-title', $data);
                 $this->load->view(ucwords($this->router->fetch_class()) . '/create-form', $data);
                 $this->load->view('Home/footer');
-              } // VALIDATION       
+              } // VALIDATION
 
             } else {
               $data['note'] = 'No Create rights Thanks';

@@ -6022,10 +6022,7 @@ $this->dompdf->stream("welcome.pdf", array("Attachment"=>0));
       <div style='padding:20px;font-size:15px;font-weight:bold;'> 
         " . $body . ":-" . $order_master_row->order_no . "<span style='font-weight:bold;font-size:15px;color:#28929B;float:right;'>" . $this->common_model->view_date($order_master_row->trans_closed_date, $this->session->userdata['logged_in']['company_id']) . "</span>
       </div>
-      <div style='padding:20px;background-color:white;'>  
-        
-        
-        <div style='margin-top:20px;'>
+      
           <table cellpadding='5'>          
             <tr>
               <th width='15%'>SALES ORDER NO</td>

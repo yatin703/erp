@@ -9,13 +9,13 @@
 
     });
  </script>
-<?php 
+<?php
     if($production==FALSE){
                     echo "<tr><td colspan='7'>No Records Found</td></tr>";
     }
     else{
             foreach ($production as $production_row)
-            {    
+            {
                 // Instanciating Models--------------------------------------
                     $spec_id=$this->uri->segment(4);
                     $spec_version_no=$this->uri->segment(5);
@@ -77,12 +77,12 @@
                         <td><b>ARTICLE NO</b></td>
                         <td></td>
                         <td><?php echo $production_row->article_no;?></td>
-                        <td><b>ARTICLE NAME</b></td>
+                        <td><b>ARTICLEE NAME</b></td>
                         <td></td>
                         <td><?php echo $this->common_model->get_article_name($production_row->article_no,$this->session->userdata['logged_in']['company_id']); ?></td>
-                       
-                    
-                    </tr> 
+
+
+                    </tr>
 
                     <tr class="item">
                         <td><b>BOM</b></td>
@@ -95,7 +95,7 @@
                                     'bom_version_no'=>$spec_version_no);
                                 $data['bom']=$this->common_model->select_active_records_where("bill_of_material",$this->session->userdata['logged_in']['company_id'],$bom);
 
-                                foreach($data['bom'] as $bom_row){  
+                                foreach($data['bom'] as $bom_row){
                                     echo "<a href='".base_url()."index.php/bill_of_material/view/".$bom_row->bom_id."' target='blank'>".$spec_id."_".$spec_version_no."</a>";
                                 }
 
@@ -110,7 +110,7 @@
                         <td width="35%"><?php echo ($artwork_no!='' ? "<b><a href='".base_url('index.php/'.(substr($artwork_no,0,3)=='SAW'?'artwork_springtube':'artwork_new').'/view/'.$artwork_no.'/'.$artwork_version)."' target='_blank'>".$artwork_no."_".$artwork_version."</a>": "NOT ATTACHED");?></td>
                     </tr>
 
-                               
+
                     <tr class="item">
                         <td><b>JOB CARD QTY</b></td>
                         <td></td>
@@ -127,8 +127,8 @@
                         <td><b>DISPATCH TOLERANCE %</b></td>
                         <td></td>
                         <td><?php echo $tolerance;?> %</td>
-                         
-                    
+
+
                     </tr>
                 <?php
                 $data=array('bom_no'=>$spec_id,
@@ -196,7 +196,7 @@
 
 
                         $data['label_specification_details']=$this->sales_order_book_model->select_label_specs_record('specification_sheet_details',$this->session->userdata['logged_in']['company_id'],$dataaa);
-                        
+
                         if($data['label_specification_details']==FALSE){
                                     $LABEL_NAME="";
                                     $LABEL_LACQUER_ONE="";
@@ -250,7 +250,7 @@
                     foreach($data['workprocedure_types_master'] as $workprocedure_types_master){
                       $extrusion_rejection=$this->common_model->read_number($workprocedure_types_master->rejection_perc,$this->session->userdata['logged_in']['company_id']);
                     }
-                
+
                 ?>
                 <tr class="item last">
                         <td><b>SPEC COMMENT</b></td>
@@ -263,7 +263,7 @@
                 <table cellpadding="0" cellspacing="0" style="border:1px solid #D9d9d9;">
                     <tr class="heading">
                         <td colspan="6">EXTRUSION MATERIAL FOR <?php echo $jobcard_qty+($jobcard_qty/100)*$extrusion_rejection;?> QUANTITY</td>
-                
+
                     </tr>
                     <tr class="item last">
                         <td width="10%"><b>SLEEVE DIA</b></td>
@@ -273,19 +273,19 @@
                         <td width="5%"></td>
                         <td width="35%"><?php echo $sleeve_length; ?></td>
                     </tr>
-                    
+
                 </table>
-                <table cellpadding="0" cellspacing="0" style="border:1px solid #D9d9d9;"> 
+                <table cellpadding="0" cellspacing="0" style="border:1px solid #D9d9d9;">
                     <tr class="heading">
                         <td width="10%">LAYER</td>
                         <td width="5%"></td>
                         <td colspan="3">MATERIAL</td>
-                
-                    </tr>   
+
+                    </tr>
                     <?php
 
 
-                    
+
                     $pos_no=1;
                     for($i=1;$i<=$no_of_layer;$i++){
 
@@ -293,10 +293,10 @@
 
                         $data['specification_sleeve_details']=$this->specification_model->select_details_record_for_jobcardprint_where_gauge('specification_sheet_details',$this->session->userdata['logged_in']['company_id'],'specification_sheet_details.spec_id',$sleeve_spec_id,'specification_sheet_details.spec_version_no',$sleeve_spec_vesrion_no,'item_group_id','3','mat_article_no<>','','layer_no',$i,'srd_id','asc','layer_no','asc');
                         $this->db->last_query();
-                        
+
                         foreach($data['specification_sleeve_details'] as $specification_sleeve_details_row){
-                                                
-                           
+
+
                             if(!empty($specification_sleeve_details_row->mat_info) || !empty($specification_sleeve_details_row->mat_article_no)){
 
                                 $array_rm=explode(",",$specification_sleeve_details_row->rm);
@@ -309,13 +309,13 @@
                                     $guage=$specification_sleeve_details_guage_row->parameter_value;
                                     }
                                 }
-                                
+
 
                                 echo "<tr class='item'>
                                         <td>LAYER ".$i." ".$guage."MIC</td>
                                         <td></td>
                                         ";
-                                       
+
                                         foreach(array_combine($array_rm, $array_rm_per) as $val_rm =>$val_rm_per){
 
                                             $article_desc="";
@@ -340,7 +340,7 @@
 
                                             //$material_manufacturing=$this->common_model->select_active_records_where('material_manufacturing',$this->session->userdata['logged_in']['company_id'],$extrusion_search);
 
-                                            $query=$this->db->query("select * from material_manufacturing where archive=0 AND company_id='000020' AND manu_order_no='".$jobcard_no."' AND work_proc_no=1 AND from_job_card=1 AND procedures_completed=0 AND article_no='".ltrim($val_rm," ")."' LIMIT 0,1 "); 
+                                            $query=$this->db->query("select * from material_manufacturing where archive=0 AND company_id='000020' AND manu_order_no='".$jobcard_no."' AND work_proc_no=1 AND from_job_card=1 AND procedures_completed=0 AND article_no='".ltrim($val_rm," ")."' LIMIT 0,1 ");
                                             $material_manufacturing=$query->result();
                                             //echo $this->db->last_query();
 
@@ -358,7 +358,7 @@
 
 
 
-                                            
+
 
                                             }
 
@@ -370,38 +370,38 @@
                                             //print_r($data['tally_material_issue_master_extr']);
                                             $error='';
                                             foreach ($data['tally_material_issue_master_extr'] as $key => $tally_row) {
-                                                $error= $tally_row->remarks;    
+                                                $error= $tally_row->remarks;
                                             }
 
                                             echo "<td style='border-right:1px solid #D9d9d9;'>".$completed=($com==0?"":($error!=''?"<i class='x red circle icon'></i>":"<i class='check green circle icon'></i>"))." ".$article_desc." (".$val_rm_per."%) = <b>" .$extrusion_val."</b> ".$uom."</td>";
 
 
-                                              
 
-                                           $pos_no++; 
-                                            
+
+                                           $pos_no++;
+
                                         }
                                         echo "
-                                        
+
                                 </tr>";
                             }
 
-                            
+
                         }
 
 
-                        
+
                     }
                     $pos_no++;
                     ?>
-                    
-            
+
+
 
                 </table>
-                
-                
 
-                <?php 
+
+
+                <?php
                 if($purging==FALSE){
 
                 }else{
@@ -424,9 +424,9 @@
                         $data['tally_material_issue_master']=$this->jobcard_issue_tally_model->active_record_search('tally_material_issue_master',$search,'','');
                         $error='';
                         foreach ($data['tally_material_issue_master'] as $key => $tally_row) {
-                            $error= $tally_row->remarks;    
-                        }    
-                    
+                            $error= $tally_row->remarks;
+                        }
+
                     echo '
                         <tr class="item">
                             <td width="10%"></td>
@@ -448,7 +448,7 @@
                             foreach ($production_master as $production_master_row) {
 
                                 echo '<div class="ui compact menu">
-                                      
+
                                       <a class="item">
                                         <i class="recycle icon"></i> Reused
                                       </a>
@@ -462,17 +462,17 @@
                                         '.($production_master_row->bottom_box_flag==1 ? "<i class='check green circle icon'></i>" : "<i class='x red circle icon'></i>").'
                                       </a>
                                     </div>';
-                                    
+
                             }
                         }else{
 
                         }
                         ?>
-            
+
             <br/>
 
 
-                <?php 
+                <?php
                 if($box==FALSE){
 
                 }else{
@@ -497,9 +497,9 @@
                         $data['tally_material_issue_master_box']=$this->jobcard_issue_tally_model->active_record_search('tally_material_issue_master',$search_box,'','');
                         $error='';
                         foreach ($data['tally_material_issue_master_box'] as $key => $tally_row) {
-                            $error= $tally_row->remarks;    
-                        }      
-                    
+                            $error= $tally_row->remarks;
+                        }
+
                     echo '
                         <tr>
                             <td width="10%"></td>
@@ -512,7 +512,7 @@
                     echo "</table>";
                 }
                 ?>
-                
+
 
                 <br/>
 
@@ -540,7 +540,7 @@
 
                 </table>
 
-                <table cellpadding="0" cellspacing="0" style="border:1px solid #D9d9d9;">                    
+                <table cellpadding="0" cellspacing="0" style="border:1px solid #D9d9d9;">
                     <tr class="heading">
                         <td width="10%">MATERIAL</td>
                         <td width="5%"></td>
@@ -548,7 +548,7 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                
+
                     </tr>
                     <tr class='item'>
                     <td></td>
@@ -556,7 +556,7 @@
                 <?php
                 $data['specification_shoulder_details']=$this->specification_model->select_details_record_for_jobcard_where_gauge('specification_sheet_details',$this->session->userdata['logged_in']['company_id'],'specification_sheet_details.spec_id',$shoulder_spec_id,'specification_sheet_details.spec_version_no',$shoulder_spec_vesrion_no,'item_group_id','4','material','1','layer_no','1','srd_id','asc','layer_no','asc');
                $part_pos_no_heading=1;
-               
+
                 foreach($data['specification_shoulder_details'] as $specification_shoulder_details_row){
                     if(!empty($specification_shoulder_details_row->mat_info) && !empty($specification_shoulder_details_row->mat_article_no)){
 
@@ -566,7 +566,7 @@
                                     $article_group=$article_row->sub_group;
                                     $uom=$article_row->uom;
 
-                                   
+
                                 }
 
                                 // Material Manufacturing----------------------
@@ -580,7 +580,7 @@
 
                                  $material_manufacturing_1=$this->common_model->select_active_records_where('material_manufacturing',$this->session->userdata['logged_in']['company_id'],$heading_search);
 
-                                
+
 
                                  $heading_val='';
                                  $com_head="";
@@ -601,7 +601,7 @@
                                 //print_r($data['tally_material_issue_master_extr']);
                                 $error='';
                                 foreach ($data['tally_material_issue_master_heading'] as $key => $tally_row) {
-                                    $error= $tally_row->remarks;    
+                                    $error= $tally_row->remarks;
                                 }
 
 
@@ -615,7 +615,7 @@
                 </tr>
                 </table>
 
-            
+
 
                 <?php
 
@@ -631,7 +631,7 @@
 
                         $printing_job_card_quantity=$printing_job_card_quantity+(($printing_job_card_quantity/100)*$printing_rejection);
 
-                    echo '<br/><table cellpadding="0" cellspacing="0" style="border:1px solid #D9d9d9;">                    
+                    echo '<br/><table cellpadding="0" cellspacing="0" style="border:1px solid #D9d9d9;">
                         <tr class="heading">
                         <td colspan="8">PRINTING MATERIAL FOR '.$printing_job_card_quantity.' QUANTITY</td>
                         </tr>';
@@ -654,11 +654,11 @@
                                 //print_r($data['tally_material_issue_master_extr']);
                                 $error='';
                                 foreach ($data['tally_material_issue_master_printing'] as $key => $tally_row) {
-                                    $error= $tally_row->remarks;    
+                                    $error= $tally_row->remarks;
                                 }
 
 
-                                   
+
                                 }
 
                         echo '<tr class="item">
@@ -675,7 +675,7 @@
                         ////////////echo "<td style='border:1px solid #D9d9d9;'>".$completed=($com_head==0?"":($error!=''?"<i class='x red circle icon'></i>":"<i class='check green circle icon'></i>"))." ".$article_desc." (".$specification_shoulder_details_row->mat_info."%)= <b>".$heading_val."</b> $uom </td>";
 
 
-                        
+
                     }
 
                   echo '</table>';
@@ -686,7 +686,7 @@
                 ?>
 
 
-                 <?php 
+                 <?php
                  $label_qty=0;
                 if($labeling==FALSE){
 
@@ -704,7 +704,7 @@
                                     $uom=$article_row->uom;
                                 }
 
-                    
+
                         //if($labeling_row->demand_qty ==0){
 
                            $data_label=array('manu_order_no' =>$jobcard_no,
@@ -716,7 +716,7 @@
 
                             foreach ($result_reserved_qty_manu_label as  $rqml_row) {
                                 $label_qty+=$this->common_model->read_number($rqml_row->qty,$this->session->userdata['logged_in']['company_id']);
-                            } 
+                            }
 
                         // }else{
                         //     $label_qty=$this->common_model->read_number($labeling_row->demand_qty,$this->session->userdata['logged_in']['company_id']);
@@ -733,8 +733,8 @@
                                 //print_r($data['tally_material_issue_master_extr']);
                         $error='';
                         foreach ($data['tally_material_issue_master_labeling'] as $key => $tally_row) {
-                            $error= $tally_row->remarks;    
-                        } 
+                            $error= $tally_row->remarks;
+                        }
 
 
                     echo '
@@ -769,13 +769,13 @@
                         foreach($data['workprocedure_types_master'] as $workprocedure_types_master){
                           $foiling_rejection=$this->common_model->read_number($workprocedure_types_master->rejection_perc,$this->session->userdata['logged_in']['company_id']);
                         }
-                        
+
                         $foiling_job_card_quantity="";
                        //$foiling_job_card_quantity=($printing_output_quantity-($printing_output_quantity/100)*$foiling_rejection);
                         $foiling_job_card_quantity=$printing_output_quantity+(($printing_output_quantity/100)*$foiling_rejection);
 
 
-                    echo '<br/><table cellpadding="0" cellspacing="0" style="border:1px solid #D9d9d9;">                    
+                    echo '<br/><table cellpadding="0" cellspacing="0" style="border:1px solid #D9d9d9;">
                         <tr class="heading">
                         <td colspan="8">FOILING MATERIAL FOR '.$foiling_job_card_quantity.' QUANTITY</td>
                         </tr>';
@@ -792,8 +792,8 @@
                                 //print_r($data['tally_material_issue_master_extr']);
                         $error='';
                         foreach ($data['tally_material_issue_master_foiling'] as $key => $tally_row) {
-                            $error= $tally_row->remarks;    
-                        }   
+                            $error= $tally_row->remarks;
+                        }
 
 
                         echo '<tr class="item">
@@ -806,7 +806,7 @@
                         </tr>';
 
 
-                        
+
                     }
 
                   echo '</table>';
@@ -815,7 +815,7 @@
                 ?>
 
 
-                
+
 
                 <?php
 
@@ -829,7 +829,7 @@
 
                             $printing_job_card_quantity=($jobcard_qty-($jobcard_qty/100)*$heading_rejection);
                             $printing_output_quantity=$printing_job_card_quantity-(($printing_job_card_quantity/100)*$printing_rejection);
-                            
+
 
                             $printing_job_card_quantity=$printing_job_card_quantity+(($printing_job_card_quantity/100)*$printing_rejection);
 
@@ -844,7 +844,7 @@
                             foreach($data['workprocedure_types_master'] as $workprocedure_types_master){
                               $foiling_rejection=$this->common_model->read_number($workprocedure_types_master->rejection_perc,$this->session->userdata['logged_in']['company_id']);
                             }
-                            
+
                             $foiling_job_card_quantity="";
                            //$foiling_job_card_quantity=($printing_output_quantity-($printing_output_quantity/100)*$foiling_rejection);
                             $foiling_job_card_quantity=$printing_output_quantity+(($printing_output_quantity/100)*$foiling_rejection);
@@ -852,12 +852,12 @@
                             $shoulder_foil_job_card_quantity=$foiling_job_card_quantity+(($foiling_job_card_quantity/100)*$shoulder_foil_rejection);
                         }else{
 
-                            
-                            
+
+
                             $shoulder_foil_job_card_quantity=$printing_output_quantity+(($printing_output_quantity/100)*$shoulder_foil_rejection);
                         }
 
-                    echo '<br/><table cellpadding="0" cellspacing="0" style="border:1px solid #D9d9d9;">                    
+                    echo '<br/><table cellpadding="0" cellspacing="0" style="border:1px solid #D9d9d9;">
                         <tr class="heading">
                         <td colspan="8">SHOULDER FOILING MATERIAL FOR '.$shoulder_foil_job_card_quantity.' QUANTITY</td>
                         </tr>';
@@ -874,7 +874,7 @@
                                 //print_r($data['tally_material_issue_master_extr']);
                         $error='';
                         foreach ($data['tally_material_issue_master_shlfoiling'] as $key => $tally_row) {
-                            $error= $tally_row->remarks;    
+                            $error= $tally_row->remarks;
                         }
 
                         echo '<tr class="item">
@@ -887,7 +887,7 @@
                         </tr>';
 
 
-                        
+
                     }
 
                   echo '</table>';
@@ -898,7 +898,7 @@
                 ?>
 
 
-                <?php 
+                <?php
                 if($capping==FALSE){
 
                 }else{
@@ -915,13 +915,13 @@
                     foreach($data['workprocedure_types_master'] as $workprocedure_types_master){
                       $foiling_rejection=$this->common_model->read_number($workprocedure_types_master->rejection_perc,$this->session->userdata['logged_in']['company_id']);
                     }
-                    
+
                     $foiling_job_card_quantity="";
                     $foiling_job_card_quantity=$printing_output_quantity+(($printing_output_quantity/100)*$foiling_rejection);
                     $foiling_output_quantity=($printing_output_quantity-(($printing_output_quantity/100)*$foiling_rejection));
                     $cap_job_card_quantity=round($foiling_output_quantity+(($foiling_output_quantity/100)*$capping_rejection));
 
-                      
+
                     }else if($shoulder_foil==1){
 
                         $data['workprocedure_types_master']=$this->process_model->select_one_active_record('workprocedure_types_master',$this->session->userdata['logged_in']['company_id'],'workprocedure_types_master.work_proc_type_id','7');
@@ -930,7 +930,7 @@
                             $shoulder_foil_rejection=$this->common_model->read_number($workprocedure_types_master->rejection_perc,$this->session->userdata['logged_in']['company_id']);
                             }
 
-                        
+
                         if($foil==1){
                         $shoulder_foil_job_card_quantity=$foiling_job_card_quantity+(($foiling_job_card_quantity/100)*$shoulder_foil_rejection);
                         $shoulder_foil_output_quantity=($foiling_output_quantity-(($foiling_output_quantity/100)*$shoulder_foil_rejection));
@@ -941,7 +941,7 @@
                             $shoulder_foil_output_quantity=($printing_output_quantity-(($printing_output_quantity/100)*$shoulder_foil_rejection));
                             $cap_job_card_quantity=round($shoulder_foil_output_quantity+(($shoulder_foil_output_quantity/100)*$capping_rejection));
                         }
-                      
+
                       }else{
                         $cap_job_card_quantity=round($printing_output_quantity+(($printing_output_quantity/100)*$capping_rejection));
                       }
@@ -951,7 +951,7 @@
                                 <td colspan="8">CAPPING FOR '.$cap_job_card_quantity.' QUANTITY</td>
                             </tr>';
 
-                     $cap_issue_qty=0;       
+                     $cap_issue_qty=0;
                     foreach($capping as $capping_row){
 
                         $data['article']=$ci->article_model->select_one_active_record('article',$this->session->userdata['logged_in']['company_id'],'article.article_no',$capping_row->article_no);
@@ -960,7 +960,7 @@
                             $article_desc=$article_row->article_name;
                             $uom=$article_row->uom;
                         }
-                     //Eknath-- 
+                     //Eknath--
                       $data_cap=array('manu_order_no' =>$jobcard_no,
                                         'article_no' =>$capping_row->article_no,
                                         'type_flag'=>'2');
@@ -978,9 +978,9 @@
                         $data['tally_material_issue_master']=$this->jobcard_issue_tally_model->active_record_search('tally_material_issue_master',$search,'','');
                         $error='';
                         foreach ($data['tally_material_issue_master'] as $key => $tally_row) {
-                            $error= $tally_row->remarks;    
-                        }       
-                    
+                            $error= $tally_row->remarks;
+                        }
+
                     echo '
                         <tr class="item">
                             <td width="10%"></td>
@@ -992,12 +992,12 @@
                     echo "</table>";
                 }
                 ?>
-                    
-                
-      
 
 
-     
+
+
+
+
     <?php
 
         } // Foreach
@@ -1009,7 +1009,7 @@
     <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;">
                     <tr class="heading">
                         <td colspan="5">AGAINST JOB CARD</td>
-                
+
                     </tr>
                     <tr class="heading">
                         <td width="10%">SR NO</td>
@@ -1018,7 +1018,7 @@
 
                     </tr>
 
-                    <?php 
+                    <?php
                     if($extrusion_additional==FALSE){
                         echo "<tr>
                                 <td></td>
@@ -1040,21 +1040,21 @@
                                 <td></td>
                                 <td>".($extrusion_additional_row->calculated_purchase_price<>0 ? "
 <i class='check green circle icon'></i>" : "-")."".$article_desc."=<b>".$this->common_model->read_number($extrusion_additional_row->total_qty,$this->session->userdata['logged_in']['company_id'])."</b> $article_uom</td>
-                                
+
                                 <td></td>
                             </tr>";
                             $i++;
-                        } 
+                        }
                     }
-                    
+
                     ?>
 
 
 
-    
 
 
-    
+
+
     </div>
 </body>
 </html>

@@ -1,0 +1,16 @@
+version: '3'
+services:
+  php-app:
+    build: .
+    ports:
+      - "8080:80"
+    links:
+      - mysql-db
+    depends_on:
+      - mysql-db
+
+  mysql-db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: admin@3d
+      MYSQL_DATABASE: neo

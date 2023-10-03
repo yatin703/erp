@@ -1078,6 +1078,10 @@ class Sales_quote extends CI_Controller
                   $sales_quote_date         = date('Y-m-d');
                   $user_id = $this->session->userdata['logged_in']['user_id'];
                   $prepared_by              = $this->common_model->get_user_name($user_id, $this->session->userdata['logged_in']['company_id']);
+                  $user_email = $this->common_model->get_user_email($user_id, $this->session->userdata['logged_in']['company_id']);
+
+                  $apr_name = $this->input->post('approval_authority');
+                  $apr_email = $this->common_model->get_user_email($apr_name, $this->session->userdata['logged_in']['company_id']);
 
 
                   $customer_result = $this->common_model->select_one_active_record('address_category_master', $this->session->userdata['logged_in']['company_id'], 'adr_category_id', $customer_no);
@@ -1124,7 +1128,7 @@ class Sales_quote extends CI_Controller
                     $company_id = $this->session->userdata['logged_in']['company_id'];
 
 
-                    $machine_type = $this->common_model->select_one_active_record('coex_machine_master', $company_id, 'machine_id', $machine_id);
+                    $machine_type = $this->common_model->select_one_active_record('coex_machine_master', 'machine_id', $machine_id, 'null');
 
                     if ($machine_type != null) {
 
@@ -1136,7 +1140,6 @@ class Sales_quote extends CI_Controller
                       }
                     }
                   }
-
 
 
                   $cap_type_          = $cap_type;
@@ -1160,11 +1163,12 @@ class Sales_quote extends CI_Controller
 
                   $freight_           = ($this->input->post('freight') == 0 ? 'NA' : 'ADDED IN UNIT RATE');
 
+                  $price = $data['_5k_quoted_price'];
+
                   $i = 1;
                   $total_quantity = 0;
                   $total_net_value = 0;
                   $total_amount = 0;
-
 
 
                   $filename = base_url('assets/img/logo.png');
@@ -1182,9 +1186,9 @@ class Sales_quote extends CI_Controller
                   $config['newline'] = "\r\n";
                   $this->load->library('email', $config);
                   $this->email->from("auto.mailer@3d-neopac.com");
-                  $this->email->to('yatin.patel@3d-neopac.com');
-                  //$this->email->cc($user_email);
-                  //$this->email->cc('ankit.shukla@3d-neopac.com');
+                  $this->email->to("yatin.patel@3d-neopac.com");
+                  // $this->email->cc($user_email);
+                  //$this->email->bcc('ankit.shukla@3d-neopac.com');
                   $this->email->subject("Sales Quote  " . $sales_quotation_no . " Version " . $this->input->post('version_no') . " ");
                   $this->email->attach($filename);
                   $cid = $this->email->attachment_cid($filename);
@@ -1233,14 +1237,14 @@ class Sales_quote extends CI_Controller
                   </tr>  
                   <tr class="heading">
                     <td colspan="4" width="100%" style="background-color:#dffcfc;">
-                      <b>COUSTOMER DETAILS</b>
+                      <b>CUSTOMER DETAILS</b>
                     </td>             
                   </tr>
                   <tr class="item last">
-                    <td width="15%"><b>BILL TO</b></td>
+                    <td width="15%"><b>Customer Name</b></td>
                     <td width="35%">' . $bill_to . '
                     </td>
-                    <td width="15%"><b>SHIP TO</b></td>
+                    <td width="15%"><b>Purchase Manager</b></td>
                     <td width="35%">' . $contact_name . '</td>
                   </tr>                
                 <tr class="item last">
@@ -1342,158 +1346,120 @@ class Sales_quote extends CI_Controller
                   <td width="19%"><?php  ?></td>
                 </tr>
               </table>
+              <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;">
+            
+             
 
-              <table width="100%" cellpadding="6" cellspacing="0" style="margin-top: 10px;">
-              <tr class="heading">
-                <td width="100%" colspan="6" style="background-color:#dffcfc !important;"><b>Quotetion</td>
-              </tr>
-
-              <tr class="heading">
-                <td width="20%" colspan="1" style="background-color:#dffcfc;"><b>Machine</td>
-                 <td width="20%" colspan="1" style="background-color:#dffcfc;"><b>Capacity</td>
-                 <td width="20%" colspan="1" style="background-color:#dffcfc;"><b>Speed</td>  
-                 <td width="20%" colspan="1" style="background-color:#dffcfc;"><b>Speed 90%</td>
-                 <td width="20%" colspan="1" style="background-color:#dffcfc;"><b>Setup Time</td>
-                 <td width="20%" colspan="1" style="background-color:#dffcfc;"><b>Contribution</td>
-
-              </tr>
-
-              <tr class="item">
-                <td width="15%">' . $machine_name . '</td>
-                <td width="15%">' . $this->input->post('capacity')  . '</td>
-                <td width="15%">' . $this->input->post('running_speed')  . '</td>
-                <td width="15%">' . $this->input->post('running_speed_90')  . '</td>
-                <td width="15%">' . $this->input->post('job_changeover')  . '</td>
-                <td width="15%">' . $this->input->post('min_contribution')  . '</td>
-
-     
+            <tr class="heading">
+                <td width="5%"><b>SR NO</td>
+                <td width="1%" style="border-right:1px solid #D9d9d9;"></td>
+                <td width="45%"  style="border-right:1px solid #D9d9d9;" >PRODUCT NAME</td>
+                <td width="12%" style="border-right:1px solid #D9d9d9; text-align: right;">QUANTITY</td>
+                <td width="12%" style="border-right:1px solid #D9d9d9; text-align: right;">UNIT PRICE</td>                
+                <td width="20%" style="text-align: right;">NET AMOUNT</td>
                 
-              </tr>
-              <tr class="heading">
-                <td width="20%" colspan="1" style="background-color:#dffcfc;"><b>Quote For</td>
-                 <td width="20%" colspan="1" style="background-color:#dffcfc;"><b>Waste %	</td>
-                 <td width="20%" colspan="1" style="background-color:#dffcfc;"><b>Contr.</td>  
-                 <td width="20%" colspan="1" style="background-color:#dffcfc;"><b>Cost</td>
-                 <td width="33%" colspan="2" style="background-color:#dffcfc;"><b>Quoted Price</td>
-
-              </tr>
-
-              <tr class="item">
-                <td width="15%"> <b>5 K </b> </td>
-                <td width="15%">' . $this->input->post('_5k_waste')  . '</td>
-                <td width="15%">' . $this->input->post('_5k_quoted_contr') . '</td>
-                <td width="15%">' . $this->input->post('_5k_cost') . '</td>
-                <td width="15%" colspan="2">' . $this->input->post('_5k_quoted_price') . '</td>
-
-              </tr>
-              <tr class="item">
-              <td width="15%"><b> 10 K <b> </td>
-              <td width="15%">' . $this->input->post('_10k_waste')  . '</td>
-              <td width="15%">' . $this->input->post('_10k_quoted_contr') . '</td>
-              <td width="15%">' . $this->input->post('_10k_cost') . '</td>
-              <td width="15%" colspan="2">' . $this->input->post('_10k_quoted_price') . '</td>
-
-              <tr class="item">
-              <td width="15%"><b> 25 K <b> </td>
-              <td width="15%">' . $this->input->post('_25k_waste')  . '</td>
-              <td width="15%">' . $this->input->post('_25k_quoted_contr') . '</td>
-              <td width="15%">' . $this->input->post('_25k_cost') . '</td>
-              <td width="15%" colspan="2">' . $this->input->post('_25k_quoted_price') . '</td>
-
-              <tr class="item">
-              <td width="15%"><b> 50 K <b> </td>
-              <td width="15%">' . $this->input->post('_50k_waste')  . '</td>
-              <td width="15%">' . $this->input->post('_50k_quoted_contr') . '</td>
-              <td width="15%">' . $this->input->post('_50k_cost') . '</td>
-              <td width="15%" colspan="2">' . $this->input->post('_50k_quoted_price') . '</td>
-
-              <tr class="item">
-              <td width="15%"><b> 100 K <b> </td>
-              <td width="15%">' . $this->input->post('_100k_waste')  . '</td>
-              <td width="15%">' . $this->input->post('_100k_quoted_contr') . '</td>
-              <td width="15%">' . $this->input->post('_100k_cost') . '</td>
-              <td width="15%" colspan="2">' . $this->input->post('_100k_quoted_price') . '</td>
-
-              <tr class="item">
-              <td width="15%"><b> ' . $this->input->post('free_quantity') . ' <b> </td>
-              <td width="15%">' . $this->input->post('_free_quantity_waste') . '</td>
-              <td width="15%">' . $this->input->post('free_quoted_contr') . '</td>
-              <td width="15%">' . $this->input->post('free_cost') . '</td>
-              <td width="15%" colspan="2">' . $this->input->post('free_quoted_price') . '</td>
-
-            </tr>
-
-                  </table> 
-                  <table width="100%" cellpadding="3" cellspacing="0" style="margin-top: 10px;">
-                  <tr class="heading">
-                      <td width="6%" style="background-color:#dffcfc !important;padding: 5px"><b>SR NO</td>
-                      <td width="50%"  style="background-color:#dffcfc !important;padding: 5px" >PRODUCT NAME</td>
-                      <td width="17%" style="background-color:#dffcfc !important;padding: 5px">QUANTITY</td>
-                      <td width="17%" style="background-color:#dffcfc !important;padding: 5px">UNIT PRICE</td>                
-                      <td width="18%" style="background-color:#dffcfc !important;padding: 5px">NET AMOUNT</td>
-                  </tr>
-                 </table>';
-
-
+            </tr>' .
+                    $i = 1;
+                  //$total_quantity=0;
+                  //$total_net_value=0;
+                  //$total_amount=0;
                   if ($_5k_flag == 1) {
-                    $html .= '<tr class="item">
-                            <td width="6%" style="padding: 5px">' . $i . '</td>
-                            <td width="50%" style="padding: 5px">' . strtoupper($this->input->post('product_name')) . '</td>
-                            <td width="17%" style="text-align:right !important;padding: 5px">5,000</td>                               
-                            <td width="17%" style="text-align:right !important;padding: 5px">&#8377;' . ($this->input->post('_5k_r1_price') <> 0 ? number_format($this->input->post('_5k_r1_price'), 2, '.', '') : '') . '</td>
-                            <td width="18%" style="text-align:right !important;padding: 5px">' . money_format('%.0n', (5000 * $this->input->post('_5k_r1_price'))) . '/-</td>    
-                        </tr>';
-                    $total_quantity += 5000;
-                    $total_net_value += (5000 * $this->input->post('_5k_r1_price'));
-                    $i++;
+                    echo
+                    '<tr class="item">
+                <td>' . $i . '</td>
+                <td style="border-right:1px solid #D9d9d9;"></td>
+                <td style="border-right:1px solid #D9d9d9;">' . $this->input->post('product_name') . '</td>
+                <td style="border-right:1px solid #D9d9d9; text-align: right;">5,000</td>                               
+                <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;' . ($this->input->post('_5k_quoted_price') <> 0 ? number_format($this->input->post('_5k_quoted_price'), 2, '.', '') : '') . '</td>
+                <td style="text-align: right;">' . money_format('%.0n', (5000 * $this->input->post('_5k_quoted_price'))) . '/-</td>    
+            </tr>';
                   }
 
-                  $total_quantity_  = money_format('%!.0n', $total_quantity);
-                  $total_net_value_ = money_format('%.0n', $total_net_value);
-                  $total_net_value__ = money_format('%.0n', ($total_net_value / 100) * 18);
-                  $total_net_value___ = money_format('%.0n', ($total_net_value + (($total_net_value / 100) * 18)));
+                  if ($_10k_flag == 1) {
+                    echo '<tr class="item">
+                <td>' . $i . '</td>
+                <td style="border-right:1px solid #D9d9d9;"></td>
+                <td style="border-right:1px solid #D9d9d9;">' . $this->input->post('product_name') . '</td>
+                <td style="border-right:1px solid #D9d9d9; text-align: right;">10,000</td>                               
+                <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;' . ($this->input->post('_10k_quoted_price') <> 0 ? number_format($this->input->post('_10k_quoted_price'), 2, '.', '') : '') . '</td>
+                <td style="text-align: right;">' . money_format('%.0n', (10000 * $this->input->post('_10k_quoted_price'))) . '/-</td>    
+            </tr>';
+                  }
+                  if ($_25k_flag == 1) {
+                    echo '<tr class="item">
+                <td>' . $i . '</td>
+                <td style="border-right:1px solid #D9d9d9;"></td>
+                <td style="border-right:1px solid #D9d9d9;">' . $this->input->post('product_name') . '</td>
+                <td style="border-right:1px solid #D9d9d9; text-align: right;">25,000</td>                               
+                <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;' . ($this->input->post('_25k_quoted_price') <> 0 ? number_format($this->input->post('_25k_quoted_price'), 2, '.', '') : '') . '</td>
+                <td style="text-align: right;">' . money_format('%.0n', (25000 * $this->input->post('_25k_quoted_price'))) . '/-</td>    
+            </tr>';
+                  }
+                  if ($_50k_flag == 1) {
+                    echo
+                    '<tr class="item">
+                <td>' . $i . '</td>
+                <td style="border-right:1px solid #D9d9d9;"></td>
+                <td style="border-right:1px solid #D9d9d9;">' . $this->input->post('product_name') . '</td>
+                <td style="border-right:1px solid #D9d9d9; text-align: right;">50,000</td>                               
+                <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;' . ($this->input->post('_50k_quoted_price') <> 0 ? number_format($this->input->post('_50k_quoted_price'), 2, '.', '') : '') . '</td>
+                <td style="text-align: right;">' . money_format('%.0n', (50000 * $this->input->post('_50k_quoted_price'))) . '/-</td>    
+            </tr>';
+                  }
+                  if ($_100k_flag == 1) {
+                    echo
+                    '<tr class="item">
+                <td>' . $i . '</td>
+                <td style="border-right:1px solid #D9d9d9;"></td>
+                <td style="border-right:1px solid #D9d9d9;">' . $this->input->post('product_name') . '</td>
+                <td style="border-right:1px solid #D9d9d9; text-align: right;">100,000</td>                               
+                <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;' . ($this->input->post('_100k_quoted_price') <> 0 ? number_format($this->input->post('_100k_quoted_price'), 2, '.', '') : '') . '</td>
+                <td style="text-align: right;">' . money_format('%.0n', (100000 * $this->input->post('_100k_quoted_price'))) . '/-</td>    
+            </tr>';
+                  }
+                  if ($free_flag == 1) {
+                    echo
+                    '<tr class="item">
+                <td>' . $i . '</td>
+                <td style="border-right:1px solid #D9d9d9;"></td>
+                <td style="border-right:1px solid #D9d9d9;">' . $this->input->post('product_name') . '</td>
+                <td style="border-right:1px solid #D9d9d9; text-align: right;">' . $this->input->post('free_quantity') . '<td>                               
+                <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;' . ($this->input->post('free_quoted_price') <> 0 ? number_format($this->input->post('free_quoted_price'), 2, '.', '') : '') . '</td>
+                <td style="text-align: right;">' . money_format('%.0n', ($this->input->post('free_quantity') * $this->input->post('free_quoted_price'))) . '/-</td>    
+            </tr>';
+                  }
 
+                  '</table>
 
-                  $html .=  '<tr class="item">
-                        <td width="6%"></td>
-                        <td width="50%" style="padding: 5px"><b>FREIGHT - ' . $freight_ . '</b></td>
-                        <td width="17%"> </td>
-                        <td width="17%"></td>
-                        <td width="18%"></td>
-                    </tr> 
-
-                    <tr class="item">
-                        <td width="56%" colspan="2" style="border-right:1px solid #D9d9d9;text-align: right;padding: 5px"><b>TOTAL</b></td>
-                        <td width="17%" style="border-right:1px solid #D9d9d9;text-align:right !important;padding: 5px"><b>' . $total_quantity_ . '</b></td>
-                        <td width="17%" style="border-right:1px solid #D9d9d9;text-align: right;padding: 5px"><b>NET AMOUNT</b></td>
-                        <td width="18%" style="text-align: right;padding: 5px"><b>' . $total_net_value_ . '/-</b></td>
-                    </tr>
-                    <tr class="item">
-                        <td colspan="4" style="border-right:1px solid #D9d9d9;text-align: right;padding: 5px" width="82%"><b>GST 18%</b></td>
-                        <td width="18%" style="text-align: right;padding: 5px"><b>' . $total_net_value__ . '/-</b></td>
-                    </tr>
-                    <tr class="item last">
-                        <td colspan="4" style="border-right:1px solid #D9d9d9;text-align: right;padding: 5px" width="82%"><b>GROSS AMOUNT</b></td>
-                        <td width="18%" style="text-align: right;padding: 5px"><b>' . $total_net_value___ . '/-</b></td>
-                    </tr>   
-                </table>
-             
-                <table width="100%" cellpadding="5" cellspacing="0">
-                  <tr class="heading">
-                    <td style="background-color:#dffcfc;"><b>IF YOU HAVE ANY QUESTIONS CONCERNING THIS QUOTATION CONTACT OR E-MAIL US : SALES@3D-NEOPAC.COM </b>
-                    </td>
-                  </tr>
-                </table>
-
+              <table width="100%" cellpadding="5" cellspacing="0">
+              <tr class="heading">
+                  <div class="printbtn">
+                    <br/>
+                    <br/>
+                    <button style="background-color: green border: none;
+                    color: white;
+                    padding: 15px 32px;
+                    text-align: center;
+                    text-decoration: none;
+                    display: inline-block;
+                    font-size: 16px; ; color: white;" class="ui mini green button" id="approval">Procced</button>
+                  </div>
+                </td>
+              </tr>
+            </table>
                </div>
               </div>
             </div>
             </body>
           </html>';
 
+
                   $this->email->message($html);
 
+
                   $this->email->set_mailtype("html");
+
+
 
                   if ($this->email->send()) {
                     $data['note'] = 'File Uploaded Succesfully!';
@@ -1502,11 +1468,15 @@ class Sales_quote extends CI_Controller
                   }
                 }
 
+
+
+
                 if ($result_sales_quote_master) {
                   $data['note'] = 'Data saved Successfully';
                 } else {
                   $data['error'] = 'Error while saving data';
                 }
+
 
                 //header("refresh:1;url=".base_url()."index.php/".$this->router->fetch_class());
 
