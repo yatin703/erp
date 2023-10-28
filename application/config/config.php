@@ -527,13 +527,23 @@ $config['rewrite_short_tags'] = FALSE;
 | Comma-separated:	'10.0.1.200,192.168.5.0/24'
 | Array:		array('10.0.1.200', '192.168.5.0/24')
 */
-$config['proxy_ips'] = '';
+//$config['proxy_ips'] = '';
 
-$config['protocol'] = 'smtp';
-$config['smtp_host'] = 'ssl://smtp.googlemail.com';
-$config['smtp_port'] = 465;
-$config['smtp_user'] = 'auto.mailer@3d-neopac.com';
-$config['smtp_pass'] = 'auto@202';
+// $config['protocol'] = 'smtp';
+// $config['smtp_host'] = 'ssl://smtp.googlemail.com';
+// $config['smtp_port'] = 465;
+// $config['smtp_user'] = 'auto.mailer@3d-neopac.com';
+// $config['smtp_pass'] = 'auto@202';
+// $config['protocol'] = 'smtp';
+// $config['smtp_host'] = 'ssl://smtp.googlemail.com'; // Your SMTP server address
+// $config['smtp_port'] = 587; // SMTP port (e.g., 587 for TLS or 465 for SSL)
+// $config['smtp_user'] = 'auto.mailer@3d-neopac.com'; // Your SMTP username
+// $config['smtp_pass'] = 'auto@2023'; // Your SMTP password
+// $config['mailtype'] = 'html'; // Set email format to HTML
+// $config['charset'] = 'utf-8'; // Character set
+
+// You can add more configuration options as needed
+
 
 
 

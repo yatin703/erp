@@ -1587,6 +1587,8 @@ class Job_card extends CI_Controller
   public function mail()
   {
 
+    
+
     $this->load->model('Auto_mailer');
 
     $result = $this->Auto_mailer->jobcard_automailer();
@@ -1681,19 +1683,19 @@ class Job_card extends CI_Controller
 
 
 
-      //$smtp_user = $this->config->item('smtp_user');
-      //$smtp_pass = $this->config->item('smtp_pass');
-      $config['protocol'] = 'smtp';
-      $config['smtp_host'] = 'ssl://smtp.googlemail.com';
-      $config['smtp_port'] = 465;
-      $config['smtp_timeout'] = 60;
-      $config['charset'] = 'utf-8';
-      $config['mailtype'] = 'html';
-      $config['validation'] = 'TRUE';
-      $config['smtp_user'] = 'auto.mailer@3d-neopac.com';
-      $config['smtp_pass'] = 'auto@222';
-      $config['newline'] = "\r\n";
-      $this->load->library('email', $config);
+      // $smtp_user = $this->config->item('smtp_user');
+      // $smtp_pass = $this->config->item('smtp_pass');
+      // $config['protocol'] = 'smtp';
+      // $config['smtp_host'] = 'ssl://smtp.googlemail.com';
+      // $config['smtp_port'] = 465;
+      // $config['smtp_timeout'] = 60;
+      // $config['charset'] = 'utf-8';
+      // $config['mailtype'] = 'html';
+      // $config['validation'] = 'TRUE';
+      // $config['smtp_user'] = 'auto.mailer@3d-neopac.com';
+      // $config['smtp_pass'] = 'auto@2023';
+      // $config['newline'] = "\r\n";
+      // $this->load->library('email', $config);
       $this->email->from("auto.mailer@3d-neopac.com");
       $this->email->to("yatin.patel@3d-neopac.com");
       // $this->email->cc($user_email);
@@ -1702,10 +1704,28 @@ class Job_card extends CI_Controller
 
 
       $this->email->message($html);
-
-
       $this->email->set_mailtype("html");
-      $this->email->send();
+
+      if ($this->email->send()) {
+        echo 'Your email was sent.';
+    } else {
+        show_error($this->email->print_debugger());
+    }
+
+   
+
+    }
+  }
+
+  public function test(){
+    $this->email->from("auto.mailer@3d-neopac.com");
+    $this->email->to("yatin.patel@3d-neopac.com");
+    $this->email->subject("test");
+
+      if ($this->email->send()) {
+        echo 'Your email was sent.';
+    } else {
+        show_error($this->email->print_debugger());
     }
   }
 }

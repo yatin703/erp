@@ -1068,12 +1068,23 @@ class Sales_quote extends CI_Controller
 
                 if ($result_sales_quote_master != '') {
 
-                  $data['sales_quote_master']=$this->sales_quote_model->select_one_active_record('sales_quote_master',$this->session->userdata['logged_in']['company_id'],'sales_quote_master.quotation_no',$sales_quotation_no);
+                  
+              $data['company'] = $this->common_model->select_one_active_record('company_master', $this->session->userdata['logged_in']['company_id'], 'company_id', $this->session->userdata['logged_in']['company_id']);
 
-                  foreach ($data['sales_quote_master'] as $sales_quote_master_row): {
-                    //echo "<pre>";print_r($sales_quote_master_row);die();
+              $data['company_details'] = $this->common_model->select_one_active_record('company_system_parameters', $this->session->userdata['logged_in']['company_id'], 'company_id', $this->session->userdata['logged_in']['company_id']);
 
-                    
+
+
+              $data['sales_quote_master'] = $this->sales_quote_model->select_one_active_record_where('sales_quote_master', $this->session->userdata['logged_in']['company_id'], 'sales_quote_master.quotation_no', $this->uri->segment(3), 'sales_quote_revision.version_no', $this->uri->segment(4));
+
+          
+
+              foreach ($data['sales_quote_master'] as $sales_quote_master_row):
+
+
+
+                  
+
 
                   $filename = base_url('assets/img/logo.png');
                   $smtp_user = $this->config->item('smtp_user');
@@ -1083,20 +1094,19 @@ class Sales_quote extends CI_Controller
                   $config['smtp_port'] = 465;
                   $config['smtp_timeout'] = 60;
                   $config['charset'] = 'utf-8';
-                  $config['mailtype'] = 'html';
+                  $config['mailtype'] = '';
                   $config['validation'] = 'TRUE';
                   $config['smtp_user'] = 'auto.mailer@3d-neopac.com';
                   $config['smtp_pass'] = 'auto@2223';
                   $config['newline'] = "\r\n";
                   $this->load->library('email', $config);
-                // $this->email->from("auto.mailer@3d-neopac.com");
-                 //$this->email->to("yatin.patel@3d-neopac.com");
+                  $this->email->from("auto.mailer@3d-neopac.com");
+                  $this->email->to("yatin.patel@3d-neopac.com");
                   // $this->email->cc($user_email);
                   //$this->email->bcc('ankit.shukla@3d-neopac.com');
-                  $this->email->subject("Sales Quote  " . $sales_quote_master_row->quotation_no . " Version " . $sales_quote_master_row->version_no. " ");
+                  $this->email->subject("Sales Quote  " . $sales_quote_master_row->quotation_no. " Version " . $this->input->post('version_no') . " ");
                   $this->email->attach($filename);
                   $cid = $this->email->attachment_cid($filename);
-                 
 
 
                   $html = '<!DOCTYPE>
@@ -1127,135 +1137,84 @@ class Sales_quote extends CI_Controller
                   <div class="ui label">SALES QUOTE</div>
                 </div>
 
-                 <table width="100%" cellpadding="3" cellspacing="0" style="margin-top: 10px;">
-                  <tr class="heading">
-                    <td width="15%" style="background-color:#dffcfc;"><b>QUOTE NO</td>
-                    <td width="35%" style="background-color:#dffcfc;"><b>' . $sales_quote_master_row->quotation_no  . ' ' .$sales_quote_master_row->version_no . ' </b></td>
-                    <td width="15%" style="background-color:#dffcfc;"><b>QUOTE DATE</b></td>
-                    <td width="35%" style="background-color:#dffcfc;">' . $sales_quote_master_row->quotation_date. '</td>                        
+                <table width="100%" cellpadding="3" cellspacing="0" style="margin-top: 10px;">
+                <tr class="heading">
+                  <td width="15%" style="background-color:#dffcfc;"><b>QUOTE NO</b></td>
+                  <td width="35%" style="background-color:#dffcfc;"><b>'. $sales_quote_master_row->quotation_no . ' ' . $this->input->post('version_no') .'</b></td>
+                  <td width="15%" style="background-color:#dffcfc;"><b>QUOTE DATE</b></td>
+                  <td width="35%" style="background-color:#dffcfc;">'. $sales_quote_date .'</td>
+                </tr>
+                <tr class="item last">
+                  <td width="15%"><b>PREPARED BY</b></td>
+                  <td width="35%">'. $prepared_by .'</td>
+                  <td width="15%"><b>QUOTE VALIDITY</b></td>
+                  <td width="35%"><i>FOR 30 DAYS</i></td>
+                </tr>
+              </table>
+              <table width="100%" cellpadding="2" cellspacing="0" style="margin-top: px;">
+              <tr class="heading">
+                  <td style="background-color:#dffcfc;"><b>BILLING</b></td>
+        
+                  <td  style="background-color:#dffcfc;"><b></b></td>
+                  
+                  <td style="background-color:#dffcfc;"><b>SHIPPING</b></td>
+        
+                  <td  style="background-color:#dffcfc;"><b></b></td>
+            
+                </tr>
+
+                <tr class="item last">
+                  <td width="15%"><b>BILL TO</b></td>
+                  <td width="35%">'.$bill_to .'</td>
+                  <td width="15%"><b>	SHIP TO</b></td>
+                  <td width="35%"><i>SAME AS BILLING</i></td>
                   </tr>
                   <tr class="item last">
-                    <td width="15%"><b>PREPARED BY</b></td>
-                    <td width="35%">' . $prepared_by . '</td>                        
-                    <td width="15%"><b>QUOTE VALIDITY</b></td>
-                    <td width="35%"><i>FOR 30 DAYS</i></td>
-                  </tr>  
-                  </table>
-      <table cellpadding="3" cellspacing="0" style="border:1px solid #D9d9d9;">
-        <tr class="heading">
-            <td width="15%" style="background-color:#dffcfc;"><b>BILLING </td>
-            
-            <td width="34%" style="background-color:#dffcfc;" ></td>
-            <td width="15%" style="background-color:#dffcfc;"><b>SHIPPING</td>
-            <td width="34%" style="background-color:#dffcfc;" ></td>
-          
-        </tr>';
-        $customer_result = $this->common_model->select_one_active_record('address_category_master', $this->session->userdata['logged_in']['company_id'], 'adr_category_id', $sales_quote_master_row->customer_no);
-                    if ($customer_result == TRUE) {
-                        foreach ($customer_result as $customer_row) {
-                            $customer_row->category_name;
-                        }
-                    }
+                  <td width="15%"><b>NAME</b></td>
+                  <td width="35%">'.$contact_name .'</td>
+                  <td width="15%"><b>NAME</b></td>
+                  <td width="35%">'.$contact_name .'</td>
+                  </tr>
+                  <tr class="item last">
+                  <td width="15%"><b>CONTACT NO</b></td>
+                  <td width="35%">'.$company_contact_no .'</td>
+                  <td width="15%"><b>CONTACT NO</b></td>
+                  <td width="35%">'.$company_contact_no .'</td>
+                  </tr>
+                  <tr class="item last">
+                  <td width="15%"><b>ADDRESS</b></td>
+                  <td width="35%">'.$address.'</td>
+                  <td width="15%"><b>ADDRESS</b></td>
+                  <td width="35%">'.$address.'</td>
+                  </tr>
+                  <tr class="item last">
+                  <td width="15%"><b>EMAIL</b></td>
+                  <td width="35%">'.$company_email.'</td>
+                  <td width="15%"><b>EMAIL</b></td>
+                  <td width="35%">'.$company_email.'</td>
 
-        $html.='<tr class="item">
-            <td><b>BILL TO</b></td>
-            <td style="border-right:1px solid #D9d9d9;"><b>'.$customer_row->category_name.'</b></td>
-            <td><b>SHIP TO</b></td>
-           
-            <td>SAME AS BILLING</td>
-        </tr>';
-        $sales_quote_customer_contact_details = $this->common_model->select_one_record_with_company('address_category_contact_details', $this->session->userdata['logged_in']['company_id'], 'address_category_contact_id', $sales_quote_master_row->pm_1);
-        foreach ($sales_quote_customer_contact_details as $key => $sales_quote_customer_contact_details_row) {
-           $sales_quote_customer_contact_details_row->contact_name;
-        }
-
-        $html.='<tr class="item">
-            <td><b>NAME</b></td>
-           
-            <td style="border-right:1px solid #D9d9d9;">
-            '.$sales_quote_customer_contact_details_row->contact_name.'</td>
-            <td><b>NAME</b></td>
-           
-            <td>-</td>
-        </tr>
-        <tr class="item">
-            <td><b>CONTACT NO</b></td>
-         
-            <td style="border-right:1px solid #D9d9d9;">
-               '.$sales_quote_master_row->company_contact_no.'
-
-            </td>
-            <td><b>CONTACT NO</b></td>
-          
-            <td>-</td>
-        </tr>
-
-
-        <tr class="item">
-            <td><b>ADDRESS</b></td>
-           
-            <td style="border-right:1px solid #D9d9d9;">
-                ' .$sales_quote_master_row->address.'
-
-            </td>
-            <td><b>ADDRESS</b></td>
-         
-            <td>-</td>
-        </tr>
-
-        <tr class="item">
-            <td><b>EMAIL</b></td>
-           
-            <td style="border-right:1px solid #D9d9d9;">
-
-                '.strtoupper($sales_quote_master_row->company_email).'
-
-            </td>
-            <td><b>EMAIL</b></td>
-     
-            <td>-</td>
-        </tr>
-
-        <tr class="item">
-            <td><b>STATE</b></td>
-          
-            <td style="border-right:1px solid #D9d9d9;">
-                '.strtoupper($this->common_model->get_state_name($sales_quote_master_row->state, $this->session->userdata['logged_in']['company_id'])).'
-            </td>
-            <td><b>STATE</b></td>
-           
-            <td>-</td>
-        </tr>
-
-        <tr class="item">
-            <td><b>COUNTRY</b></td>
- 
-            <td style="border-right:1px solid #D9d9d9;">'. $sales_quote_master_row->lang_country_name.'
-
-            </td>
-            <td><b>COUNTRY</b></td>
-           
-            <td>-</td>
-        </tr>
-
-        <tr class="item last">
-            <td><b>PAYMENT TERM</b></td>
-          
-            <td style="border-right:1px solid #D9d9d9;">'. $sales_quote_master_row->credit_days.' Days
-
-            </td>
-            <td><b></b></td>
-          
-            <td></td>
-        </tr>
-           <tr>
-                <td width="15%"><b>Date of Enquiry</b></td>
-                <td width="35%">' . $sales_quote_master_row->quotation_date . ' </td>
-                <td width="15%"><b></b></td>
-                <td width="35%"></td>
+                  <tr class="item last">
+                  <td width="15%"><b>STATE</b></td>
+                  <td width="35%">'.$state.'</td>
+                  <td width="15%"><b>STATE</b></td>
+                  <td width="35%">'.$state.'</td>
+                  </tr>
+                  <tr class="item last">
+                  <td width="15%"><b>COUNTRY</b></td>
+                  <td width="35%">'.$country.'</td>
+                  <td width="15%"><b>COUNTRY</b></td>
+                  <td width="35%">'.$country.'</td>
+                  </tr>
+                  <tr class="item last">
+                  <td width="15%"><b>PAYMENT TERM</b></td>
+                  <td width="35%">'.$credit_days.'</td>
+                  <td width="15%"><b>PAYMENT TERM</b></td>
+                  <td width="35%">'.$credit_days.'</td>
+                  </tr>
+                  <td width="15%"><b>Date of Enquiry</b></td>
+                  <td width="35%">'.$this->input->post('enquiry_date').'</td>
                 </tr>
-               </table>
-                  
+              </table>            
                <table width="100%" cellpadding="3" cellspacing="0" style="margin-top: 10px;">
                 <tr class="heading">
                   <td width="100%" colspan="7" style="background-color:#dffcfc !important;"><b>PRODUCT SPECIFICATION</td>
@@ -1269,62 +1228,62 @@ class Sales_quote extends CI_Controller
 
                 <tr class="item">
                   <td width="15%"><b>TUBE DIA X LENGTH</b></td>
-                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->sleeve_diameter. ' X ' . $sales_quote_master_row->sleeve_length . 'MM</td>
+                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $sleeve_diaa . ' X ' . $this->input->post('sleeve_length') . 'MM</td>
                   <td width="15%"><b>CAP TYPE</b></td>
-                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->cap_type . '</td>
+                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $cap_type_ . '</td>
                   <td width="15%" ><b>SPECIAL INK</b></td>
-                  <td width="19%" >' . $sales_quote_master_row->special_ink . '</td>
+                  <td width="19%" >' . $special_ink_ . '</td>
                 </tr>
 
                 <tr class="item">
                   <td width="15%"><b>TUBE LAYER</b></td>
-                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->layer . '</td>
+                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $tube_layer_ . '</td>
                   <td width="15%"><b>CAP COLOR</b></td>
-                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->cap_color . '</td>
+                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $cap_color_ . '</td>
                   <td width="15%"><b>SHOULDER FOIL</b></td>
-                  <td width="19%">' . $sales_quote_master_row->shoulder_foil. '</td>
+                  <td width="19%">' . $shoulder_foil_ . '</td>
                 </tr>
 
                 <tr class="item">
                   <td width="15%"><b>TUBE COLOR</b></td>
-                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->tube_color. '</td>
+                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $tube_color_ . '</td>
                   <td width="15%"><b>CAP FINISH</b></td>
-                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->cap_finish . '</td>
+                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $cap_finishes_ . '</td>
                   <td width="15%"><b>CAP FOIL</b></td>
-                  <td width="19%">' . $sales_quote_master_row->cap_foil . '</td>
+                  <td width="19%">' . $cap_foil_ . '</td>
                 </tr>
 
                 <tr class="item">
                   <td width="15%"><b>TUBE PRINT TYPE</b></td>
-                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->print_type . '</td>
+                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $this->input->post('print_type') . '</td>
                   <td width="15%"><b>CAP DIA</b></td>
-                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->cap_dia . '</td>
+                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $cap_dia_ . '</td>
                   <td width="15%"><b>CAP SHRINK SLEEVE</b></td>
-                  <td width="19%">' .$sales_quote_master_row->cap_shrink_sleeve . '</td>
+                  <td width="19%">' . $cap_shrink_sleeve_ . '</td>
                 </tr>
 
                 <tr class="item">
                   <td width="15%"><b>TUBE LACQUER </b></td>
-                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->tube_lacquer . '</td>
+                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $tube_lacquer_ . '</td>
                   <td width="15%"><b>CAP ORIFICE</b></td>
-                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->cap_orifice. '</td>
+                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $cap_orifice_ . '</td>
                   <td width="15%"><b>CAP METALIZATION</b></td>
-                  <td width="19%">' . $sales_quote_master_row->cap_metalization . '</td>
+                  <td width="19%">' . $cap_metalization_ . '</td>
                   
                 </tr>
 
                 <tr class="item">
                   <td width="15%"><b>SHOULDER </b></td>
-                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->shoulder . '</td>
+                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $shoulder_typeee . '</td>
                   <td width="15%"><b></b></td>
                   <td width="18%" style="border-right:1px solid #D9d9d9;"></td>
                   <td width="15%"><b>TUBE FOIL</b></td>
-                  <td width="19%">' . $sales_quote_master_row->tube_foil . '</td>
+                  <td width="19%">' . $tube_foil_ . '</td>
                 </tr>
 
                 <tr class="item">
-                  <td width="15%"><b>SHOULDER ORIFACE </b></td>
-                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->shoulder_orifice . '</td>
+                  <td width="15%"><b>SHOULDER ORIFICE </b></td>
+                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $this->input->post('shoulder_orifice') . '</td>
                   <td width="15%"><b></b></td>
                   <td width="18%" style="border-right:1px solid #D9d9d9;"> </td>
                   <td width="15%"><b></b></td>
@@ -1333,223 +1292,161 @@ class Sales_quote extends CI_Controller
 
                 <tr class="item last">
                   <td width="15%"><b>SHOULDER COLOR </b></td>
-                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->shoulder_color. '</td>
+                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $shoulder_color_ . '</td>
                   <td width="15%"><b></b></td>
-                  <td width="18%"></td>
+                  <td width="18%">  </td>
                   <td width="15%"></td>
-                  <td width="19%"></td>
+                  <td width="19%"><?php  ?></td>
                 </tr>
-                </table>
-          
-        <table cellpadding="4" cellspacing="0" style="border:1px solid #D9d9d9;">
-            <tr class="heading">
-            <td width="5%" style="background-color:#dffcfc;"><b>SR NO</td>
-            <td width="45%" style="background-color:#dffcfc;"><b>PRODUCT NAME</td>
-            <td width="12%" style="background-color:#dffcfc; text-align: right;"><b>QUANTITY</td>
-            <td width="12%" style="background-color:#dffcfc; text-align: right;"><b>UNIT PRICE</td>
-            <td width="20%" style="background-color:#dffcfc; text-align:right;"><b>NET AMOUNT</td>
-
-        </tr>';
-        $i = 1;
-        $total_quantity = 0;
-        $total_net_value = 0;
-        $total_amount = 0;
-        
-
-
-        if ($sales_quote_master_row->_5k_flag == 1) {
-            $html.= '<tr class="item">
-                <td>' . $i . '</td>
-                <td style="border-right:1px solid #D9d9d9;">' . strtoupper($sales_quote_master_row->product_name) . '</td>
-                <td style="border-right:1px solid #D9d9d9; text-align: right;">5,000</td>                               
-                <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;' . ($sales_quote_master_row->_5k_quoted_price <> 0 ? number_format($sales_quote_master_row->_5k_quoted_price, 2, '.', '') : '') . '</td>
-                <td style="text-align: right;">' . money_format('%.0n', (5000 * $sales_quote_master_row->_5k_quoted_price)) . '/-</td>    
-            </tr>';
-            $total_quantity += 5000;
-            $total_net_value += (5000 * $sales_quote_master_row->_5k_quoted_price);
-            $i++;
-        }
-        if ($sales_quote_master_row->_10k_flag == 1) {
-            $html.= '<tr class="item">
-                <td>' . $i . '</td>             
-                <td style="border-right:1px solid #D9d9d9;">' . strtoupper($sales_quote_master_row->product_name) . '</td>
-                <td style="border-right:1px solid #D9d9d9;text-align: right;">10,000</td>              
-                <td style="border-right:1px solid #D9d9d9;text-align: right;">&#8377;' . ($sales_quote_master_row->_10k_quoted_price <> 0 ? number_format($sales_quote_master_row->_10k_quoted_price, 2, '.', '') : '') . '</td>
-                <td style="text-align: right;">' . money_format('%.0n', (10000 * $sales_quote_master_row->_10k_quoted_price)) . '/-</td>
-            </tr>';
-            $total_quantity += 10000;
-            $total_net_value += (10000 * $sales_quote_master_row->_10k_quoted_price);
-
-            $i++;
-        }
-
-        if ($sales_quote_master_row->_25k_flag == 1) {
-
-            $html.= '<tr class="item">
-                <td>' . $i . '</td>
-                <td style="border-right:1px solid #D9d9d9;">' . strtoupper($sales_quote_master_row->product_name). '</td>             
-                <td style="border-right:1px solid #D9d9d9;text-align: right;">25,000</td>
-                <td style="border-right:1px solid #D9d9d9;text-align: right;">&#8377;' . ($sales_quote_master_row->_25k_quoted_price <> 0 ? number_format($sales_quote_master_row->_25k_quoted_price, 2, '.', '') : '') . '</td>                
-                <td style="text-align: right;">' . money_format('%.0n', (25000 * $sales_quote_master_row->_25k_quoted_price)) . '/-</td>
-            </tr>';
-            $total_quantity += 25000;
-            $total_net_value += (25000 * $sales_quote_master_row->_25k_quoted_price);
-            $i++;
-        }
-
-         if ($sales_quote_master_row->_50k_flag == 1) {
-          $html.= '<tr class="item">
-                <td>' . $i . '</td>
-                <td style="border-right:1px solid #D9d9d9;">' . strtoupper($sales_quote_master_row->product_name). '</td>
-                <td style="border-right:1px solid #D9d9d9;text-align: right;">50,000</td>
-                <td style="border-right:1px solid #D9d9d9;text-align: right;">&#8377;' . ($sales_quote_master_row->_50k_quoted_price <> 0 ? number_format($sales_quote_master_row->_50k_quoted_price, 2, '.', '') : '') . '</td>                
-                <td style="text-align: right;">' . money_format('%.0n', (50000 * $sales_quote_master_row->_50k_quoted_price)) . '/-</td>
-            </tr>';
-            $total_quantity += 50000;
-            $total_net_value += (50000 * $sales_quote_master_row->_50k_quoted_price);
-            $i++;
-        }
-
-         if ($sales_quote_master_row->_100k_flag == 1) {
-            $html.= '<tr class="item">
-                <td>' . $i . '</td>
-                <td style="border-right:1px solid #D9d9d9;">' . strtoupper($sales_quote_master_row->product_name) . '</td>                
-                <td style="border-right:1px solid #D9d9d9;text-align: right;">1,00,000</td>
-                <td style="border-right:1px solid #D9d9d9;text-align: right;">&#8377;' . ($sales_quote_master_row->_100k_quoted_price <> 0 ? number_format($sales_quote_master_row->_100k_quoted_price, 2, '.', '') : '') . '</td>                
-                <td style="border-right:1px solid #D9d9d9;text-align: right;">' . money_format('%.0n', (100000 * $sales_quote_master_row->_100k_quoted_price)) . '/-</td>
-            </tr>';
-            $total_quantity += 100000;
-            $total_net_value += (100000 * $sales_quote_master_row->_100k_quoted_price);
-            $i++;
-        }
-
-         if ($sales_quote_master_row->free_flag == 1) {
-            $html.= '<tr class="item">
-                <td>' . $i . '</td>
-                <td style="border-right:1px solid #D9d9d9;">' . strtoupper($sales_quote_master_row->product_name). '</td>               
-                <td style="border-right:1px solid #D9d9d9;text-align: right;">' . money_format('%!.0n', $sales_quote_master_row->free_quantity) . '</td>
-               <td style="border-right:1px solid #D9d9d9;text-align: right;">&#8377;' . ($sales_quote_master_row->_free_quoted_price <> 0 ? number_format($sales_quote_master_row->_free_quoted_price, 2, '.', '') : '') . '</td> 
-                <td style="text-align: right;">' . money_format('%.0n', ($sales_quote_master_row->free_quantity * $sales_quote_master_row->_free_quoted_price)) . '/-</td>
-            </tr>';
-            $total_quantity += $sales_quote_master_row->free_quantity;
-            $total_net_value += ($sales_quote_master_row->free_quantity * $sales_quote_master_row->_free_quoted_price);
-            $i++;
-        }
-        $freight_1= ($sales_quote_master_row->freight == 0) ? 'NA' : 'ADDED IN UNIT RATE';
-        $total_quantity_1= money_format('%!.0n', $total_quantity);
-        $total_net_value_1=money_format('%.0n', $total_net_value);
-        $total_net_value_2=money_format('%.0n', ($total_net_value / 100) * 18);
-        $gross_amount=money_format('%.0n', ($total_net_value + (($total_net_value / 100) * 18)));
-      
-
-       
-
-        $html.='<tr class="item">
-            <td style="border-right:1px solid #D9d9d9;"></td>
-            <td><b>FREIGHT - '.$freight_1.'</b></td>
-            <td> </td>
-            <td></td>
-            <td></td>
-        </tr>
-      <tr class="item">
-            <td colspan="2" style="border-right:1px solid #D9d9d9;text-align: right;"><b>TOTAL</b></td>
-            <td style="border-right:1px solid #D9d9d9; text-align:right;"><b>'.$total_quantity_1.'</b></td>
-            <td style="border-right:1px solid #D9d9d9;text-align: right;"><b>NET AMOUNT</b></td>
-            <td style="text-align:right"><b>'.$total_net_value_1.'/-</b></td>
-        </tr>
-        <tr class="item">
-            <td colspan="4" style="border-right:1px solid #D9d9d9;text-align: right;"><b>GST 18%</b></td>
-            <td style="text-align: right;"><b>'.$total_net_value_2.'/-</b></td>
-        </tr>
-        <tr class="item last">
-            <td colspan="4" style="border-right:1px solid #D9d9d9;text-align: right;"><b>GROSS AMOUNT</b></td>
-            <td style="text-align: right;"><b>'.$gross_amount.'/-</b></td>
-        </tr>
-    </table>
-
-    <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;>
-
-        <tr class="heading">
-            <td colspan="7"  style="background-color: #dffcfc";><b>TERMS AND CONDITIONS </b></td>
-            <!-- <td style="border-right:1px solid #D9d9d9;"></td>
-                <td><b>REMARK</b></td> -->
-        </tr>
-        <td width="5%" style="font-size: 11px; text-transform: uppercase;line-height: 15px;border-right:1px solid #D9d9d9;">
-            <ol>
-                <li>The above Rates are basic rate/ex-factory.</li>
-                <li>Supply will be done from Silvassa Factory.</li>
-                <li><b>Excise duty shall be charged @ I GST of 18% </b></li>
-                <li><b>Delivery Lead Time: 4-6 Weeks from date of PO or Receipt of artwork approval whichever is Later </b></li>
-                <li>Freight: On Parties A/c.</li>
-                <li>Quotation Validity: 60 Days.</li>
-                <li>Compatibility & Stability of the tube is not our responsibility.</li>
-                <li>Tubes are manufactured under Air Conditioner rooms.</li>
-                <li><b> 10% +/- variation in the ordered quantity is to be accepted.</b></li>
-                <li>Rates are subject to change depending upon change in the final artwork.</li>
-                <li>Insurance – On Parties Account.</li>
-                <li>Preferable Transporter to be suggested by Party.</li>
-            </ol>
-        </td>
-    </table>
-    <br />
-    <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;">
-
-        <tr class="heading">
-            <td colspan="7"><b>IF YOU HAVE ANY QUESTIONS CONCERNING THIS QUOTATION CONTACT OR E-MAIL US : SALES@3D-NEOPAC.COM </b></td>
-        </tr>
-
-    </table>
-
-
-    <table width="100%" cellpadding="5" cellspacing="0">
-              <tr class="heading">
-                  <div class="printbtn">
-                    <br/>
-                    <br/>
-                    <button style="background-color: green border: none;
-                    color: white;
-                    padding: 15px 32px;
-                    text-align: center;
-                    text-decoration: none;
-                    display: inline-block;
-                    font-size: 16px; ; color: white;" class="ui mini green button" id="approval">Procced</button>
-                  </div>
-                </td>
-              </tr>
-            </table>
-               </div>
-              </div>
-            </div>
-            </body>
-          </html>';
-
-
-                  // $this->email->message($html);
-                  echo $html;
-
-
-                  $this->email->set_mailtype("html");
-
-
-
-                  if ($this->email->send()) {
-                    $data['note'] = 'File Uploaded Succesfully!';
-                  } else {
-                    $data['error'] = 'Email send failed!';
-                  }
-
-                }
-
-              endforeach;
-                
-
-                if ($result_sales_quote_master) {
-                  $data['note'] = 'Data saved Successfully';
-                } else {
-                  $data['error'] = 'Error while saving data';
-                }
-              }
+              </table>
+              <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;">
+            
              
+
+            <tr class="heading">
+                <td width="5%"><b>SR NO</td>
+                <td width="45%"  style="border-right:1px solid #D9d9d9;" >PRODUCT NAME</td>
+                <td width="12%" style="border-right:1px solid #D9d9d9; text-align: right;">QUANTITY</td>
+                <td width="12%" style="border-right:1px solid #D9d9d9; text-align: right;">UNIT PRICE</td>                
+                <td width="20%" style="text-align: right;">NET AMOUNT</td>
+                
+             </tr></table>
+
+             <table width="100%" cellpadding="5" cellspacing="0">
+             <tr class="heading">
+                 <div class="printbtn">
+                   <br/>
+                   <br/>
+                   <button style="background-color: green border: none;
+                   color: white;
+                   padding: 15px 32px;
+                   text-align: center;
+                   text-decoration: none;
+                   display: inline-block;
+                   font-size: 16px; ; color: white;" class="ui mini green button" id="approval">Procced</button>
+                 </div>
+               </td>
+             </tr>
+           </table>
+              </div>
+             </div>
+           </div>
+           </body>
+         </html>';
+
+
+                 $this->email->message($html);
+
+
+                 $this->email->set_mailtype("html");
+
+
+
+                 if ($this->email->send()) {
+                   $data['note'] = 'File Uploaded Succesfully!';
+                 } else {
+                   $data['error'] = 'Email send failed!';
+                 }
+
+                endforeach;
+
+               }
+          
+
+
+               if ($result_sales_quote_master) {
+                 $data['note'] = 'Data saved Successfully';
+
+                 
+               } else {
+                 $data['error'] = 'Error while saving data';
+               }
+
+          
+            
+            // $i = 1;
+            // $total_quantity = 0;
+            // $total_net_value = 0;
+            
+            // foreach ($sales_quote_master as $sales_quote_master_row) {
+            //     if ($sales_quote_master_row->_5k_flag == 1) {
+            //         echo '<tr class="item">';
+            //         echo '<td>' . $i . '</td>';
+            //         echo '<td style="border-right:1px solid #D9d9d9;"></td>';
+            //         echo '<td style="border-right:1px solid #D9d9d9;">' . $this->input->post('product_name') . '</td>';
+            //         echo '<td style="border-right:1px solid #D9d9d9; text-align: right;">5,000</td>';
+            //         echo '<td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;' . ($sales_quote_master_row->_5k_rev_price <> 0 ? number_format($sales_quote_master_row->_5k_rev_price, 2, '.', '') : '') . '</td>';
+            //         echo '<td style="text-align: right;">' . money_format('%.0n', (5000 * $sales_quote_master_row->_5k_rev_price)) . '/-</td>';
+            //         echo '</tr>';
+                    
+            //         // Accumulate values outside the if condition
+            //         $total_quantity += 5000;
+            //         $total_net_value += (5000 * $sales_quote_master_row->_5k_rev_price);
+            //         $i++;
+            //     }
+              
+              
+            //       if ($sales_quote_master_row->_10k_flag == 1) {
+            //         echo '<tr class="item">
+            //     <td>' . $i . '</td>
+            //     <td style="border-right:1px solid #D9d9d9;"></td>
+            //     <td style="border-right:1px solid #D9d9d9;">' . $this->input->post('product_name') . '</td>
+            //     <td style="border-right:1px solid #D9d9d9; text-align: right;">10,000</td>                               
+            //     <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;' . ($this->input->post('_10k_quoted_price') <> 0 ? number_format($this->input->post('_10k_quoted_price'), 2, '.', '') : '') . '</td>
+            //     <td style="text-align: right;">' . money_format('%.0n', (10000 * $this->input->post('_10k_quoted_price'))) . '/-</td>    
+            // </tr>';
+            //       }
+            //       if ($sales_quote_master_row->_25k_flag == 1) {
+            //         echo '<tr class="item">
+            //     <td>' . $i . '</td>
+            //     <td style="border-right:1px solid #D9d9d9;"></td>
+            //     <td style="border-right:1px solid #D9d9d9;">' . $this->input->post('product_name') . '</td>
+            //     <td style="border-right:1px solid #D9d9d9; text-align: right;">25,000</td>                               
+            //     <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;' . ($this->input->post('_25k_quoted_price') <> 0 ? number_format($this->input->post('_25k_quoted_price'), 2, '.', '') : '') . '</td>
+            //     <td style="text-align: right;">' . money_format('%.0n', (25000 * $this->input->post('_25k_quoted_price'))) . '/-</td>    
+            // </tr>';
+            //       }
+            //       if ($sales_quote_master_row->_50k_flag == 1) {
+            //         echo
+            //         '<tr class="item">
+            //     <td>' . $i . '</td>
+            //     <td style="border-right:1px solid #D9d9d9;"></td>
+            //     <td style="border-right:1px solid #D9d9d9;">' . $this->input->post('product_name') . '</td>
+            //     <td style="border-right:1px solid #D9d9d9; text-align: right;">50,000</td>                               
+            //     <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;' . ($this->input->post('_50k_quoted_price') <> 0 ? number_format($this->input->post('_50k_quoted_price'), 2, '.', '') : '') . '</td>
+            //     <td style="text-align: right;">' . money_format('%.0n', (50000 * $this->input->post('_50k_quoted_price'))) . '/-</td>    
+            // </tr>';
+            //       }
+            //       if ($sales_quote_master_row->_100k_flag == 1) {
+            //         echo
+            //         '<tr class="item">
+            //     <td>' . $i . '</td>
+            //     <td style="border-right:1px solid #D9d9d9;"></td>
+            //     <td style="border-right:1px solid #D9d9d9;">' . $this->input->post('product_name') . '</td>
+            //     <td style="border-right:1px solid #D9d9d9; text-align: right;">100,000</td>                               
+            //     <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;' . ($this->input->post('_100k_quoted_price') <> 0 ? number_format($this->input->post('_100k_quoted_price'), 2, '.', '') : '') . '</td>
+            //     <td style="text-align: right;">' . money_format('%.0n', (100000 * $this->input->post('_100k_quoted_price'))) . '/-</td>    
+            // </tr>';
+            //       }
+            //       if ($sales_quote_master_row->free_flag == 1) {
+            //         echo
+            //         '<tr class="item">
+            //     <td>' . $i . '</td>
+            //     <td style="border-right:1px solid #D9d9d9;"></td>
+            //     <td style="border-right:1px solid #D9d9d9;">' . $this->input->post('product_name') . '</td>
+            //     <td style="border-right:1px solid #D9d9d9; text-align: right;">' . $this->input->post('free_quantity') . '<td>                               
+            //     <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;' . ($this->input->post('free_quoted_price') <> 0 ? number_format($this->input->post('free_quoted_price'), 2, '.', '') : '') . '</td>
+            //     <td style="text-align: right;">' . money_format('%.0n', ($this->input->post('free_quantity') * $this->input->post('free_quoted_price'))) . '/-</td>    
+            // </tr>';
+            //       }
+            //     }
+              
+
+                  
+
+
+
+                //header("refresh:1;url=".base_url()."index.php/".$this->router->fetch_class());
 
                 $data['page_name'] = 'Sales';
                 $data['module'] = $this->common_model->select_active_module($this->session->userdata['logged_in']['user_id'], $this->session->userdata['logged_in']['company_id']);
