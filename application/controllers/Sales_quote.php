@@ -1071,12 +1071,17 @@ class Sales_quote extends CI_Controller
                   $data['sales_quote_master']=$this->sales_quote_model->select_one_active_record('sales_quote_master',$this->session->userdata['logged_in']['company_id'],'sales_quote_master.quotation_no',$sales_quotation_no);
 
                   foreach ($data['sales_quote_master'] as $sales_quote_master_row): {
-                    //echo "<pre>";print_r($sales_quote_master_row);die();
+                   // echo "<pre>";print_r($sales_quote_master_row);die();
 
-                    
+
+                    $prepared_by = $this->common_model->get_user_name($sales_quote_master_row->user_id, $this->session->userdata['logged_in']['company_id']);
+                    $cc_email = $this->common_model->get_user_email($sales_quote_master_row->user_id, $this->session->userdata['logged_in']['company_id']);
+
+                    $to_email = $this->common_model->get_user_email($sales_quote_master_row->approved_by, $this->session->userdata['logged_in']['company_id']);
 
                   $filename = base_url('assets/img/logo.png');
                   $smtp_user = $this->config->item('smtp_user');
+
                   $smtp_pass = $this->config->item('smtp_pass');
                   $config['protocol'] = 'smtp';
                   $config['smtp_host'] = 'ssl://smtp.googlemail.com';
@@ -1089,9 +1094,9 @@ class Sales_quote extends CI_Controller
                   $config['smtp_pass'] = 'auto@2223';
                   $config['newline'] = "\r\n";
                   $this->load->library('email', $config);
-                // $this->email->from("auto.mailer@3d-neopac.com");
-                 //$this->email->to("yatin.patel@3d-neopac.com");
-                  // $this->email->cc($user_email);
+                 $this->email->from("auto.mailer@3d-neopac.com");
+                 $this->email->to("yatin.patel@3d-neopac.com");
+                 //$this->email->cc("$cc_email");
                   //$this->email->bcc('ankit.shukla@3d-neopac.com');
                   $this->email->subject("Sales Quote  " . $sales_quote_master_row->quotation_no . " Version " . $sales_quote_master_row->version_no. " ");
                   $this->email->attach($filename);
@@ -1130,9 +1135,9 @@ class Sales_quote extends CI_Controller
                  <table width="100%" cellpadding="3" cellspacing="0" style="margin-top: 10px;">
                   <tr class="heading">
                     <td width="15%" style="background-color:#dffcfc;"><b>QUOTE NO</td>
-                    <td width="35%" style="background-color:#dffcfc;"><b>' . $sales_quote_master_row->quotation_no  . ' ' .$sales_quote_master_row->version_no . ' </b></td>
+                    <td width="35%" style="background-color:#dffcfc;"><b>' . $sales_quote_master_row->quotation_no  . ' ' .'REV' .$sales_quote_master_row->version_no . ' </b></td>
                     <td width="15%" style="background-color:#dffcfc;"><b>QUOTE DATE</b></td>
-                    <td width="35%" style="background-color:#dffcfc;">' . $sales_quote_master_row->quotation_date. '</td>                        
+                    <td width="35%" style="background-color:#dffcfc;">' . $this->common_model->view_date($sales_quote_master_row->quotation_date, $this->session->userdata['logged_in']['company_id']). '</td>                        
                   </tr>
                   <tr class="item last">
                     <td width="15%"><b>PREPARED BY</b></td>
@@ -1250,7 +1255,7 @@ class Sales_quote extends CI_Controller
         </tr>
            <tr>
                 <td width="15%"><b>Date of Enquiry</b></td>
-                <td width="35%">' . $sales_quote_master_row->quotation_date . ' </td>
+                <td width="35%">' . $this->common_model->view_date($sales_quote_master_row->quotation_date, $this->session->userdata['logged_in']['company_id']). ' </td>
                 <td width="15%"><b></b></td>
                 <td width="35%"></td>
                 </tr>
@@ -1271,14 +1276,14 @@ class Sales_quote extends CI_Controller
                   <td width="15%"><b>TUBE DIA X LENGTH</b></td>
                   <td width="18%"style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->sleeve_diameter. ' X ' . $sales_quote_master_row->sleeve_length . 'MM</td>
                   <td width="15%"><b>CAP TYPE</b></td>
-                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->cap_type . '</td>
+                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->cap_type. '</td>
                   <td width="15%" ><b>SPECIAL INK</b></td>
                   <td width="19%" >' . $sales_quote_master_row->special_ink . '</td>
                 </tr>
 
                 <tr class="item">
                   <td width="15%"><b>TUBE LAYER</b></td>
-                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->layer . '</td>
+                  <td width="18%"style="border-right:1px solid #D9d9d9;">' .($sales_quote_master_row->layer == '1' ? 'MONO LAYER' : ($sales_quote_master_row->layer == '7' ? 'SPRING' : ($sales_quote_master_row->layer == '5' ? 'MULTI LAYER' : ($sales_quote_master_row->layer == '2' ? '2 LAYER' : ($sales_quote_master_row->layer == '3' ? '3 LAYER' : '-'))))) . '</td>
                   <td width="15%"><b>CAP COLOR</b></td>
                   <td width="18%"style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->cap_color . '</td>
                   <td width="15%"><b>SHOULDER FOIL</b></td>
@@ -1298,7 +1303,7 @@ class Sales_quote extends CI_Controller
                   <td width="15%"><b>TUBE PRINT TYPE</b></td>
                   <td width="18%" style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->print_type . '</td>
                   <td width="15%"><b>CAP DIA</b></td>
-                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->cap_dia . '</td>
+                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->cap_dia. '</td>
                   <td width="15%"><b>CAP SHRINK SLEEVE</b></td>
                   <td width="19%">' .$sales_quote_master_row->cap_shrink_sleeve . '</td>
                 </tr>
@@ -1315,7 +1320,7 @@ class Sales_quote extends CI_Controller
 
                 <tr class="item">
                   <td width="15%"><b>SHOULDER </b></td>
-                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->shoulder . '</td>
+                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->shoulder_type . '</td>
                   <td width="15%"><b></b></td>
                   <td width="18%" style="border-right:1px solid #D9d9d9;"></td>
                   <td width="15%"><b>TUBE FOIL</b></td>
@@ -1324,7 +1329,7 @@ class Sales_quote extends CI_Controller
 
                 <tr class="item">
                   <td width="15%"><b>SHOULDER ORIFACE </b></td>
-                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->shoulder_orifice . '</td>
+                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->shoulder_orifice. '</td>
                   <td width="15%"><b></b></td>
                   <td width="18%" style="border-right:1px solid #D9d9d9;"> </td>
                   <td width="15%"><b></b></td>
@@ -1467,10 +1472,10 @@ class Sales_quote extends CI_Controller
         </tr>
     </table>
 
-    <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;>
+    <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;">
 
         <tr class="heading">
-            <td colspan="7"  style="background-color: #dffcfc";><b>TERMS AND CONDITIONS </b></td>
+            <td colspan="7" style="background-color:#dffcfc;"><b>TERMS AND CONDITIONS </b></td>
             <!-- <td style="border-right:1px solid #D9d9d9;"></td>
                 <td><b>REMARK</b></td> -->
         </tr>
@@ -1483,13 +1488,17 @@ class Sales_quote extends CI_Controller
                 <li>Freight: On Parties A/c.</li>
                 <li>Quotation Validity: 60 Days.</li>
                 <li>Compatibility & Stability of the tube is not our responsibility.</li>
-                <li>Tubes are manufactured under Air Conditioner rooms.</li>
+                <li>*Tubes are manufactured under Air Conditioner rooms.</li>
                 <li><b> 10% +/- variation in the ordered quantity is to be accepted.</b></li>
                 <li>Rates are subject to change depending upon change in the final artwork.</li>
                 <li>Insurance – On Parties Account.</li>
                 <li>Preferable Transporter to be suggested by Party.</li>
+
+
             </ol>
         </td>
+
+
     </table>
     <br />
     <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;">
@@ -1500,19 +1509,12 @@ class Sales_quote extends CI_Controller
 
     </table>
 
-
     <table width="100%" cellpadding="5" cellspacing="0">
               <tr class="heading">
                   <div class="printbtn">
                     <br/>
                     <br/>
-                    <button style="background-color: green border: none;
-                    color: white;
-                    padding: 15px 32px;
-                    text-align: center;
-                    text-decoration: none;
-                    display: inline-block;
-                    font-size: 16px; ; color: white;" class="ui mini green button" id="approval">Procced</button>
+                    <button style="background-color:#00A300;">Procced</button>
                   </div>
                 </td>
               </tr>
@@ -1524,8 +1526,8 @@ class Sales_quote extends CI_Controller
           </html>';
 
 
-                  // $this->email->message($html);
-                  echo $html;
+                  $this->email->message($html);
+                 // echo $html;
 
 
                   $this->email->set_mailtype("html");
