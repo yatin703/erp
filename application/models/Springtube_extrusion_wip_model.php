@@ -117,7 +117,7 @@ class Springtube_extrusion_wip_model extends CI_Model {
 				
 				if($key=='status' && $value==0){
 
-					$where='(release_date="0000-00-00" OR release_date>"'.$to.'")';
+					$where='(release_date IS NULL OR release_date>"'.$to.'")';
 					$this->db->where($where);
 
 				}else{
@@ -297,9 +297,20 @@ class Springtube_extrusion_wip_model extends CI_Model {
 	}
 
 
-	public function select_active_records_papertube($table){
+	/*public function select_active_records_papertube($table){
 		$this->db->select('*');
 		$this->db->from($table);
+		$this->db->order_by('sofp_id','desc');
+		$query = $this->db->get();
+		return $result=$query->result();
+	}*/
+
+	public function select_active_records_papertube($table){
+		$this->db->select('*');
+		
+		$this->db->select(''.$table.'.*,springtube_extrusion_wip_master.order_no as STSO_ORDER_NO');
+		$this->db->from($table);
+		$this->db->join('springtube_extrusion_wip_master',''.$table.'.order_no=springtube_extrusion_wip_master.release_to_order_no','LEFT');
 		$this->db->order_by('sofp_id','desc');
 		$query = $this->db->get();
 		return $result=$query->result();

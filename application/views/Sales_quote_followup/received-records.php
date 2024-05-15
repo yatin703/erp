@@ -71,9 +71,7 @@
 										echo ($formrights_row->new==1 ? '<a href="'.base_url('index.php/sales_quote/approval/'.substr($followup_received_row->record_no,0,13).'/'.substr($followup_received_row->record_no,16)).'/'.$followup_received_row->transaction_no.'" target="_blank"  ><i class="thumbs outline up icon"></i>	</a> &nbsp;&nbsp; ' : '');
 
 										echo ($formrights_row->new==1 ? 
-											'<a href="'.base_url('index.php/'.$this->router->fetch_class().'/notapproved/'.substr($followup_received_row->record_no,0,13).'/'.substr($followup_received_row->record_no,16)).'/'.$followup_received_row->transaction_no.'" onClick="return confirm('.$a.');" ><i class="thumbs outline down icon"></i>'
-											 : 
-											 '');
+											'<a href="'.base_url('index.php/sales_quote/notapproved/'.substr($followup_received_row->record_no,0,13).'/'.substr($followup_received_row->record_no,16)).'/'.$followup_received_row->transaction_no.'" target="_blank"   ><i class="thumbs outline down icon"></i></a> &nbsp;&nbsp; ' : '');
 
 										echo ($formrights_row->copy==1 ? '<a href="#">Copy</a> ' : '');
 

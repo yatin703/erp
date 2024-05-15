@@ -1289,10 +1289,17 @@ class Ajax_springtube extends CI_Controller {
           </tr>
           <tr id="tr_13">
             <td class="label">New Name for Film :</td>
-            <td><input type="text" name="film_new_name" id="film_new_name"  value="'.set_value('film_new_name').'" disabled=true/></td>
+            <td><input type="text" name="film_new_name" id="film_new_name"  value="'.set_value('film_new_name').'" disabled=true/></td>            
           </tr>
+          <tr id="tr_13">
+            <td class="label">Bill To :</td>
+            <td><input type="text" name="adr_company_id" size="60" id="adr_company_id"  value="'.set_value('adr_company_id').'" disabled=true/></td>            
+          </tr>
+          
           <script>
               $(document).ready(function(){
+
+                $("#adr_company_id").autocomplete("' . base_url('index.php/ajax/customer') . '", {selectFirst: true});
 
                 var release_to_order_no = $("#release_to_order_no_1").val();      
                 var release_article_no=$("#release_article_no").val();
@@ -1302,10 +1309,12 @@ class Ajax_springtube extends CI_Controller {
                     if($("#outsource").val()==1){
                       alert("You are sending this film for outside printing then please enter the name of film");
                       $("#film_new_name").removeAttr("disabled");
+                      $("#adr_company_id").removeAttr("disabled");
                     }
                     if($("#outsource").val()==0){
 
                       $("#film_new_name").attr("disabled", "disabled");
+                      $("#adr_company_id").attr("disabled", "disabled");
                     }
 
                   }); 

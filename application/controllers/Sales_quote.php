@@ -273,332 +273,333 @@ class Sales_quote extends CI_Controller
     }
   }
 
-  function save()
-  {
-
-    $data['page_name'] = 'Sales';
-    $data['module'] = $this->common_model->select_active_module($this->session->userdata['logged_in']['user_id'], $this->session->userdata['logged_in']['company_id']);
+    function save(){    
+    
+    $data['page_name']='Sales';
+    $data['module']=$this->common_model->select_active_module($this->session->userdata['logged_in']['user_id'],$this->session->userdata['logged_in']['company_id']);
     //echo $this->db->last_query();
-    if ($data['module'] != FALSE) {
+    if($data['module']!=FALSE){
       foreach ($data['module'] as $module_row) {
-        if ($module_row->module_name === 'Sales') {
+        if($module_row->module_name==='Sales'){
 
-          $data['formrights'] = $this->common_model->select_active_formrights_of_form($this->session->userdata['logged_in']['user_id'], $this->session->userdata['logged_in']['company_id'], 1, $this->router->fetch_class());
+          $data['formrights']=$this->common_model->select_active_formrights_of_form($this->session->userdata['logged_in']['user_id'],$this->session->userdata['logged_in']['company_id'],1,$this->router->fetch_class());
 
           foreach ($data['formrights'] as $formrights_row) {
-            if ($formrights_row->new == 1) {
+            if($formrights_row->new==1){
 
               //Information----------------------------
+             
+              $this->form_validation->set_rules('customer','Custommer ' ,'required|trim|xss_clean|callback_customer_check');              
+             $this->form_validation->set_rules('pm_1','Purchase Manager 1' ,'required|trim|xss_clean'); 
+              $this->form_validation->set_rules('product_name','Product Name' ,'required|trim|xss_clean'); 
+              $this->form_validation->set_rules('credit_days','Payment Terms','required|trim|xss_clean');
+              $this->form_validation->set_rules('enquiry_date','Enquiry Date','required|trim|xss_clean');
 
-              $this->form_validation->set_rules('customer', 'Custommer ', 'required|trim|xss_clean|callback_customer_check');
-              $this->form_validation->set_rules('pm_1', 'Purchase Manager 1', 'required|trim|xss_clean');
-              $this->form_validation->set_rules('product_name', 'Product Name', 'required|trim|xss_clean');
-              $this->form_validation->set_rules('credit_days', 'Payment Terms', 'required|trim|xss_clean');
-              $this->form_validation->set_rules('enquiry_date', 'Enquiry Date', 'required|trim|xss_clean');
-
-              // Tube Specification-----------------------------              
-              $this->form_validation->set_rules('sleeve_dia', 'Tube dia', 'required|trim|xss_clean');
-              $this->form_validation->set_rules('sleeve_length', 'Tube length', 'required|trim|xss_clean');
-              $this->form_validation->set_rules('layer', 'Layer', 'required|trim|xss_clean');
-
-
-              $this->form_validation->set_rules('tube_color', 'Tube Color', 'required|xss_clean');
-              $this->form_validation->set_rules('tube_lacquer', 'Tube lacquer', 'required|xss_clean');
-              $this->form_validation->set_rules('print_type', 'Print Type', 'required|trim|xss_clean');
-              $this->form_validation->set_rules('special_ink', 'Special ink', 'required|trim|xss_clean');
+               // Tube Specification-----------------------------              
+              $this->form_validation->set_rules('sleeve_dia','Tube dia' ,'required|trim|xss_clean');
+              $this->form_validation->set_rules('sleeve_length','Tube length' ,'required|trim|xss_clean');
+              $this->form_validation->set_rules('layer','Layer' ,'required|trim|xss_clean');
+              
+              
+              $this->form_validation->set_rules('tube_color','Tube Color' ,'required|xss_clean');
+              $this->form_validation->set_rules('tube_lacquer','Tube lacquer' ,'required|xss_clean');
+              $this->form_validation->set_rules('print_type','Print Type' ,'required|trim|xss_clean');
+              $this->form_validation->set_rules('special_ink','Special ink' ,'required|trim|xss_clean');
 
               // Shoulder Specification-----------------------------
-              $this->form_validation->set_rules('shoulder', 'Shoulder', 'required|xss_clean');
-              $this->form_validation->set_rules('shoulder_orifice', 'Shoulder Oriface', 'xss_clean');
-              $this->form_validation->set_rules('shoulder_color', 'Shoulder Color', 'required|xss_clean');
+              $this->form_validation->set_rules('shoulder','Shoulder' ,'required|xss_clean');
+              $this->form_validation->set_rules('shoulder_orifice','Shoulder Oriface' ,'xss_clean');
+              $this->form_validation->set_rules('shoulder_color','Shoulder Color' ,'required|xss_clean');
 
               // Cap Specification-----------------------------
-              $this->form_validation->set_rules('cap_type', 'Cap type', 'trim|xss_clean');
-              $this->form_validation->set_rules('cap_finish', 'Cap Finish', 'trim|xss_clean');
-              $this->form_validation->set_rules('cap_dia', 'Cap Dia', 'trim|xss_clean');
-              $this->form_validation->set_rules('cap_orifice', 'Cap Orifice', 'xss_clean');
-              $this->form_validation->set_rules('cap_color', 'Cap Color', 'xss_clean');
+              $this->form_validation->set_rules('cap_type','Cap type' ,'trim|xss_clean');
+              $this->form_validation->set_rules('cap_finish','Cap Finish' ,'trim|xss_clean');
+              $this->form_validation->set_rules('cap_dia','Cap Dia' ,'trim|xss_clean');
+              $this->form_validation->set_rules('cap_orifice','Cap Orifice' ,'xss_clean');              
+              $this->form_validation->set_rules('cap_color','Cap Color' ,'xss_clean');
 
               // Decorative Elements -----------------------------
-              $this->form_validation->set_rules('tube_foil', 'Tube foil', 'required|trim|xss_clean');
+              $this->form_validation->set_rules('tube_foil','Tube foil' ,'required|trim|xss_clean');
               //$this->form_validation->set_rules('shoulder_foil','Shoulder Foil' ,'required|trim|xss_clean');
-              $this->form_validation->set_rules('cap_foil', 'Cap foil', 'trim|xss_clean');
-              $this->form_validation->set_rules('cap_metalization', 'Cap Metalization', 'trim|xss_clean');
-              $this->form_validation->set_rules('cap_shrink_sleeve', 'Cap shrink sleeve', 'required|trim|xss_clean');
-              $this->form_validation->set_rules('label_price', 'Label Price', 'trim|xss_clean');
+              $this->form_validation->set_rules('cap_foil','Cap foil' ,'trim|xss_clean');
+              $this->form_validation->set_rules('cap_metalization','Cap Metalization' ,'trim|xss_clean');
+              $this->form_validation->set_rules('cap_shrink_sleeve','Cap shrink sleeve' ,'required|trim|xss_clean');
+              $this->form_validation->set_rules('label_price','Label Price' ,'trim|xss_clean');
 
               // Quote-----------------------------------
 
               //$this->form_validation->set_rules('_5k_target_contr','5k Target contr.' ,'required|trim|xss_clean');
-              $this->form_validation->set_rules('_5k_quoted_contr', '5K Quoted contr.', 'required|trim|xss_clean');
-              $this->form_validation->set_rules('_5k_cost', '5K Cost', 'required|trim|xss_clean');
-              $this->form_validation->set_rules('_5k_quoted_price', '5k Quoted Price', 'required|trim|xss_clean');
+              $this->form_validation->set_rules('_5k_quoted_contr','5K Quoted contr.' ,'required|trim|xss_clean');
+              $this->form_validation->set_rules('_5k_cost','5K Cost' ,'required|trim|xss_clean');
+              $this->form_validation->set_rules('_5k_quoted_price','5k Quoted Price' ,'required|trim|xss_clean');
 
 
-              ///$this->form_validation->set_rules('_10k_target_contr','10k Target contr.' ,'required|trim|xss_clean');
-              $this->form_validation->set_rules('_10k_quoted_contr', '10k Quoted contr.', 'required|trim|xss_clean');
-              $this->form_validation->set_rules('_10k_cost', '10k Cost', 'required|trim|xss_clean');
-              $this->form_validation->set_rules('_10k_quoted_price', '10k Quoted Price', 'required|trim|xss_clean');
+             ///$this->form_validation->set_rules('_10k_target_contr','10k Target contr.' ,'required|trim|xss_clean');
+             $this->form_validation->set_rules('_10k_quoted_contr','10k Quoted contr.' ,'required|trim|xss_clean');
+             $this->form_validation->set_rules('_10k_cost','10k Cost' ,'required|trim|xss_clean');
+             $this->form_validation->set_rules('_10k_quoted_price','10k Quoted Price' ,'required|trim|xss_clean');
 
-              // $this->form_validation->set_rules('_25k_target_contr','25k Target contr.' ,'required|trim|xss_clean');
-              $this->form_validation->set_rules('_25k_quoted_contr', '25k Quoted contr.', 'required|trim|xss_clean');
-              $this->form_validation->set_rules('_25k_cost', '25k Cost', 'required|trim|xss_clean');
-              $this->form_validation->set_rules('_25k_quoted_price', '25K Quoted Price', 'required|trim|xss_clean');
+             // $this->form_validation->set_rules('_25k_target_contr','25k Target contr.' ,'required|trim|xss_clean');
+              $this->form_validation->set_rules('_25k_quoted_contr','25k Quoted contr.' ,'required|trim|xss_clean');
+              $this->form_validation->set_rules('_25k_cost','25k Cost' ,'required|trim|xss_clean');
+              $this->form_validation->set_rules('_25k_quoted_price','25K Quoted Price' ,'required|trim|xss_clean');
 
-              //$this->form_validation->set_rules('_50k_target_contr','50k Target contr.' ,'required|trim|xss_clean');
-              $this->form_validation->set_rules('_50k_quoted_contr', '50k Quoted contr.', 'required|trim|xss_clean');
-              $this->form_validation->set_rules('_50k_cost', '50k Cost', 'required|trim|xss_clean');
-              $this->form_validation->set_rules('_50k_quoted_price', '50K Quoted Price', 'required|trim|xss_clean');
+             //$this->form_validation->set_rules('_50k_target_contr','50k Target contr.' ,'required|trim|xss_clean');
+              $this->form_validation->set_rules('_50k_quoted_contr','50k Quoted contr.' ,'required|trim|xss_clean');
+              $this->form_validation->set_rules('_50k_cost','50k Cost' ,'required|trim|xss_clean');
+              $this->form_validation->set_rules('_50k_quoted_price','50K Quoted Price' ,'required|trim|xss_clean');
 
-              // $this->form_validation->set_rules('_100k_target_contr','100k Target contr.' ,'required|trim|xss_clean');
-              $this->form_validation->set_rules('_100k_quoted_contr', '100k Quoted contr.', 'required|trim|xss_clean');
-              $this->form_validation->set_rules('_100k_cost', '100k Cost', 'required|trim|xss_clean');
-              $this->form_validation->set_rules('_100k_quoted_price', '100k Quoted Price', 'required|trim|xss_clean');
+             // $this->form_validation->set_rules('_100k_target_contr','100k Target contr.' ,'required|trim|xss_clean');
+              $this->form_validation->set_rules('_100k_quoted_contr','100k Quoted contr.' ,'required|trim|xss_clean');
+              $this->form_validation->set_rules('_100k_cost','100k Cost' ,'required|trim|xss_clean');
+              $this->form_validation->set_rules('_100k_quoted_price','100k Quoted Price' ,'required|trim|xss_clean');
 
-              $this->form_validation->set_rules('freight', 'Freight', 'required|trim|xss_clean');
-
-
-
+              $this->form_validation->set_rules('freight','Freight' ,'required|trim|xss_clean');
+              
+              
+                            
               // Cost sheet details------------------------------
-              if (!empty($this->input->post('article_no'))) {
-                $this->form_validation->set_rules('article_no', 'Article no', 'trim|xss_clean|callback_article_check');
-              } else {
-                $this->form_validation->set_rules('article_no', 'Article no', 'trim|xss_clean');
+              if(!empty($this->input->post('article_no'))){
+                $this->form_validation->set_rules('article_no','Article no' ,'trim|xss_clean|callback_article_check');
+              }else{
+                $this->form_validation->set_rules('article_no','Article no' ,'trim|xss_clean');
               }
-
+              
               //$this->form_validation->set_rules('invoice_date','Costsheet date' ,'trim|xss_clean');
-              $this->form_validation->set_rules('invoice_no', 'Invoice no', 'trim|xss_clean');
+              $this->form_validation->set_rules('invoice_no','Invoice no' ,'trim|xss_clean');
               //$this->form_validation->set_rules('cost','Cost' ,'trim|xss_clean');  
 
-              $this->form_validation->set_rules('remarks', 'Remarks', 'trim|xss_clean');
-
-
-
+              $this->form_validation->set_rules('remarks','Remarks' ,'trim|xss_clean');           
+              
+             
+              
 
               //echo $this->input->post('cap_metalization');  
 
-              if ($this->form_validation->run() == FALSE) {
+              if($this->form_validation->run()==FALSE){
 
-                $data['page_name'] = 'Sales';
-                $data['module'] = $this->common_model->select_active_module($this->session->userdata['logged_in']['user_id'], $this->session->userdata['logged_in']['company_id']);
-                $data['formrights'] = $this->common_model->select_active_formrights_of_form($this->session->userdata['logged_in']['user_id'], $this->session->userdata['logged_in']['company_id'], 1, $this->router->fetch_class());
+                $data['page_name']='Sales';
+                $data['module']=$this->common_model->select_active_module($this->session->userdata['logged_in']['user_id'],$this->session->userdata['logged_in']['company_id']);
+                $data['formrights']=$this->common_model->select_active_formrights_of_form($this->session->userdata['logged_in']['user_id'],$this->session->userdata['logged_in']['company_id'],1,$this->router->fetch_class());
 
-                $data['sleeve_dia'] = $this->common_model->select_active_drop_down('sleeve_diameter_master', $this->session->userdata['logged_in']['company_id']);
+                 $data['sleeve_dia']=$this->common_model->select_active_drop_down('sleeve_diameter_master',$this->session->userdata['logged_in']['company_id']);
 
-                $data['shoulder_types'] = $this->common_model->select_active_drop_down('shoulder_types_master', $this->session->userdata['logged_in']['company_id']);
+              $data['shoulder_types']=$this->common_model->select_active_drop_down('shoulder_types_master',$this->session->userdata['logged_in']['company_id']);
 
-                $data['shoulder_orifice'] = $this->common_model->select_active_drop_down('shoulder_orifice_master', $this->session->userdata['logged_in']['company_id']);
+              $data['shoulder_orifice']=$this->common_model->select_active_drop_down('shoulder_orifice_master',$this->session->userdata['logged_in']['company_id']);
 
-                //$data['print_type']=$this->common_model->select_active_distinct_drop_down('lacquer_types_master','printing_group',$this->session->userdata['logged_in']['company_id']);
-                // $data['print_type']=$this->common_model->select_active_drop_down('lacquer_types_master',$this->session->userdata['logged_in']['company_id']);
+              //$data['print_type']=$this->common_model->select_active_distinct_drop_down('lacquer_types_master','printing_group',$this->session->userdata['logged_in']['company_id']);
+             // $data['print_type']=$this->common_model->select_active_drop_down('lacquer_types_master',$this->session->userdata['logged_in']['company_id']);
 
-                $data['print_type'] = $this->common_model->select_active_distinct_drop_down('lacquer_types_master', 'print_type', $this->session->userdata['logged_in']['company_id']);
-                //echo $this->db->last_query();
+              $data['print_type']=$this->common_model->select_active_distinct_drop_down('lacquer_types_master','print_type',$this->session->userdata['logged_in']['company_id']);
+              //echo $this->db->last_query();
 
-                $data['tube_color'] = $this->common_model->select_active_drop_down('color_master', $this->session->userdata['logged_in']['company_id']);
+              $data['tube_color']=$this->common_model->select_active_drop_down('color_master',$this->session->userdata['logged_in']['company_id']);
+            
+              $data['cap_type']=$this->common_model->select_active_drop_down('cap_types_master',$this->session->userdata['logged_in']['company_id']);
 
-                $data['cap_type'] = $this->common_model->select_active_drop_down('cap_types_master', $this->session->userdata['logged_in']['company_id']);
-
-                $data['cap_finish'] = $this->common_model->select_active_drop_down('cap_finish_master', $this->session->userdata['logged_in']['company_id']);
-                $data['cap_dia'] = $this->common_model->select_active_drop_down('cap_diameter_master', $this->session->userdata['logged_in']['company_id']);
-                $data['cap_orifice'] = $this->common_model->select_active_drop_down('cap_orifice_master', $this->session->userdata['logged_in']['company_id']);
-                $data['packing_box'] = $this->article_model->spec_all_active_record_search('article', '41', $this->session->userdata['logged_in']['company_id']);
-
-
-                $data['ldpe'] = $this->article_model->spec_active_record_search('article', '7', $this->session->userdata['logged_in']['company_id']);
-                $data['lldpe'] = $this->article_model->spec_active_record_search('article', '8', $this->session->userdata['logged_in']['company_id']);
-                $data['hdpe'] = $this->article_model->spec_active_record_search('article', '6', $this->session->userdata['logged_in']['company_id']);
-                $data['admer'] = $this->article_model->spec_active_record_search('article', '15', $this->session->userdata['logged_in']['company_id']);
-                $data['evoh'] = $this->article_model->spec_active_record_search('article', '16', $this->session->userdata['logged_in']['company_id']);
-                $data['masterbatch'] = $this->article_model->spec_all_active_record_search('article', '12', $this->session->userdata['logged_in']['company_id']);
-                $data['lacquer'] = $this->article_model->spec_all_active_record_search('article', '14', $this->session->userdata['logged_in']['company_id']);
-                $special_ink_data = array('ink_id' => '4', 'archive' => '0');
-                $data['special_ink'] = $this->common_model->select_one_active_record_with_limit('ink_price_master', $this->session->userdata['logged_in']['company_id'], $special_ink_data, 'apply_from_date desc', '1', '0');
-
-                $ink_data = array('ink_id' => '2', 'archive' => '0');
-                $data['offset'] = $this->common_model->select_one_active_record_with_limit('ink_price_master', $this->session->userdata['logged_in']['company_id'], $ink_data, 'apply_from_date desc', '1', '0');
-                $screen_data = array('ink_id' => '3', 'archive' => '0');
-                $data['screen'] = $this->common_model->select_one_active_record_with_limit('ink_price_master', $this->session->userdata['logged_in']['company_id'], $screen_data, 'apply_from_date desc', '1', '0');
-                $flexo_data = array('ink_id' => '1', 'archive' => '0');
-                $data['flexo'] = $this->common_model->select_one_active_record_with_limit('ink_price_master', $this->session->userdata['logged_in']['company_id'], $flexo_data, 'apply_from_date desc', '1', '0');
-                //echo $this->db->last_query();
-
-                $data['workprocedure_types_master'] = $this->process_model->select_one_active_record('workprocedure_types_master', $this->session->userdata['logged_in']['company_id'], 'workprocedure_types_master.work_proc_type_id', '1');
-
-                //----Shoulder
-                $data['hdpe'] = $this->article_model->spec_active_record_search('article', '6', $this->session->userdata['logged_in']['company_id']);
-
-                $data['workprocedure'] = $this->process_model->select_one_active_record('workprocedure_types_master', $this->session->userdata['logged_in']['company_id'], 'workprocedure_types_master.work_proc_type_id', '7');
-
-                $data['workprocedure_label'] = $this->process_model->select_one_active_record('workprocedure_types_master', $this->session->userdata['logged_in']['company_id'], 'workprocedure_types_master.work_proc_type_id', '5');
-
-                $data['workprocedure_printing'] = $this->process_model->select_one_active_record('workprocedure_types_master', $this->session->userdata['logged_in']['company_id'], 'workprocedure_types_master.work_proc_type_id', '3');
-
-                $data['approval_authority'] = $this->common_model->select_one_active_approval_authority_record('authority_master', $this->session->userdata['logged_in']['company_id'], 'authority_master.form_id', '91');
-                $data['hot_foil'] = $this->article_model->spec_all_active_record_search('article', '71', $this->session->userdata['logged_in']['company_id']);
-                $data['cold_foil'] = $this->article_model->spec_all_active_record_search('article', '304', $this->session->userdata['logged_in']['company_id']);
-
-                $data['hot_foil'] = $this->article_model->spec_all_active_record_search('article', '71', $this->session->userdata['logged_in']['company_id']);
-                $data['cap_foil'] = $this->article_model->spec_all_active_record_search('article', '71', $this->session->userdata['logged_in']['company_id']);
-                $data['cap_shrink_sleeve'] = $this->article_model->spec_all_active_record_search('article', '213', $this->session->userdata['logged_in']['company_id']);
-
-                $dataa = array('process_id' => '3');
-                $data['machine_type'] = $this->common_model->select_active_records_where('coex_machine_master', $this->session->userdata['logged_in']['company_id'], $dataa);
-
-                $data_search = array('archive' => 0);
-                $data['purchase_manager'] = $this->common_model->select_active_records_where('address_category_contact_details', $this->session->userdata['logged_in']['company_id'], $data_search);
+              $data['cap_finish']=$this->common_model->select_active_drop_down('cap_finish_master',$this->session->userdata['logged_in']['company_id']);
+              $data['cap_dia']=$this->common_model->select_active_drop_down('cap_diameter_master',$this->session->userdata['logged_in']['company_id']);
+              $data['cap_orifice']=$this->common_model->select_active_drop_down('cap_orifice_master',$this->session->userdata['logged_in']['company_id']);
+              $data['packing_box']=$this->article_model->spec_all_active_record_search('article','41',$this->session->userdata['logged_in']['company_id']);
 
 
+               $data['ldpe']=$this->article_model->spec_active_record_search('article','7',$this->session->userdata['logged_in']['company_id']);
+               $data['lldpe']=$this->article_model->spec_active_record_search('article','8',$this->session->userdata['logged_in']['company_id']);
+               $data['hdpe']=$this->article_model->spec_active_record_search('article','6',$this->session->userdata['logged_in']['company_id']);
+               $data['admer']=$this->article_model->spec_active_record_search('article','15',$this->session->userdata['logged_in']['company_id']);
+               $data['evoh']=$this->article_model->spec_active_record_search('article','16',$this->session->userdata['logged_in']['company_id']);
+               $data['masterbatch']=$this->article_model->spec_all_active_record_search('article','12',$this->session->userdata['logged_in']['company_id']);
+               $data['lacquer']=$this->article_model->spec_all_active_record_search('article','14',$this->session->userdata['logged_in']['company_id']);
+               $special_ink_data=array('ink_id'=>'4','archive'=>'0');
+               $data['special_ink']=$this->common_model->select_one_active_record_with_limit('ink_price_master',$this->session->userdata['logged_in']['company_id'],$special_ink_data,'apply_from_date desc','1','0');
+
+               $ink_data=array('ink_id'=>'2','archive'=>'0');
+               $data['offset']=$this->common_model->select_one_active_record_with_limit('ink_price_master',$this->session->userdata['logged_in']['company_id'],$ink_data,'apply_from_date desc','1','0');
+              $screen_data=array('ink_id'=>'3','archive'=>'0');
+               $data['screen']=$this->common_model->select_one_active_record_with_limit('ink_price_master',$this->session->userdata['logged_in']['company_id'],$screen_data,'apply_from_date desc','1','0');
+               $flexo_data=array('ink_id'=>'1','archive'=>'0');
+               $data['flexo']=$this->common_model->select_one_active_record_with_limit('ink_price_master',$this->session->userdata['logged_in']['company_id'],$flexo_data,'apply_from_date desc','1','0');
+               //echo $this->db->last_query();
+
+               $data['workprocedure_types_master']=$this->process_model->select_one_active_record('workprocedure_types_master',$this->session->userdata['logged_in']['company_id'],'workprocedure_types_master.work_proc_type_id','1');
+
+               //----Shoulder
+               $data['hdpe']=$this->article_model->spec_active_record_search('article','6',$this->session->userdata['logged_in']['company_id']);
+
+               $data['workprocedure']=$this->process_model->select_one_active_record('workprocedure_types_master',$this->session->userdata['logged_in']['company_id'],'workprocedure_types_master.work_proc_type_id','7');
+               
+               $data['workprocedure_label']=$this->process_model->select_one_active_record('workprocedure_types_master',$this->session->userdata['logged_in']['company_id'],'workprocedure_types_master.work_proc_type_id','5');
+               
+               $data['workprocedure_printing']=$this->process_model->select_one_active_record('workprocedure_types_master',$this->session->userdata['logged_in']['company_id'],'workprocedure_types_master.work_proc_type_id','3');
+
+              $data['approval_authority']=$this->common_model->select_one_active_approval_authority_record('authority_master',$this->session->userdata['logged_in']['company_id'],'authority_master.form_id','91');
+              $data['hot_foil']=$this->article_model->spec_all_active_record_search('article','71',$this->session->userdata['logged_in']['company_id']);
+              $data['cold_foil']=$this->article_model->spec_all_active_record_search('article','304',$this->session->userdata['logged_in']['company_id']);
+
+              $data['hot_foil']=$this->article_model->spec_all_active_record_search('article','71',$this->session->userdata['logged_in']['company_id']);
+              $data['cap_foil']=$this->article_model->spec_all_active_record_search('article','71',$this->session->userdata['logged_in']['company_id']);
+              $data['cap_shrink_sleeve']=$this->article_model->spec_all_active_record_search('article','213',$this->session->userdata['logged_in']['company_id']);
+
+              $dataa = array('process_id' =>'3');
+              $data['machine_type']=$this->common_model->select_active_records_where('coex_machine_master',$this->session->userdata['logged_in']['company_id'],$dataa);
+
+              $data_search=array('archive'=>0);
+              $data['purchase_manager']=$this->common_model->select_active_records_where('address_category_contact_details',$this->session->userdata['logged_in']['company_id'],$data_search);
+
+              
 
 
                 $this->load->view('Home/header');
-                $this->load->view('Home/nav', $data);
+                $this->load->view('Home/nav',$data);
                 $this->load->view('Home/subnav');
                 //$this->load->view('Loading/loading');
-                $this->load->view(ucwords($this->router->fetch_class()) . '/active-title', $data);
-                $this->load->view(ucwords($this->router->fetch_class()) . '/create-form', $data);
+                $this->load->view(ucwords($this->router->fetch_class()).'/active-title',$data);
+                $this->load->view(ucwords($this->router->fetch_class()).'/create-form',$data);
                 $this->load->view('Home/footer');
-              } else {
+              }else{
 
-                // echo $this->input->post('cap_metalization');
-                //echo "<br/>";
-                // echo "hi";
+               // echo $this->input->post('cap_metalization');
+              //echo "<br/>";
+              // echo "hi";
 
-                $sales_quotation_no = '';
-                if (!empty($this->input->post('quotation_no'))) {
-                  $sales_quotation_no = $this->input->post('quotation_no');
-                } else {
-                  $data['auto'] = $this->common_model->select_one_active_record_nonlanguage_without_archive('autogeneration_format_master', $this->session->userdata['logged_in']['company_id'], 'form_id', '91');
-                  $no = "";
-                  foreach ($data['auto'] as $auto_row) {
+                $sales_quotation_no='';
+                if(!empty($this->input->post('quotation_no'))){
+                  $sales_quotation_no=$this->input->post('quotation_no');
+                }else{
+                    $data['auto']=$this->common_model->select_one_active_record_nonlanguage_without_archive('autogeneration_format_master',$this->session->userdata['logged_in']['company_id'],'form_id','91');
+                    $no="";
+                    foreach ($data['auto'] as $auto_row) {
 
-                    $data['account_periods'] = $this->common_model->select_one_active_record_nonlanguage_without_archive('account_periods_master', $this->session->userdata['logged_in']['company_id'], 'finyear_close_opt', '0');
-                    foreach ($data['account_periods'] as $account_periods_row) {
-                      $start = date('y', strtotime($account_periods_row->fin_year_start));
-                      $end = date('y', strtotime($account_periods_row->fin_year_end));
+                      $data['account_periods']=$this->common_model->select_one_active_record_nonlanguage_without_archive('account_periods_master',$this->session->userdata['logged_in']['company_id'],'finyear_close_opt','0');
+                      foreach($data['account_periods'] as $account_periods_row){
+                        $start=date('y', strtotime($account_periods_row->fin_year_start));
+                        $end=date('y', strtotime($account_periods_row->fin_year_end));
+                      }
+                      $no=str_pad($auto_row->curr_val,4,"0",STR_PAD_LEFT);
+                      $sales_quotation_no=$auto_row->textcode.$auto_row->seperator.$start.$auto_row->seperator.$end.$auto_row->seperator.$no;
+                      $next_quotation_no=$auto_row->curr_val+1;
                     }
-                    $no = str_pad($auto_row->curr_val, 4, "0", STR_PAD_LEFT);
-                    $sales_quotation_no = $auto_row->textcode . $auto_row->seperator . $start . $auto_row->seperator . $end . $auto_row->seperator . $no;
-                    $next_quotation_no = $auto_row->curr_val + 1;
-                  }
-                }
+              }
 
                 //$data=array('curr_val'=>$next_sales_order_no);
                 //$this->common_model->update_one_active_record('autogeneration_format_master',$data,'form_id','91',$this->session->userdata['logged_in']['company_id']);
+               
 
+                $customer_no=''; 
 
-                $customer_no = '';
+                if(!empty($this->input->post('customer'))){
 
-                if (!empty($this->input->post('customer'))) {
-
-                  $arr = explode("//", $this->input->post('customer'));
-                  if (count($arr) >= 2) {
-                    $customer_no = $arr[1];
+                  $arr=explode("//",$this->input->post('customer'));
+                  if(count($arr)>=2){
+                    $customer_no=$arr[1];
                   }
-                }
-                $article_no = '';
-                if (!empty($this->input->post('article_no'))) {
 
-                  $arr1 = explode("//", $this->input->post('article_no'));
-                  if (count($arr1) >= 2) {
-                    $article_no = $arr1[1];
+                }
+                $article_no='';
+                if(!empty($this->input->post('article_no'))){
+
+                  $arr1=explode("//",$this->input->post('article_no'));
+                  if(count($arr1)>=2){
+                    $article_no=$arr1[1];
                   }
+
                 }
 
-                if (!empty($this->input->post('sleeve_dia'))) {
-                  $sleeve_dia_array = explode("//", $this->input->post('sleeve_dia'));
-                  $sleeve_dia = $sleeve_dia_array[1];
-                } else {
-                  $sleeve_dia = "";
+                if(!empty($this->input->post('sleeve_dia'))){
+                  $sleeve_dia_array=explode("//",$this->input->post('sleeve_dia'));
+                  $sleeve_dia=$sleeve_dia_array[1];
+                  }else{
+                  $sleeve_dia="";
+                }  
+
+                if(!empty($this->input->post('shoulder'))){
+                  $shoulder_array=explode("//",$this->input->post('shoulder'));
+                  $shoulder=$shoulder_array[1];
+                  }else{
+                  $shoulder="";
                 }
 
-                if (!empty($this->input->post('shoulder'))) {
-                  $shoulder_array = explode("//", $this->input->post('shoulder'));
-                  $shoulder = $shoulder_array[1];
-                } else {
-                  $shoulder = "";
-                }
-
-                if (!empty($this->input->post('shoulder_orifice'))) {
-                  $shoulder_orifice_array = explode("//", $this->input->post('shoulder_orifice'));
-                  $shoulder_orifice = $shoulder_orifice_array[1];
-                } else {
-                  $shoulder_orifice = "";
+                if(!empty($this->input->post('shoulder_orifice'))){
+                  $shoulder_orifice_array=explode("//",$this->input->post('shoulder_orifice'));
+                  $shoulder_orifice=$shoulder_orifice_array[1];
+                  }else{
+                  $shoulder_orifice="";
                 }
 
                 //-------CAP explode//
-                if (!empty($this->input->post('cap_type'))) {
-                  $cap_type_array = explode("//", $this->input->post('cap_type'));
-                  $cap_type = $cap_type_array[1];
+                if(!empty($this->input->post('cap_type'))){
+                  $cap_type_array=explode("//",$this->input->post('cap_type'));
+                  $cap_type=$cap_type_array[1];
+                  }else{
+                  $cap_type="";
+                }
+
+                if(!empty($this->input->post('cap_finish'))){
+                  $cap_finish_array=explode("//",$this->input->post('cap_finish'));
+                  $cap_finish=$cap_finish_array[1];
+                  }else{
+                  $cap_finish="";
+                }
+
+                if(!empty($this->input->post('cap_dia'))){
+                  $cap_dia_array=explode("//",$this->input->post('cap_dia'));
+                  $cap_dia=$cap_dia_array[1];
+                  }else{
+                  $cap_dia="";
+                }
+
+                if(!empty($this->input->post('cap_orifice'))){
+                  $cap_orifice_array=explode("//",$this->input->post('cap_orifice'));
+                  $cap_orifice=$cap_orifice_array[1];
+                  }else{
+                  $cap_orifice="";
+                }
+
+                if(!empty($this->input->post('tube_color'))){
+                  $tube_color_aray=explode("//",$this->input->post('tube_color'));
+                  $tube_color=$tube_color_aray[0];
+                  }else{
+                  $tube_color="";
+                }
+
+                if(!empty($this->input->post('shoulder_color'))){
+                  $shoulder_color_array=explode("//",$this->input->post('shoulder_color'));
+                  $shoulder_color=$shoulder_color_array[0];
+                  }else{
+                  $shoulder_color="";
+                }
+
+                if(!empty($this->input->post('cap_color'))){
+                  $cap_color_array=explode("//",$this->input->post('cap_color'));
+                  $cap_color=$cap_color_array[0];
+                  }else{
+                  $cap_color="";
+                }
+
+                if($this->input->post('cap_metalization') == 'YES') {
+                   $cap_metalization = "YES";
                 } else {
-                  $cap_type = "";
+                   $cap_metalization = "NO";
                 }
-
-                if (!empty($this->input->post('cap_finish'))) {
-                  $cap_finish_array = explode("//", $this->input->post('cap_finish'));
-                  $cap_finish = $cap_finish_array[1];
+                
+                if($this->input->post('cap_foil') == 'YES') {
+                   $cap_foil = "YES";
                 } else {
-                  $cap_finish = "";
+                   $cap_foil = "NO";
                 }
 
-                if (!empty($this->input->post('cap_dia'))) {
-                  $cap_dia_array = explode("//", $this->input->post('cap_dia'));
-                  $cap_dia = $cap_dia_array[1];
-                } else {
-                  $cap_dia = "";
+                $version_no='';
+                if(!empty($this->input->post('version_no'))){
+                  $version_no=$this->input->post('version_no');
                 }
 
-                if (!empty($this->input->post('cap_orifice'))) {
-                  $cap_orifice_array = explode("//", $this->input->post('cap_orifice'));
-                  $cap_orifice = $cap_orifice_array[1];
-                } else {
-                  $cap_orifice = "";
-                }
-
-                if (!empty($this->input->post('tube_color'))) {
-                  $tube_color_aray = explode("//", $this->input->post('tube_color'));
-                  $tube_color = $tube_color_aray[0];
-                } else {
-                  $tube_color = "";
-                }
-
-                if (!empty($this->input->post('shoulder_color'))) {
-                  $shoulder_color_array = explode("//", $this->input->post('shoulder_color'));
-                  $shoulder_color = $shoulder_color_array[0];
-                } else {
-                  $shoulder_color = "";
-                }
-
-                if (!empty($this->input->post('cap_color'))) {
-                  $cap_color_array = explode("//", $this->input->post('cap_color'));
-                  $cap_color = $cap_color_array[0];
-                } else {
-                  $cap_color = "";
-                }
-
-                if ($this->input->post('cap_metalization') == 'YES') {
-                  $cap_metalization = "YES";
-                } else {
-                  $cap_metalization = "NO";
-                }
-
-                if ($this->input->post('cap_foil') == 'YES') {
-                  $cap_foil = "YES";
-                } else {
-                  $cap_foil = "NO";
-                }
-
-                $version_no = '';
-                if (!empty($this->input->post('version_no'))) {
-                  $version_no = $this->input->post('version_no');
-                }
-
-                $_5k_flag = ($this->input->post('_5k_flag') == '1' ? '1' : '0');
-                $_10k_flag = ($this->input->post('_10k_flag') == '1' ? '1' : '0');
-                $_25k_flag = ($this->input->post('_25k_flag') == '1' ? '1' : '0');
-                $_50k_flag = ($this->input->post('_50k_flag') == '1' ? '1' : '0');
-                $_100k_flag = ($this->input->post('_100k_flag') == '1' ? '1' : '0');
-                $free_flag = ($this->input->post('free_flag') == '1' ? '1' : '0');
+                $_5k_flag=($this->input->post('_5k_flag') == '1' ? '1' :'0');
+                $_10k_flag=($this->input->post('_10k_flag') == '1' ? '1' :'0');
+                $_25k_flag=($this->input->post('_25k_flag') == '1' ? '1' :'0');
+                $_50k_flag=($this->input->post('_50k_flag') == '1' ? '1' :'0');  
+                $_100k_flag=($this->input->post('_100k_flag') == '1' ? '1' :'0');
+                $free_flag=($this->input->post('free_flag') == '1' ? '1' :'0');
 
                 // $data['version']=$this->sales_quote_model->select_quote_verion_no_copy_fun('sales_quote_master',$this->session->userdata['logged_in']['company_id'],'quotation_no',$sales_quotation_no,'version_no',$version_no);
                 //                   //echo $this->db->last_query();
@@ -616,1039 +617,1183 @@ class Sales_quote extends CI_Controller
                 //              }
                 //          }
 
-                // File Upload----------------------------------  
+                 // File Upload----------------------------------  
 
-                $filename = $sales_quotation_no . "_" . time() . "_" . preg_replace('/[^A-Za-z0-9.-]/ ', '', $_FILES['userfile']['name']);
-                $config['upload_path'] = './assets/' . $this->session->userdata['logged_in']['company_id'] . '/sales_quote_ref/';
-                $config['encrypt_name '] = TRUE;
-                $config['allowed_types'] = 'pdf|PDF';
-                $config['max_size'] = '0';
-                $config['remove_spaces'] = TRUE;
-                $config['file_name'] = $filename;
-                $this->load->library('upload', $config);
-                $this->upload->initialize($config);
+                  $filename=$sales_quotation_no."_".time()."_".preg_replace('/[^A-Za-z0-9.-]/ ','',$_FILES['userfile']['name']);
+                  $config['upload_path'] = './assets/'.$this->session->userdata['logged_in']['company_id'].'/sales_quote_ref/';
+                  $config['encrypt_name '] = TRUE;
+                  $config['allowed_types'] = 'pdf|PDF';
+                  $config['max_size'] = '0';
+                  $config['remove_spaces'] = TRUE;
+                  $config['file_name']=$filename;
+                  $this->load->library('upload',$config);
+                  $this->upload->initialize($config);
 
-                if ($this->upload->do_upload('userfile')) {
-                  $data = $this->upload->data();
-                  //$filename=time()."_".$data['file_name'];
-                } else {
-                  //$filename=$this->input->post('po_file');
-                  $filename = '';
-                  $data['error'] = $this->upload->display_errors();
-                }
+                  if($this->upload->do_upload('userfile')){
+                    $data= $this->upload->data();
+                    //$filename=time()."_".$data['file_name'];
+                  }else{
+                    //$filename=$this->input->post('po_file');
+                    $filename = '';
+                     $data['error'] = $this->upload->display_errors();
+                  }
 
 
-                $data = array(
-                  'quotation_date' => date('Y-m-d'),
-                  'quotation_no' => $sales_quotation_no,
-                  'version_no' => $version_no,
-                  'customer_no' => $customer_no,
-                  'images' => $filename,
-                  'pm_1' => $this->input->post('pm_1'),
-                  'product_name' => $this->input->post('product_name'),
-                  'credit_days' => $this->input->post('credit_days'),
-                  'enquiry_date' => $this->input->post('enquiry_date'),
-
+                 $data=array(
+                  'quotation_date'=>date('Y-m-d'),
+                  'quotation_no'=>$sales_quotation_no, 
+                  'version_no'=>$version_no,                 
+                  'customer_no'=>$customer_no,
+                  'images'=>$filename,
+                  'pm_1'=>$this->input->post('pm_1'),
+                  'product_name'=>$this->input->post('product_name'),
+                  'credit_days'=>$this->input->post('credit_days'),
+                  'enquiry_date'=>$this->input->post('enquiry_date'),
+                  
                   // specification
-                  'layer' => $this->input->post('layer'),
-                  'sleeve_dia' => $sleeve_dia,
-                  'sleeve_length' => $this->input->post('sleeve_length'),
-                  'tube_color' => $tube_color,
-                  'tube_lacquer' => $this->input->post('tube_lacquer'),
-                  'print_type' => $this->input->post('print_type'),
-                  'special_ink' => $this->input->post('special_ink'),
+                  'layer'=>$this->input->post('layer'),
+                  'sleeve_dia'=>$sleeve_dia,
+                  'sleeve_length'=>$this->input->post('sleeve_length'),
+                  'tube_color'=>$tube_color,
+                  'tube_lacquer'=>$this->input->post('tube_lacquer'),
+                  'print_type'=>$this->input->post('print_type'),
+                  'special_ink'=>$this->input->post('special_ink'),
 
-                  'shoulder' => $shoulder,
-                  'shoulder_orifice' => $shoulder_orifice,
-                  'shoulder_color' => $shoulder_color,
+                  'shoulder'=>$shoulder,
+                  'shoulder_orifice'=>$shoulder_orifice,
+                  'shoulder_color'=>$shoulder_color,
 
-                  'cap_type' => $cap_type,
-                  'cap_finish' => $cap_finish,
-                  'cap_dia' => $cap_dia,
-                  'cap_orifice' => $cap_orifice,
-                  'cap_color' => $cap_color,
+                  'cap_type'=>$cap_type,
+                  'cap_finish'=>$cap_finish,
+                  'cap_dia'=>$cap_dia,
+                  'cap_orifice'=>$cap_orifice,
+                  'cap_color'=>$cap_color,
 
-                  'tube_foil' => $this->input->post('tube_foil'),
-                  'shoulder_foil' => $this->input->post('shoulder_foil'),
-                  'cap_foil' => $cap_foil,
-                  'cap_foil_width' => $this->input->post('cap_foil_width'),
-                  'cap_foil_dist_frm_bottom' => $this->input->post('cap_foil_dist_frm_bottom'),
+                  'tube_foil'=>$this->input->post('tube_foil'),
+                  'shoulder_foil'=>$this->input->post('shoulder_foil'),
+                  'cap_foil'=>$cap_foil,
+                  'cap_foil_width'=>$this->input->post('cap_foil_width'),
+                  'cap_foil_dist_frm_bottom'=>$this->input->post('cap_foil_dist_frm_bottom'),
 
-                  'cap_metalization' => $cap_metalization,
-                  'cap_metalization_color' => $this->input->post('cap_metalization_color'),
-                  'cap_metalization_finish' => $this->input->post('cap_metalization_finish'),
-                  'cap_shrink_sleeve' => $this->input->post('cap_shrink_sleeve'),
-
+                  'cap_metalization'=>$cap_metalization,
+                  'cap_metalization_color'=>$this->input->post('cap_metalization_color'),
+                  'cap_metalization_finish'=>$this->input->post('cap_metalization_finish'),
+                  'cap_shrink_sleeve'=>$this->input->post('cap_shrink_sleeve'),
+                  
 
                   //Quote
-                  'machine_print_type_id' => $this->input->post('machine_type'),
-                  'job_changeover_time' => $this->input->post('job_changeover'),
+                  'machine_print_type_id'=>$this->input->post('machine_type'),
+                  'job_changeover_time'=>$this->input->post('job_changeover'),
 
-                  '_5k_flag' => $_5k_flag,
-                  '_5k_waste' => $this->input->post('_5k_waste'),
+                  '_5k_flag'=>$_5k_flag,
+                  '_5k_waste'=>$this->input->post('_5k_waste'),
                   //'_5k_target_contr'=>$this->input->post('_5k_target_contr'),
-                  '_5k_quoted_contr' => $this->input->post('_5k_quoted_contr'),
-                  '_5k_cost' => $this->input->post('_5k_cost'),
-                  '_5k_quoted_price' => $this->input->post('_5k_quoted_price'),
+                  '_5k_quoted_contr'=>$this->input->post('_5k_quoted_contr'),
+                  '_5k_cost'=>$this->input->post('_5k_cost'),
+                  '_5k_quoted_price'=>$this->input->post('_5k_quoted_price'),
 
-                  '_10k_flag' => $_10k_flag,
-                  '_10k_waste' => $this->input->post('_10k_waste'),
+                  '_10k_flag'=>$_10k_flag,
+                  '_10k_waste'=>$this->input->post('_10k_waste'),
                   //'_10k_target_contr'=>$this->input->post('_10k_target_contr'),
-                  '_10k_quoted_contr' => $this->input->post('_10k_quoted_contr'),
-                  '_10k_cost' => $this->input->post('_10k_cost'),
-                  '_10k_quoted_price' => $this->input->post('_10k_quoted_price'),
+                  '_10k_quoted_contr'=>$this->input->post('_10k_quoted_contr'),
+                  '_10k_cost'=>$this->input->post('_10k_cost'),               
+                  '_10k_quoted_price'=>$this->input->post('_10k_quoted_price'),
 
-                  '_25k_flag' => $_25k_flag,
-                  '_25k_waste' => $this->input->post('_25k_waste'),
+                  '_25k_flag'=>$_25k_flag,
+                  '_25k_waste'=>$this->input->post('_25k_waste'),
                   //'_25k_target_contr'=>$this->input->post('_25k_target_contr'),
-                  '_25k_quoted_contr' => $this->input->post('_25k_quoted_contr'),
-                  '_25k_cost' => $this->input->post('_25k_cost'),
-                  '_25k_quoted_price' => $this->input->post('_25k_quoted_price'),
+                  '_25k_quoted_contr'=>$this->input->post('_25k_quoted_contr'),
+                  '_25k_cost'=>$this->input->post('_25k_cost'),                                  
+                  '_25k_quoted_price'=>$this->input->post('_25k_quoted_price'),
 
-                  '_50k_flag' => $_50k_flag,
-                  '_50k_waste' => $this->input->post('_50k_waste'),
+                  '_50k_flag'=>$_50k_flag,
+                  '_50k_waste'=>$this->input->post('_50k_waste'),
                   //'_50k_target_contr'=>$this->input->post('_50k_target_contr'),
-                  '_50k_quoted_contr' => $this->input->post('_50k_quoted_contr'),
-                  '_50k_cost' => $this->input->post('_50k_cost'),
-                  '_50k_quoted_price' => $this->input->post('_50k_quoted_price'),
+                  '_50k_quoted_contr'=>$this->input->post('_50k_quoted_contr'),
+                  '_50k_cost'=>$this->input->post('_50k_cost'),             
+                  '_50k_quoted_price'=>$this->input->post('_50k_quoted_price'),
 
-                  '_100k_flag' => $_100k_flag,
-                  '_100k_waste' => $this->input->post('_100k_waste'),
+                  '_100k_flag'=>$_100k_flag,
+                  '_100k_waste'=>$this->input->post('_100k_waste'),
                   //'_100k_target_contr'=>$this->input->post('_100k_target_contr'),
-                  '_100k_quoted_contr' => $this->input->post('_100k_quoted_contr'),
-                  '_100k_cost' => $this->input->post('_100k_cost'),
-                  '_100k_quoted_price' => $this->input->post('_100k_quoted_price'),
-
-                  'free_flag' => $free_flag,
-                  'free_quantity' => $this->input->post('free_quantity'),
-                  '_free_quantity_waste' => $this->input->post('_free_quantity_waste'),
+                  '_100k_quoted_contr'=>$this->input->post('_100k_quoted_contr'),
+                  '_100k_cost'=>$this->input->post('_100k_cost'),
+                  '_100k_quoted_price'=>$this->input->post('_100k_quoted_price'),
+                  
+                  'free_flag'=>$free_flag,
+                  'free_quantity'=>$this->input->post('free_quantity'),
+                  '_free_quantity_waste'=>$this->input->post('_free_quantity_waste'),
                   //'free_target_contr'=>$this->input->post('free_target_contr'),
-                  'free_quoted_contr' => $this->input->post('free_quoted_contr'),
-                  'free_cost' => $this->input->post('free_cost'),
-                  'free_quoted_price' => $this->input->post('free_quoted_price'),
+                  'free_quoted_contr'=>$this->input->post('free_quoted_contr'),
+                  'free_cost'=>$this->input->post('free_cost'),
+                  'free_quoted_price'=>$this->input->post('free_quoted_price'),
 
-                  'freight' => $this->input->post('freight'),
-                  //'packing'=>$this->input->post('packing'),
+                  'freight'=>$this->input->post('freight'),
+                 //'packing'=>$this->input->post('packing'),
 
                   //Cost sheet details
                   //'article_no'=>$article_no,
                   //'invoice_date'=>$this->input->post('invoice_date'),
-                  'invoice_no' => $this->input->post('invoice_no'),
+                  'invoice_no'=>$this->input->post('invoice_no'),
                   //'cost'=>$this->input->post('cost'),
-                  'remarks' => $this->input->post('remarks'),
-                  'user_id' => $this->session->userdata['logged_in']['user_id'],
-                  'company_id' => $this->session->userdata['logged_in']['company_id']
-                );
+                  'remarks'=>$this->input->post('remarks'),
+                  'user_id'=>$this->session->userdata['logged_in']['user_id'],
+                  'company_id'=>$this->session->userdata['logged_in']['company_id']               
+                  );
 
-                $result_sales_quote_master = $this->common_model->save('sales_quote_master', $data);
+                $result_sales_quote_master=$this->common_model->save('sales_quote_master',$data); 
                 //echo $this->db->last_query();
-                if ($result_sales_quote_master) {
+                if($result_sales_quote_master){
 
-                  if (!empty($this->input->post('quotation_no'))) {
+                  if(!empty($this->input->post('quotation_no'))){
                     $sales_quotation_no = $this->input->post('quotation_no');
-                  } else {
-                    $data_1 = array('curr_val' => $next_quotation_no);
-                    $result_autogeneration_format_master = $this->common_model->update_one_active_record('autogeneration_format_master', $data_1, 'form_id', '91', $this->session->userdata['logged_in']['company_id']);
+                  }else{
+                    $data_1=array('curr_val'=>$next_quotation_no);
+                    $result_autogeneration_format_master=$this->common_model->update_one_active_record('autogeneration_format_master',$data_1,'form_id','91',$this->session->userdata['logged_in']['company_id']);
+  
                   }
+                  
+
+                  $data_details = array('quotation_no'=>$sales_quotation_no,
+                                      'sleeve_per_cost'=>$this->input->post('sleeve_cost_view'),
+                                      'version_no'=>$version_no,
+                                      'lacquer_1'=>$this->input->post('lacquer_type_1'),
+                                      'lacquer1_rate'=>$this->input->post('lacquer_type_1_rate'),
+                                      'lacquer1_gm_per_tube'=>$this->input->post('lacquer_type_1_gm_per_tube'),
+                                      'lacquer1_perc'=>$this->input->post('lacquer_type_1_percentage'),
+                                      'lacquer_2'=>$this->input->post('lacquer_type_2'),
+                                      'lacquer2_rate'=>$this->input->post('lacquer_type_2_rate'),
+                                      'lacquer2_gm_per_tube'=>$this->input->post('lacquer_type_2_gm_per_tube'),
+                                      'lacquer2_perc'=>$this->input->post('lacquer_type_2_percentage'),
+                                      'lacquer_rejection'=>$this->input->post('lacquer_rejection'),
+                                      'lacquer_cost_per_tube'=>$this->input->post('lacquer_cost_view'), 
+                                      //----------print type------
+                                      'label_rejection'=>$this->input->post('label_rejection'), 
+                                      'label_rate'=>$this->input->post('label_rate'), 
+                                      'label_cost_per_tube'=>$this->input->post('label_cost_view'), 
+                                      'screen_rm_month'=>$this->input->post('screen_rm_month'), 
+                                      'screen_rate'=>$this->input->post('screen_rate'), 
+                                      'screen_gm_per_tube'=>$this->input->post('screen_gm_per_tube'),
+                                      'screen_flexo_rejection'=>$this->input->post('screen_flexo_rejection'),   
+                                      'screen_percentage'=>$this->input->post('screen_percentage'), 
+                                      'flexo_rm_month'=>$this->input->post('flexo_rm_month'), 
+                                      'flexo_rate'=>$this->input->post('flexo_rate'), 
+                                      'flexo_gm_per_tube'=>$this->input->post('flexo_gm_per_tube'), 
+                                      'flexo_percentage'=>$this->input->post('flexo_percentage'), 
+                                      'screen_flexo_cost_per_tube'=>$this->input->post('screen_flexo_cost_view'),
+
+                                      'spring_consumable_view'=>$this->input->post('spring_consumable_view'), 
+                                      'screen_flexo_consumable_view'=>$this->input->post('screen_flexo_consumable_view'), 
+                                      //----------screen flexo plate------
+                                      'screen_film_rate'=>$this->input->post('screen_film_rate'), 
+                                      'screen_colors'=>$this->input->post('screen_colors'), 
+                                      'screen_impresssion'=>$this->input->post('screen_impresssion'), 
+                                      'screen_sets'=>$this->input->post('screen_sets'), 
+                                      'screen_film_cost_per_tube'=>$this->input->post('screen_plate_cost_view'), 
+                                      'flexo_plate_rate'=>$this->input->post('flexo_plate_rate'), 
+                                      'flexo_colors'=>$this->input->post('flexo_colors'), 
+                                      'flexo_impresssion'=>$this->input->post('flexo_impresssion'), 
+                                      'flexo_sets'=>$this->input->post('flexo_sets'), 
+                                      'flexo_plate_cost_per_tube'=>$this->input->post('flexo_plate_cost_view'),
+                                      //----------offset plate------
+                                      'offset_rm_month'=>$this->input->post('offset_rm_month'),
+                                      'offset_rate'=>$this->input->post('offset_rate'),
+                                      'offset_gm_per_tube'=>$this->input->post('offset_gm_per_tube'),
+                                      'offset_rejection'=>$this->input->post('offset_rejection'),
+                                      'offset_percentage'=>$this->input->post('offset_percentage'),
+                                      'offset_cost_per_tube'=>$this->input->post('offset_cost_view'),
+                                      'offset_consumable_view'=>$this->input->post('offset_consumable_view'), 
+
+                                      'offset_plate_cost'=>$this->input->post('offset_plate_cost'),
+                                      'offset_color'=>$this->input->post('offset_color'),
+                                      'offset_impresssion'=>$this->input->post('offset_impresssion'),
+                                      'offset_sets'=>$this->input->post('offset_sets'),
+                                      'offset_plate_cost_per_tube '=>$this->input->post('offset_plate_cost_view'),
+
+                                      //----------special ink------
+                                      'special_rm_month'=>$this->input->post('special_rm_month'),
+                                      'special_ink_rate'=>$this->input->post('special_ink_rate'),
+                                      'special_gm_per_tube'=>$this->input->post('special_gm_per_tube'),
+                                      'special_percentage'=>$this->input->post('special_percentage'),
+                                      'specialink_rejection'=>$this->input->post('specialink_rejection'),
+                                      'special_ink_cost_per_tube'=>$this->input->post('special_ink_cost_view'),
+                                      //----------shoulder------
+                                      'sh_hdpe_one'=>$this->input->post('sh_hdpe_one'),
+                                      'sh_hdpe_one_rate'=>$this->input->post('sh_hdpe_one_rate'),
+                                      'hdpe_m'=>$this->input->post('hdpe_m'),
+                                      'sh_hdpe_two'=>$this->input->post('sh_hdpe_two'),
+                                      'sh_hdpe_two_rate'=>$this->input->post('sh_hdpe_two_rate'),
+                                      'hdpe_f'=>$this->input->post('hdpe_f'),
+                                      'shoulder_mb'=>$this->input->post('shoulder_mb'),
+                                      'shoulder_mb_rate'=>$this->input->post('shoulder_mb_rate'),
+                                      'shoulder_mb_percentage'=>$this->input->post('shoulder_mb_percentage'),
+                                      'shoulder_mb1'=>$this->input->post('shoulder_mb1'),
+                                      'shoulder_mb1_rate'=>$this->input->post('shoulder_mb1_rate'),
+                                      'shoulder_mb_percentage1'=>$this->input->post('shoulder_mb_percentage1'),
+                                      'sh_rejection'=>$this->input->post('sh_rejection'),
+                                      'sh_quantity'=>$this->input->post('sh_quantity'),
+                                      'shoulder_cost'=>$this->input->post('shoulder_cost_view'),
+                                      //----------cap------
+                                      'mould_type'=>$this->input->post('mould_type'),
+                                      'cap_weight_rate'=>$this->input->post('cap_weight_rate'),
+                                      'runner_waste'=>$this->input->post('runner_waste'),
+                                      'pp_price'=>$this->input->post('pp_price'),
+                                      'mb_price'=>$this->input->post('mb_price'),
+                                      'mb_loading'=>$this->input->post('mb_loading'),
+                                      'moulding_cost'=>$this->input->post('moulding_cost'),
+                                      'cap_rejection'=>$this->input->post('cap_rejection'),
+                                      'cap_cost_per_tube'=>$this->input->post('cap_cost_view'),
+                                      //----------packing box--- 
+                                      'top_box'=>$this->input->post('top_box'), 
+                                      'bottom_box'=>$this->input->post('bottom_box'), 
+                                      'box_liners'=>$this->input->post('box_liners'), 
+                                      'liner_gm'=>$this->input->post('liner_gm'), 
+                                      'top_box_rate'=>$this->input->post('top_box_rate'), 
+                                      'bottom_box_rate'=>$this->input->post('bottom_box_rate'), 
+                                      'box_liners_rate'=>$this->input->post('box_liners_rate'), 
+                                      'total_box_rate'=>$this->input->post('packing_box_view'), 
+                                      'liner_gm_per_tube'=>$this->input->post('liners_view'), 
+                                      //-------------Tube foil--------
+                                      'hot_foil_1'=>$this->input->post('hot_foil_1'), 
+                                      'hot_foil_1_rate'=>$this->input->post('hot_foil_1_rate'), 
+                                      'hot_foil_1_percentage'=>$this->input->post('hot_foil_1_percentage'), 
+                                      'hot_foil_2'=>$this->input->post('hot_foil_2'), 
+                                      'hot_foil_2_rate'=>$this->input->post('hot_foil_2_rate'), 
+                                      'hot_foil_2_percentage'=>$this->input->post('hot_foil_2_percentage'), 
+                                      'tube_foil_rejection'=>$this->input->post('tube_foil_rejection'),
+                                      'tube_foil_cost_per_tube'=>$this->input->post('tube_foil_cost_view'), 
+                                      //-------------Shoulder foil---------
+                                      'shoulder_foil_tag'=>$this->input->post('shoulder_foil_tag'), 
+                                      'shoulder_foil_rate'=>$this->input->post('shoulder_foil_rate'),
+                                      'shoulder_foil_sqm_per_tube'=>$this->input->post('shoulder_foil_sqm_per_tube'),
+                                      'shoulder_foil_cost_per_tube'=>$this->input->post('shoulder_foil_cost_view'),
+                                      //-------------shrink Sleeve---------
+                                      'cap_shrink_sleeve_code'=>$this->input->post('cap_shrink_sleeve_code'), 
+                                      'cap_shrink_sleeve_rate'=>$this->input->post('cap_shrink_sleeve_rate'),
+                                      'cap_shrink_sleeve_cost_per_tube'=>$this->input->post('cap_shrink_sleeve_cost_view'),
+                                      'cap_metalization_rate'=>$this->input->post('cap_metalization_rate'),
+                                      'cap_metalization_cost_view'=>$this->input->post('cap_metalization_cost_view'),
+                                      'cap_foil_rate'=>$this->input->post('cap_foil_rate'),
+                                      'cap_foil_cost_view'=>$this->input->post('cap_foil_cost_view'),
+                                      //-----------Stores and Spares
+                                      'stores_spares_local_view'=>$this->input->post('stores_spares_local_view'),
+                                      'stores_spares_import_view'=>$this->input->post('stores_spares_import_view'),
+                                      'export_packing'=>$this->input->post('customer_flag'),
+                                      'hygenic_consumable_view'=>$this->input->post('hygenic_consumable_view'),
+                                      'packing_shrink_flim'=>$this->input->post('packing_shrink_flim'),
+                                      'other_consumable_view'=>$this->input->post('other_consumable_view'),
+                                      'packing_corrugated_sheet'=>$this->input->post('packing_corrugated_sheet'),
+                                      'packing_bopp_tape'=>$this->input->post('packing_bopp_tape'),
+                                      'packing_stickers'=>$this->input->post('packing_stickers'),
+                                      'other_packing_material'=>$this->input->post('other_packing_material'),
+                                      'total_rm_cost_per_tube'=>$this->input->post('total_rm_cost_per_tube'),
+                                      'total_consummable_cost_per_tube'=>$this->input->post('total_consummable_cost_per_tube'),
+                                      'total_packing_cost_per_tube'=>$this->input->post('total_packing_cost_per_tube'),
+                                      'total_stores_cost_per_tube'=>$this->input->post('total_stores_cost_per_tube'),
+                                      'total_cost_per_tube'=>$this->input->post('total_cost_per_tube'),
+                                      'waste_total_cost_per_tube'=>$this->input->post('waste_total_cost_per_tube'),
+                                      'company_id'=>$this->session->userdata['logged_in']['company_id']  
+
+                                    );
+
+                  $result_sales_quote_details=$this->common_model->save('sales_quote_details',$data_details);
 
 
-                  $data_details = array(
-                    'quotation_no' => $sales_quotation_no,
-                    'sleeve_per_cost' => $this->input->post('sleeve_cost_view'),
-                    'version_no' => $version_no,
-                    'lacquer_1' => $this->input->post('lacquer_type_1'),
-                    'lacquer1_rate' => $this->input->post('lacquer_type_1_rate'),
-                    'lacquer1_gm_per_tube' => $this->input->post('lacquer_type_1_gm_per_tube'),
-                    'lacquer1_perc' => $this->input->post('lacquer_type_1_percentage'),
-                    'lacquer_2' => $this->input->post('lacquer_type_2'),
-                    'lacquer2_rate' => $this->input->post('lacquer_type_2_rate'),
-                    'lacquer2_gm_per_tube' => $this->input->post('lacquer_type_2_gm_per_tube'),
-                    'lacquer2_perc' => $this->input->post('lacquer_type_2_percentage'),
-                    'lacquer_rejection' => $this->input->post('lacquer_rejection'),
-                    'lacquer_cost_per_tube' => $this->input->post('lacquer_cost_view'),
-                    //----------print type------
-                    'label_rejection' => $this->input->post('label_rejection'),
-                    'label_rate' => $this->input->post('label_rate'),
-                    'label_cost_per_tube' => $this->input->post('label_cost_view'),
-                    'screen_rm_month' => $this->input->post('screen_rm_month'),
-                    'screen_rate' => $this->input->post('screen_rate'),
-                    'screen_gm_per_tube' => $this->input->post('screen_gm_per_tube'),
-                    'screen_flexo_rejection' => $this->input->post('screen_flexo_rejection'),
-                    'screen_percentage' => $this->input->post('screen_percentage'),
-                    'flexo_rm_month' => $this->input->post('flexo_rm_month'),
-                    'flexo_rate' => $this->input->post('flexo_rate'),
-                    'flexo_gm_per_tube' => $this->input->post('flexo_gm_per_tube'),
-                    'flexo_percentage' => $this->input->post('flexo_percentage'),
-                    'screen_flexo_cost_per_tube' => $this->input->post('screen_flexo_cost_view'),
+                   $version_details = array(
+                                              'quotation_no'=>$sales_quotation_no,  
+                                              'version_no'=>$version_no,
+                                              'company_id'=>$this->session->userdata['logged_in']['company_id'] );
 
-                    'spring_consumable_view' => $this->input->post('spring_consumable_view'),
-                    'screen_flexo_consumable_view' => $this->input->post('screen_flexo_consumable_view'),
-                    //----------screen flexo plate------
-                    'screen_film_rate' => $this->input->post('screen_film_rate'),
-                    'screen_colors' => $this->input->post('screen_colors'),
-                    'screen_impresssion' => $this->input->post('screen_impresssion'),
-                    'screen_sets' => $this->input->post('screen_sets'),
-                    'screen_film_cost_per_tube' => $this->input->post('screen_plate_cost_view'),
-                    'flexo_plate_rate' => $this->input->post('flexo_plate_rate'),
-                    'flexo_colors' => $this->input->post('flexo_colors'),
-                    'flexo_impresssion' => $this->input->post('flexo_impresssion'),
-                    'flexo_sets' => $this->input->post('flexo_sets'),
-                    'flexo_plate_cost_per_tube' => $this->input->post('flexo_plate_cost_view'),
-                    //----------offset plate------
-                    'offset_rm_month' => $this->input->post('offset_rm_month'),
-                    'offset_rate' => $this->input->post('offset_rate'),
-                    'offset_gm_per_tube' => $this->input->post('offset_gm_per_tube'),
-                    'offset_rejection' => $this->input->post('offset_rejection'),
-                    'offset_percentage' => $this->input->post('offset_percentage'),
-                    'offset_cost_per_tube' => $this->input->post('offset_cost_view'),
-                    'offset_consumable_view' => $this->input->post('offset_consumable_view'),
+                   $result_version_details=$this->common_model->save('sales_quote_revision',$version_details);
 
-                    'offset_plate_cost' => $this->input->post('offset_plate_cost'),
-                    'offset_color' => $this->input->post('offset_color'),
-                    'offset_impresssion' => $this->input->post('offset_impresssion'),
-                    'offset_sets' => $this->input->post('offset_sets'),
-                    'offset_plate_cost_per_tube ' => $this->input->post('offset_plate_cost_view'),
-
-                    //----------special ink------
-                    'special_rm_month' => $this->input->post('special_rm_month'),
-                    'special_ink_rate' => $this->input->post('special_ink_rate'),
-                    'special_gm_per_tube' => $this->input->post('special_gm_per_tube'),
-                    'special_percentage' => $this->input->post('special_percentage'),
-                    'specialink_rejection' => $this->input->post('specialink_rejection'),
-                    'special_ink_cost_per_tube' => $this->input->post('special_ink_cost_view'),
-                    //----------shoulder------
-                    'sh_hdpe_one' => $this->input->post('sh_hdpe_one'),
-                    'sh_hdpe_one_rate' => $this->input->post('sh_hdpe_one_rate'),
-                    'hdpe_m' => $this->input->post('hdpe_m'),
-                    'sh_hdpe_two' => $this->input->post('sh_hdpe_two'),
-                    'sh_hdpe_two_rate' => $this->input->post('sh_hdpe_two_rate'),
-                    'hdpe_f' => $this->input->post('hdpe_f'),
-                    'shoulder_mb' => $this->input->post('shoulder_mb'),
-                    'shoulder_mb_rate' => $this->input->post('shoulder_mb_rate'),
-                    'shoulder_mb_percentage' => $this->input->post('shoulder_mb_percentage'),
-                    'shoulder_mb1' => $this->input->post('shoulder_mb1'),
-                    'shoulder_mb1_rate' => $this->input->post('shoulder_mb1_rate'),
-                    'shoulder_mb_percentage1' => $this->input->post('shoulder_mb_percentage1'),
-                    'sh_rejection' => $this->input->post('sh_rejection'),
-                    'sh_quantity' => $this->input->post('sh_quantity'),
-                    'shoulder_cost' => $this->input->post('shoulder_cost_view'),
-                    //----------cap------
-                    'mould_type' => $this->input->post('mould_type'),
-                    'cap_weight_rate' => $this->input->post('cap_weight_rate'),
-                    'runner_waste' => $this->input->post('runner_waste'),
-                    'pp_price' => $this->input->post('pp_price'),
-                    'mb_price' => $this->input->post('mb_price'),
-                    'mb_loading' => $this->input->post('mb_loading'),
-                    'moulding_cost' => $this->input->post('moulding_cost'),
-                    'cap_rejection' => $this->input->post('cap_rejection'),
-                    'cap_cost_per_tube' => $this->input->post('cap_cost_view'),
-                    //----------packing box--- 
-                    'top_box' => $this->input->post('top_box'),
-                    'bottom_box' => $this->input->post('bottom_box'),
-                    'box_liners' => $this->input->post('box_liners'),
-                    'liner_gm' => $this->input->post('liner_gm'),
-                    'top_box_rate' => $this->input->post('top_box_rate'),
-                    'bottom_box_rate' => $this->input->post('bottom_box_rate'),
-                    'box_liners_rate' => $this->input->post('box_liners_rate'),
-                    'total_box_rate' => $this->input->post('packing_box_view'),
-                    'liner_gm_per_tube' => $this->input->post('liners_view'),
-                    //-------------Tube foil--------
-                    'hot_foil_1' => $this->input->post('hot_foil_1'),
-                    'hot_foil_1_rate' => $this->input->post('hot_foil_1_rate'),
-                    'hot_foil_1_percentage' => $this->input->post('hot_foil_1_percentage'),
-                    'hot_foil_2' => $this->input->post('hot_foil_2'),
-                    'hot_foil_2_rate' => $this->input->post('hot_foil_2_rate'),
-                    'hot_foil_2_percentage' => $this->input->post('hot_foil_2_percentage'),
-                    'tube_foil_rejection' => $this->input->post('tube_foil_rejection'),
-                    'tube_foil_cost_per_tube' => $this->input->post('tube_foil_cost_view'),
-                    //-------------Shoulder foil---------
-                    'shoulder_foil_tag' => $this->input->post('shoulder_foil_tag'),
-                    'shoulder_foil_rate' => $this->input->post('shoulder_foil_rate'),
-                    'shoulder_foil_sqm_per_tube' => $this->input->post('shoulder_foil_sqm_per_tube'),
-                    'shoulder_foil_cost_per_tube' => $this->input->post('shoulder_foil_cost_view'),
-                    //-------------shrink Sleeve---------
-                    'cap_shrink_sleeve_code' => $this->input->post('cap_shrink_sleeve_code'),
-                    'cap_shrink_sleeve_rate' => $this->input->post('cap_shrink_sleeve_rate'),
-                    'cap_shrink_sleeve_cost_per_tube' => $this->input->post('cap_shrink_sleeve_cost_view'),
-                    'cap_metalization_rate' => $this->input->post('cap_metalization_rate'),
-                    'cap_metalization_cost_view' => $this->input->post('cap_metalization_cost_view'),
-                    'cap_foil_rate' => $this->input->post('cap_foil_rate'),
-                    'cap_foil_cost_view' => $this->input->post('cap_foil_cost_view'),
-                    //-----------Stores and Spares
-                    'stores_spares_local_view' => $this->input->post('stores_spares_local_view'),
-                    'stores_spares_import_view' => $this->input->post('stores_spares_import_view'),
-                    'export_packing' => $this->input->post('customer_flag'),
-                    'hygenic_consumable_view' => $this->input->post('hygenic_consumable_view'),
-                    'packing_shrink_flim' => $this->input->post('packing_shrink_flim'),
-                    'other_consumable_view' => $this->input->post('other_consumable_view'),
-                    'packing_corrugated_sheet' => $this->input->post('packing_corrugated_sheet'),
-                    'packing_bopp_tape' => $this->input->post('packing_bopp_tape'),
-                    'packing_stickers' => $this->input->post('packing_stickers'),
-                    'other_packing_material' => $this->input->post('other_packing_material'),
-                    'total_rm_cost_per_tube' => $this->input->post('total_rm_cost_per_tube'),
-                    'total_consummable_cost_per_tube' => $this->input->post('total_consummable_cost_per_tube'),
-                    'total_packing_cost_per_tube' => $this->input->post('total_packing_cost_per_tube'),
-                    'total_stores_cost_per_tube' => $this->input->post('total_stores_cost_per_tube'),
-                    'total_cost_per_tube' => $this->input->post('total_cost_per_tube'),
-                    'waste_total_cost_per_tube' => $this->input->post('waste_total_cost_per_tube'),
-                    'company_id' => $this->session->userdata['logged_in']['company_id']
-
-                  );
-
-                  $result_sales_quote_details = $this->common_model->save('sales_quote_details', $data_details);
-
-
-                  $version_details = array(
-                    'quotation_no' => $sales_quotation_no,
-                    'version_no' => $version_no,
-                    'company_id' => $this->session->userdata['logged_in']['company_id']
-                  );
-
-                  $result_version_details = $this->common_model->save('sales_quote_revision', $version_details);
+                  
                 }
 
-                if ($this->input->post('layer') == 1) {
+                if($this->input->post('layer')==1){
 
-                  for ($i = 1; $i <= $this->input->post('layer_1_rows'); $i++) {
+                for($i=1;$i<=$this->input->post('layer_1_rows');$i++) {
 
 
-                    $sleeve_details = array(
-                      'quotation_no' => $sales_quotation_no,
-                      'version_no' => $version_no,
-                      'layer' => $this->input->post('layer'),
-                      'micron' => $this->input->post('micron'),
-                      'rm' => $this->input->post('layer_1_rm_' . $i . ''),
-                      'rm_code' => $this->input->post('layer_1_rm_' . $i . '_code'),
-                      'rm_rate' => $this->input->post('layer_1_rm_' . $i . '_rate'),
-                      'rm_percentage' => $this->input->post('layer_1_rm_' . $i . '_percentage'),
-                      'rejection' => $this->input->post('layer1_rejection'),
-                      'quantity' => $this->input->post('quantity'),
-                      'sleeve_per_cost' => $this->input->post('sleeve_cost'),
-                      'company_id' => $this->session->userdata['logged_in']['company_id']
-
-                    );
-                    $result_sales_quote_sleeve_details = $this->common_model->save('sales_quote_sleeve_details', $sleeve_details);
+                    $sleeve_details = array('quotation_no'=>$sales_quotation_no,
+                                            'version_no'=>$version_no,
+                                            'layer'=>$this->input->post('layer'),
+                                            'micron'=>$this->input->post('micron'),
+                                            'rm'=>$this->input->post('layer_1_rm_'.$i.''),
+                                            'rm_code'=>$this->input->post('layer_1_rm_'.$i.'_code'),
+                                            'rm_rate'=>$this->input->post('layer_1_rm_'.$i.'_rate'),
+                                            'rm_percentage'=>$this->input->post('layer_1_rm_'.$i.'_percentage'),
+                                            'rejection'=>$this->input->post('layer1_rejection'),
+                                            'quantity'=>$this->input->post('quantity'),                                            
+                                            'sleeve_per_cost'=>$this->input->post('sleeve_cost'),
+                                            'company_id'=>$this->session->userdata['logged_in']['company_id']  
+                                            
+                                          );
+                    $result_sales_quote_sleeve_details=$this->common_model->save('sales_quote_sleeve_details',$sleeve_details); 
                     //echo $this->db->last_query();
                   }
-                }
+               }
 
-                if ($this->input->post('layer') == 2) {
+               if($this->input->post('layer')==2){
 
-                  for ($i = 1; $i <= $this->input->post('layer_2_rows'); $i++) {
+                for($i=1;$i<=$this->input->post('layer_2_rows');$i++) {
 
 
-                    $sleeve_details = array(
-                      'quotation_no' => $sales_quotation_no,
-                      'version_no' => $version_no,
-                      'layer' => $this->input->post('layer'),
-                      'micron' => $this->input->post('layer_2_layer_' . $i . '_micron'),
-                      'rm' => $this->input->post('layer_2_rm_' . $i . ''),
-                      'rm_code' => $this->input->post('layer_2_rm_' . $i . '_code'),
-                      'rm_rate' => $this->input->post('layer_2_rm_' . $i . '_rate'),
-                      'rm_percentage' => $this->input->post('layer_2_rm_' . $i . '_percentage'),
-                      'rejection' => $this->input->post('layer2_rejection'),
-                      'quantity' => $this->input->post('layer2_quantity'),
-                      'sleeve_per_cost' => $this->input->post('layer2_sleeve_cost'),
-                      'company_id' => $this->session->userdata['logged_in']['company_id']
-
-                    );
-                    $result_sales_quote_sleeve_details = $this->common_model->save('sales_quote_sleeve_details', $sleeve_details);
+                    $sleeve_details = array('quotation_no'=>$sales_quotation_no,
+                                            'version_no'=>$version_no,
+                                            'layer'=>$this->input->post('layer'),
+                                            'micron'=>$this->input->post('layer_2_layer_'.$i.'_micron'), 
+                                            'rm'=>$this->input->post('layer_2_rm_'.$i.''),
+                                            'rm_code'=>$this->input->post('layer_2_rm_'.$i.'_code'),
+                                            'rm_rate'=>$this->input->post('layer_2_rm_'.$i.'_rate'),
+                                            'rm_percentage'=>$this->input->post('layer_2_rm_'.$i.'_percentage'),
+                                            'rejection'=>$this->input->post('layer2_rejection'),
+                                            'quantity'=>$this->input->post('layer2_quantity'),     
+                                            'sleeve_per_cost'=>$this->input->post('layer2_sleeve_cost'),
+                                            'company_id'=>$this->session->userdata['logged_in']['company_id']  
+                                            
+                                          );
+                    $result_sales_quote_sleeve_details=$this->common_model->save('sales_quote_sleeve_details',$sleeve_details); 
                     //echo $this->db->last_query();
                   }
-                }
+               }
 
-                if ($this->input->post('layer') == 3) {
+               if($this->input->post('layer')==3){
 
-                  for ($i = 1; $i <= $this->input->post('layer_3_rows'); $i++) {
+                for($i=1;$i<=$this->input->post('layer_3_rows');$i++) {
 
 
-                    $sleeve_details = array(
-                      'quotation_no' => $sales_quotation_no,
-                      'version_no' => $version_no,
-                      'layer' => $this->input->post('layer'),
-                      'micron' => $this->input->post('layer_3_layer_' . $i . '_micron'),
-                      'rm' => $this->input->post('layer_3_rm_' . $i . ''),
-                      'rm_code' => $this->input->post('layer_3_rm_' . $i . '_code'),
-                      'rm_rate' => $this->input->post('layer_3_rm_' . $i . '_rate'),
-                      'rm_percentage' => $this->input->post('layer_3_rm_' . $i . '_percentage'),
-                      'rejection' => $this->input->post('layer3_rejection'),
-                      'quantity' => $this->input->post('layer3_quantity'),
-                      'sleeve_per_cost' => $this->input->post('layer3_sleeve_cost'),
-                      'company_id' => $this->session->userdata['logged_in']['company_id']
-
-                    );
-                    $result_sales_quote_sleeve_details = $this->common_model->save('sales_quote_sleeve_details', $sleeve_details);
+                    $sleeve_details = array('quotation_no'=>$sales_quotation_no,
+                                            'version_no'=>$version_no,
+                                            'layer'=>$this->input->post('layer'),
+                                            'micron'=>$this->input->post('layer_3_layer_'.$i.'_micron'), 
+                                            'rm'=>$this->input->post('layer_3_rm_'.$i.''),
+                                            'rm_code'=>$this->input->post('layer_3_rm_'.$i.'_code'),
+                                            'rm_rate'=>$this->input->post('layer_3_rm_'.$i.'_rate'),
+                                            'rm_percentage'=>$this->input->post('layer_3_rm_'.$i.'_percentage'),
+                                            'rejection'=>$this->input->post('layer3_rejection'),
+                                            'quantity'=>$this->input->post('layer3_quantity'),     
+                                            'sleeve_per_cost'=>$this->input->post('layer3_sleeve_cost'),
+                                            'company_id'=>$this->session->userdata['logged_in']['company_id']  
+                                            
+                                          );
+                    $result_sales_quote_sleeve_details=$this->common_model->save('sales_quote_sleeve_details',$sleeve_details); 
                     //echo $this->db->last_query();
                   }
-                }
+               }
 
-                if ($this->input->post('layer') == 5) {
+               if($this->input->post('layer')==5){
 
-                  for ($i = 1; $i <= $this->input->post('layer_5_rows'); $i++) {
+                for($i=1;$i<=$this->input->post('layer_5_rows');$i++) {
 
 
-                    $sleeve_details = array(
-                      'quotation_no' => $sales_quotation_no,
-                      'version_no' => $version_no,
-                      'layer' => $this->input->post('layer'),
-                      'micron' => $this->input->post('layer_5_layer_' . $i . '_micron'),
-                      'rm' => $this->input->post('layer_5_rm_' . $i . ''),
-                      'rm_code' => $this->input->post('layer_5_rm_' . $i . '_code'),
-                      'rm_rate' => $this->input->post('layer_5_rm_' . $i . '_rate'),
-                      'rm_percentage' => $this->input->post('layer_5_rm_' . $i . '_percentage'),
-                      'rejection' => $this->input->post('layer5_rejection'),
-                      'quantity' => $this->input->post('layer5_quantity'),
-                      'sleeve_per_cost' => $this->input->post('layer5_sleeve_cost'),
-                      'company_id' => $this->session->userdata['logged_in']['company_id']
-
-                    );
-                    $result_sales_quote_sleeve_details = $this->common_model->save('sales_quote_sleeve_details', $sleeve_details);
+                    $sleeve_details = array('quotation_no'=>$sales_quotation_no,
+                                            'version_no'=>$version_no,
+                                            'layer'=>$this->input->post('layer'),
+                                            'micron'=>$this->input->post('layer_5_layer_'.$i.'_micron'), 
+                                            'rm'=>$this->input->post('layer_5_rm_'.$i.''),
+                                            'rm_code'=>$this->input->post('layer_5_rm_'.$i.'_code'),
+                                            'rm_rate'=>$this->input->post('layer_5_rm_'.$i.'_rate'),
+                                            'rm_percentage'=>$this->input->post('layer_5_rm_'.$i.'_percentage'),
+                                            'rejection'=>$this->input->post('layer5_rejection'),
+                                            'quantity'=>$this->input->post('layer5_quantity'),     
+                                            'sleeve_per_cost'=>$this->input->post('layer5_sleeve_cost'),
+                                            'company_id'=>$this->session->userdata['logged_in']['company_id']  
+                                            
+                                          );
+                    $result_sales_quote_sleeve_details=$this->common_model->save('sales_quote_sleeve_details',$sleeve_details); 
                     //echo $this->db->last_query();
                   }
-                }
+               }
 
-                if ($this->input->post('layer') == 7) {
+               if($this->input->post('layer')==7){
 
-                  for ($i = 1; $i <= $this->input->post('layer_7_rows'); $i++) {
+                for($i=1;$i<=$this->input->post('layer_7_rows');$i++) {
 
 
-                    $sleeve_details = array(
-                      'quotation_no' => $sales_quotation_no,
-                      'version_no' => $version_no,
-                      'layer' => $this->input->post('layer'),
-                      'micron' => $this->input->post('layer_7_layer_' . $i . '_micron'),
-                      'rm' => $this->input->post('layer_7_rm_' . $i . ''),
-                      'rm_code' => $this->input->post('layer_7_rm_' . $i . '_code'),
-                      'rm_rate' => $this->input->post('layer_7_rm_' . $i . '_rate'),
-                      'rm_percentage' => $this->input->post('layer_7_rm_' . $i . '_percentage'),
-                      'rejection' => $this->input->post('layer7_rejection'),
-                      'quantity' => $this->input->post('layer7_quantity'),
-                      'sleeve_per_cost' => $this->input->post('layer7_sleeve_cost'),
-                      'company_id' => $this->session->userdata['logged_in']['company_id']
-
-                    );
-                    $result_sales_quote_sleeve_details = $this->common_model->save('sales_quote_sleeve_details', $sleeve_details);
+                    $sleeve_details = array('quotation_no'=>$sales_quotation_no,
+                                            'version_no'=>$version_no,
+                                            'layer'=>$this->input->post('layer'),
+                                            'micron'=>$this->input->post('layer_7_layer_'.$i.'_micron'), 
+                                            'rm'=>$this->input->post('layer_7_rm_'.$i.''),
+                                            'rm_code'=>$this->input->post('layer_7_rm_'.$i.'_code'),
+                                            'rm_rate'=>$this->input->post('layer_7_rm_'.$i.'_rate'),
+                                            'rm_percentage'=>$this->input->post('layer_7_rm_'.$i.'_percentage'),
+                                            'rejection'=>$this->input->post('layer7_rejection'),
+                                            'quantity'=>$this->input->post('layer7_quantity'),     
+                                            'sleeve_per_cost'=>$this->input->post('layer7_sleeve_cost'),
+                                            'company_id'=>$this->session->userdata['logged_in']['company_id']  
+                                            
+                                          );
+                    $result_sales_quote_sleeve_details=$this->common_model->save('sales_quote_sleeve_details',$sleeve_details); 
                     //echo $this->db->last_query();
                   }
-                }
+               }
 
-                if (!empty($this->input->post('approval_authority'))) {
+                if(!empty($this->input->post('approval_authority'))){
 
-                  $data = array('pending_flag' => '1');
-                  $result = $this->common_model->update_one_active_record_where('sales_quote_master', $data, 'quotation_no', $sales_quotation_no, 'version_no', $version_no, $this->session->userdata['logged_in']['company_id']);
+                  $data=array('pending_flag'=>'1');
+                  $result=$this->common_model->update_one_active_record_where('sales_quote_master',$data,'quotation_no',$sales_quotation_no,'version_no',$version_no,$this->session->userdata['logged_in']['company_id']);
 
-                  $data['followup'] = $this->common_model->select_one_active_record_nonlanguage_without_archive('followup', $this->session->userdata['logged_in']['company_id'], 'record_no', $sales_quotation_no . '@@@' . $version_no);
-                  if ($data['followup'] == FALSE) {
-                    $transaction_no = 1;
-                    $status = 1;
-                  } else {
-                    $i = 1;
-                    foreach ($data['followup'] as $followup_row) {
-                      $transaction_no = $followup_row->transaction_no;
-                      $status = 1;
-                      $i++;
+                    $data['followup']=$this->common_model->select_one_active_record_nonlanguage_without_archive('followup',$this->session->userdata['logged_in']['company_id'],'record_no',$sales_quotation_no.'@@@'.$version_no);
+                    if($data['followup']==FALSE){
+                      $transaction_no=1;
+                      $status=1;
+                    }else{
+                      $i=1;
+                      foreach ($data['followup'] as $followup_row) {
+                        $transaction_no=$followup_row->transaction_no;
+                        $status=1;
+                        $i++;
+                      }
+                      $transaction_no=$i;
                     }
-                    $transaction_no = $i;
-                  }
 
-                  $data = array(
-                    'company_id' => $this->session->userdata['logged_in']['company_id'],
-                    'user_id' => $this->input->post('approval_authority'),
-                    'form_id' => '91',
-                    'transaction_no' => $transaction_no,
-                    'status' => $status,
-                    'followup_date' => date('Y-m-d'),
-                    'contact_person_id' => $this->session->userdata['logged_in']['user_id'],
-                    'record_no' => $sales_quotation_no . '@@@' . $version_no,
-                  );
+                    $data=array(
+                      'company_id'=>$this->session->userdata['logged_in']['company_id'],
+                      'user_id'=>$this->input->post('approval_authority'),
+                      'form_id'=>'91',
+                      'transaction_no'=>$transaction_no,
+                      'status'=>$status,
+                      'followup_date'=>date('Y-m-d'),
+                      'contact_person_id'=>$this->session->userdata['logged_in']['user_id'],
+                      'record_no'=>$sales_quotation_no.'@@@'.$version_no,
+                      );
 
-                  $result = $this->common_model->save('followup', $data);
-                }
+                    $result=$this->common_model->save('followup',$data);
 
+                    $sales_quote_master=$this->sales_quote_model->select_one_active_record_where('sales_quote_master',$this->session->userdata['logged_in']['company_id'],'sales_quote_master.quotation_no',$sales_quotation_no,'sales_quote_revision.version_no',$version_no);
+        
+                    foreach ($sales_quote_master as $sales_quote_master_row){
+                      
+                      $quotation_date  = $this->common_model->view_date($sales_quote_master_row->quotation_date,$this->session->userdata['logged_in']['company_id']);
+                      
+                      $prepared_by     = $this->common_model->get_user_name($sales_quote_master_row->user_id,$this->session->userdata['logged_in']['company_id']);
+                      
+                      $customer_result = $this->common_model->select_one_active_record('address_category_master',$this->session->userdata['logged_in']['company_id'],'adr_category_id',$sales_quote_master_row->customer_no);
+                        if($customer_result==TRUE){
+                          foreach($customer_result as $customer_row){
+                            $billing_to = $customer_row->category_name;
+                          }
+                        }
+                      
+                      $sales_quote_customer_contact_details=$this->common_model->select_one_record_with_company('address_category_contact_details',$this->session->userdata['logged_in']['company_id'],'address_category_contact_id',$sales_quote_master_row->pm_1);
+                        foreach ($sales_quote_customer_contact_details as $key => $sales_quote_customer_contact_details_row) {
+                            $billing_name = $sales_quote_customer_contact_details_row->contact_name;
+                        }
+                      
+                      $billing_contact_no   = $sales_quote_master_row->company_contact_no;
+                      $billing_address      = $sales_quote_master_row->address;
+                      $billing_email        = strtoupper($sales_quote_master_row->company_email);
+                      $billing_state_name   = strtoupper($this->common_model->get_state_name($sales_quote_master_row->state,$this->session->userdata['logged_in']['company_id']));
+                      $billing_country_name = $sales_quote_master_row->lang_country_name;
+                      $patyment_terms       = $sales_quote_master_row->credit_days.' Days';
+                      $tube_dia_length      = $sales_quote_master_row->sleeve_diameter." X ".$sales_quote_master_row->sleeve_length." MM";
+                      $cap_types            = $sales_quote_master_row->cap_types;
+                      $special_ink          = ($sales_quote_master_row->special_ink== 'YES' ? 'YES' : '-');
+                      $tube_layer           = ($sales_quote_master_row->layer== '1' ? 'MONO LAYER' : ($sales_quote_master_row->layer== '7' ? 'SPRING': ($sales_quote_master_row->layer== '5' ? 'MULTI LAYER': ($sales_quote_master_row->layer== '2' ? '2 LAYER': ($sales_quote_master_row->layer== '3' ? '3 LAYER': '-')) ) ));
+                      $cap_color            = strtoupper( $sales_quote_master_row->cap_color);
+                      $shoulder_foil        = ($sales_quote_master_row->shoulder_foil== 'YES' ? 'YES' : '-');
+                      $tube_color           = strtoupper($sales_quote_master_row->tube_color);
+                      $cap_finishes         = strtoupper($sales_quote_master_row->cap_finishes);
+                      $cap_foil             = ($sales_quote_master_row->cap_foil== 'YES' ? 'YES' : '-');
+                      $print_type           = $sales_quote_master_row->print_type;
+                      $cap_dias             = strtoupper($sales_quote_master_row->cap_dias);
+                      $cap_shrink_sleeve    = ($sales_quote_master_row->cap_shrink_sleeve== 'YES' ? 'YES' : '-');
+                      $tube_lacquer         = strtoupper ($sales_quote_master_row->tube_lacquer);
+                      $cap_orifice          = $sales_quote_master_row->cap_ori;
+                      $cap_metalization     = ($sales_quote_master_row->cap_metalization== 'YES' ? 'YES' : '-');
+                      $shoulder_type        = strtoupper ($sales_quote_master_row->shoulder_type);
+                      $tube_foil            = ($sales_quote_master_row->tube_foil== 'YES' ? 'YES' : '-');
+                      $shoulder_orifice     = strtoupper ($sales_quote_master_row->shoulder_ori);
+                      $shoulder_color       = strtoupper ($sales_quote_master_row->shoulder_color);
+                      $remarks              = strtoupper($sales_quote_master_row->remarks);
+                      $created_by_mailbox   = $sales_quote_master_row->created_by_mailbox;
+                    }
 
-                if ($result_sales_quote_master != '') {
+                    $free_qty_ = $this->input->post('free_quantity');
 
-                  $data['sales_quote_master']=$this->sales_quote_model->select_one_active_record('sales_quote_master',$this->session->userdata['logged_in']['company_id'],'sales_quote_master.quotation_no',$sales_quotation_no);
-
-                  foreach ($data['sales_quote_master'] as $sales_quote_master_row): {
-                   // echo "<pre>";print_r($sales_quote_master_row);die();
-
-
-                    $prepared_by = $this->common_model->get_user_name($sales_quote_master_row->user_id, $this->session->userdata['logged_in']['company_id']);
-                    $cc_email = $this->common_model->get_user_email($sales_quote_master_row->user_id, $this->session->userdata['logged_in']['company_id']);
-
-                    $to_email = $this->common_model->get_user_email($sales_quote_master_row->approved_by, $this->session->userdata['logged_in']['company_id']);
-
-                  $filename = base_url('assets/img/logo.png');
-                  $smtp_user = $this->config->item('smtp_user');
-
-                  $smtp_pass = $this->config->item('smtp_pass');
-                  $config['protocol'] = 'smtp';
-                  $config['smtp_host'] = 'ssl://smtp.googlemail.com';
-                  $config['smtp_port'] = 465;
-                  $config['smtp_timeout'] = 60;
-                  $config['charset'] = 'utf-8';
-                  $config['mailtype'] = 'html';
-                  $config['validation'] = 'TRUE';
-                  $config['smtp_user'] = 'auto.mailer@3d-neopac.com';
-                  $config['smtp_pass'] = 'auto@2223';
-                  $config['newline'] = "\r\n";
-                  $this->load->library('email', $config);
-                 $this->email->from("auto.mailer@3d-neopac.com");
-                 $this->email->to("yatin.patel@3d-neopac.com");
-                 //$this->email->cc("$cc_email");
-                  //$this->email->bcc('ankit.shukla@3d-neopac.com');
-                  $this->email->subject("Sales Quote  " . $sales_quote_master_row->quotation_no . " Version " . $sales_quote_master_row->version_no. " ");
-                  $this->email->attach($filename);
-                  $cid = $this->email->attachment_cid($filename);
-                 
-
+                    $filename = base_url('assets/img/logo.png');
+                    $smtp_user=$this->config->item('smtp_user');
+                    $smtp_pass=$this->config->item('smtp_pass');
+                    $config['protocol'] = 'smtp';
+                    $config['smtp_host'] = 'ssl://smtp.googlemail.com';
+                    $config['smtp_port'] = 465;
+                    $config['smtp_timeout'] = 60;
+                    $config['charset'] = 'utf-8';
+                    $config['mailtype'] = 'html';
+                    $config['validation'] = 'TRUE';
+                    $config['smtp_user']= 'auto.mailer@3d-neopac.com';
+                    $config['smtp_pass']='auto@2223';
+                    $config['newline']= "\r\n";
+                    $this->load->library('email', $config);
+                    $this->email->from("auto.mailer@3d-neopac.com");
+                    //$to_emails = "prasad.sathe@3d-neopac.com, erp@3d-neopac.com, $created_by_mailbox";
+                    //$this->email->to($to_emails);
+                    $this->email->to('ankit.shukla@3d-neopac.com');
+                    $this->email->subject("SALES QUOTE:-".$sales_quotation_no." REV ".$version_no." ");
+                    $this->email->attach($filename);
+                    $cid = $this->email->attachment_cid($filename);
 
                   $html = '<!DOCTYPE>
-              <html>
-               <head><title>Sales Order</title>
-                <style>table {border:1px solid #ddd;border-collapse:collapse;font-size:10px;width:100%;color:black;font-family:verdana;}th {border:1px solid #ddd;text-align: left;background-color:#DFFCFC;font-weight:bold;font-size:10px;}td {border:1px solid #ddd;text-align: left;font-size:10px;}        .ui.teal.labels .label {background-color: #00b5ad!important;border-color: #00b5ad!important;color: #fff!important;}.invoice-box table {width: 100%;line-height: 12px;text-align: left;}.invoice-box table td {padding: 3px !important;}.invoice-box table tr td:nth-child(2) {text-align: center;}
-                </style>
-               </head>         
-               <body>
-               <div style="margin-top:5px;width:875px;margin:0px auto;background-color:#ddd;border:1px solid #ddd;font-family:verdana;">
-               <div style="padding:3px;background-color: #ffffff">  
-               <div style="margin-top:20px;>
-               <table cellpadding="0" cellspacing="0" border="0">          
-                <tbody>
-                 <tr>
-                <td class="title" width="5%">
-                 <div style="text-align:center;"">
-                  <img src="cid:' . $cid . '" style="max-width:130px;height:30px;"><br/>
-                  <span style="font-size:10px;"><b>3D TECHNOPACK PVT LTD</b><br/>
-                  SURVEY NO 8/1, VILLAGE ATHAL, SILVASSA, DADRA NAGAR HAVELI, PIN : 396230, INDIA</span>
-                 </div>
-                </td>
-                 </tr>                      
-                </tbody>
-                </table>
-
-                <div class="ui teal labels" style="text-align: center;">
-                  <div class="ui label">SALES QUOTE</div>
-                </div>
-
-                 <table width="100%" cellpadding="3" cellspacing="0" style="margin-top: 10px;">
-                  <tr class="heading">
-                    <td width="15%" style="background-color:#dffcfc;"><b>QUOTE NO</td>
-                    <td width="35%" style="background-color:#dffcfc;"><b>' . $sales_quote_master_row->quotation_no  . ' ' .'REV' .$sales_quote_master_row->version_no . ' </b></td>
-                    <td width="15%" style="background-color:#dffcfc;"><b>QUOTE DATE</b></td>
-                    <td width="35%" style="background-color:#dffcfc;">' . $this->common_model->view_date($sales_quote_master_row->quotation_date, $this->session->userdata['logged_in']['company_id']). '</td>                        
-                  </tr>
-                  <tr class="item last">
-                    <td width="15%"><b>PREPARED BY</b></td>
-                    <td width="35%">' . $prepared_by . '</td>                        
-                    <td width="15%"><b>QUOTE VALIDITY</b></td>
-                    <td width="35%"><i>FOR 30 DAYS</i></td>
-                  </tr>  
-                  </table>
-      <table cellpadding="3" cellspacing="0" style="border:1px solid #D9d9d9;">
-        <tr class="heading">
-            <td width="15%" style="background-color:#dffcfc;"><b>BILLING </td>
-            
-            <td width="34%" style="background-color:#dffcfc;" ></td>
-            <td width="15%" style="background-color:#dffcfc;"><b>SHIPPING</td>
-            <td width="34%" style="background-color:#dffcfc;" ></td>
-          
-        </tr>';
-        $customer_result = $this->common_model->select_one_active_record('address_category_master', $this->session->userdata['logged_in']['company_id'], 'adr_category_id', $sales_quote_master_row->customer_no);
-                    if ($customer_result == TRUE) {
-                        foreach ($customer_result as $customer_row) {
-                            $customer_row->category_name;
+                    <html>
+                    <head><title>Sales Order</title>
+                      <style>
+                        table {
+                          border:1px solid #ddd;
+                          border-collapse:collapse;
+                          font-size:10px;
+                          width:100%;
+                          color:black;
+                          font-family:verdana;
                         }
+
+                        th {
+
+                          border:1px solid #ddd;
+                          text-align: left;
+                          background-color:#DFFCFC;
+                          font-weight:bold;
+                          font-size:11px;
+                        }
+
+                        td {
+                          border:1px solid #ddd;
+                          text-align: left;            
+                          font-size:11px;
+                        }        
+                        .ui.teal.labels .label {
+                            background-color: #00b5ad!important;
+                            border-color: #00b5ad!important;
+                            color: #fff!important;
+                        }
+                        .invoice-box table {
+                            width: 100%;
+                            line-height: 12px;
+                            text-align: left;
+                        }
+                        .invoice-box table td {
+                            padding: 3px !important;
+                        }
+                        .invoice-box table tr td:nth-child(2) {
+                            text-align: center;
+                        }
+                      </style>
+                    </head>         
+                    <body>
+                    <div style="margin-top:5px;width:850px;margin:0px auto;background-color:#ddd;border:1px solid #ddd;font-family:verdana;">
+                    <div style="padding:3px;background-color: #f5f5f5">  
+                    <div style="margin-top:20px;>
+                    <table cellpadding="0" cellspacing="0" border="0">          
+                      <tbody>
+                          <tr>
+                            <td class="title" width="5%">
+                               <div style="text-align:center;"">
+                                  <img src="cid:'.$cid.'" style="max-width:130px;height:30px;"><br/>
+                                  <span style="font-size:10px;"><b>3D TECHNOPACK PVT LTD</b><br/>
+                                  SURVEY NO 8/1, VILLAGE ATHAL, SILVASSA, DADRA NAGAR HAVELI, PIN : 396230, INDIA</span>
+                                </div>
+                            </td>
+                        </tr>                      
+                      </tbody>
+                    </table>
+                    <div class="ui teal labels" style="text-align: center;">
+                      <div class="ui label">
+                        SALES QUOTE
+                      </div>
+                    </div>
+                    <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;">
+                      <tr class="heading">
+                        <td width="16%"><b>QUOTE NO</td>
+                        <td width="34%" style="border-right:1px solid #D9d9d9;"><b>'.$sales_quotation_no.' REV'.$version_no.'</b></td>
+                        <td width="16%"><b>QUOTE DATE</b></td>
+                        <td width="34%">'.$quotation_date.'</td>            
+                      </tr>
+                      <tr class="item last">
+                        <td>PREPARED BY</td>
+                        <td style="border-right:1px solid #D9d9d9;">'.$prepared_by.'</td>
+                        <td>QUOTE VALIDITY</td>
+                        <td><i>FOR 30 DAYS</i></td>                       
+                      </tr>
+                    </table>
+                    <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;">
+                     <tr class="heading">
+                      <td width="16%" style="background:#dffcfc;"><b>BILLING </td>
+                      <td width="34%" style="border-right:1px solid #D9d9d9;background:#dffcfc;"></td>
+                      <td width="16%" style="background:#dffcfc;"><b>SHIPPING</td>
+                      <td width="34%" style="background:#dffcfc;"></td>
+                     </tr>
+                     <tr class="item">
+                      <td><b>BILL TO</b></td>
+                      <td style="border-right:1px solid #D9d9d9;"><b>'.$billing_to.'</b></td>
+                      <td><b>SHIP TO</b></td>
+                      <td>SAME AS BILLING</td>
+                     </tr>
+                     <tr class="item">
+                      <td><b>NAME</b></td>
+                      <td style="border-right:1px solid #D9d9d9;">'.$billing_name.'</td>
+                      <td><b>NAME</b></td>
+                      <td>-</td>
+                     </tr>
+                     <tr class="item">
+                      <td><b>CONTACT NO</b></td>
+                      <td style="border-right:1px solid #D9d9d9;">'.$billing_contact_no.'</td>
+                      <td><b>CONTACT NO</b></td>
+                      <td>-</td>
+                     </tr>
+                     <tr class="item">
+                      <td><b>ADDRESS</b></td>
+                      <td style="border-right:1px solid #D9d9d9;">'.$billing_address.'</td>
+                      <td><b>ADDRESS</b></td>
+                      <td>-</td>
+                     </tr>
+                     <tr class="item">
+                      <td><b>EMAIL</b></td>
+                      <td style="border-right:1px solid #D9d9d9;">'.$billing_email.'</td>
+                      <td><b>EMAIL</b></td>
+                      <td>-</td>
+                     </tr>
+                     <tr class="item">
+                      <td><b>STATE</b></td>
+                      <td style="border-right:1px solid #D9d9d9;">'.$billing_state_name.'</td>
+                      <td><b>STATE</b></td>
+                      <td>-</td>
+                     </tr>
+                     <tr class="item">
+                      <td><b>COUNTRY</b></td>
+                      <td style="border-right:1px solid #D9d9d9;">'.$billing_country_name.'</td>
+                      <td><b>COUNTRY</b></td>
+                      <td>-</td>
+                     </tr>
+                     <tr class="item last">
+                      <td><b>PAYMENT TERM</b></td>
+                      <td style="border-right:1px solid #D9d9d9;">'.$patyment_terms.'</td>
+                      <td><b></b></td>
+                      <td></td>
+                     </tr>
+                    </table>';
+
+                    $html.= '<br/>
+                    <table cellpadding="7" cellspacing="0" style="border:1px solid #D9d9d9;">
+                     <tr class="heading">
+                      <td width="5%" style="background:#dffcfc;font-weight: bold;text-align: center;"><b>SR NO</td>
+                      <td width="45%"  style="border-right:1px solid #D9d9d9;background:#dffcfc;font-weight: bold;text-align: center;">PRODUCT NAME</td>
+                      <td width="10%" style="border-right:1px solid #D9d9d9;background:#dffcfc;font-weight: bold;text-align: center;">QUANTITY</td>
+                      <td width="10%" style="border-right:1px solid #D9d9d9;background:#dffcfc;font-weight: bold;text-align: center;">UNIT PRICE</td>      
+                      <td width="10%" style="border-right:1px solid #D9d9d9;background:#dffcfc;font-weight: bold;text-align: center;">CONTR.</td>      
+                      <td width="10%" style="border-right:1px solid #D9d9d9;background:#dffcfc;font-weight: bold;text-align: center;">COST</td>      
+                      <td width="10%" style="background:#dffcfc;font-weight: bold;text-align: center;">NET AMOUNT</td>
+                     </tr>';
+
+                    $i=1;
+                    $total_quantity=0;
+                    $total_net_value=0;
+                    $total_amount=0; 
+           
+                    if($sales_quote_master_row->_5k_flag==1){
+                      $html.= '<tr class="item">
+                                  <td>'.$i.'</td>
+                                  <td style="border-right:1px solid #D9d9d9;">'.strtoupper ($sales_quote_master_row->product_name).'</td>
+                                  <td style="border-right:1px solid #D9d9d9; text-align: right;">5,000</td>                               
+                                  <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;'.($sales_quote_master_row->_5k_quoted_price<>0 ? number_format($sales_quote_master_row->_5k_quoted_price,2,'.','') : '').'</td>
+                                  <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;'.($sales_quote_master_row->_5k_quoted_contr<>0 ? number_format($sales_quote_master_row->_5k_quoted_contr,2,'.','') : '').'</td>
+                                  <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;'.($sales_quote_master_row->_5k_cost<>0 ? number_format($sales_quote_master_row->_5k_cost,2,'.','') : '').'</td>
+                                  <td style="text-align: right;">'.money_format('%.0n',(5000*$sales_quote_master_row->_5k_quoted_price)).'/-</td>   
+                                </tr>';
+                      $total_quantity+=5000;
+                      $total_net_value+=(5000*$sales_quote_master_row->_5k_quoted_price);
+                      $i++;         
                     }
 
-        $html.='<tr class="item">
-            <td><b>BILL TO</b></td>
-            <td style="border-right:1px solid #D9d9d9;"><b>'.$customer_row->category_name.'</b></td>
-            <td><b>SHIP TO</b></td>
-           
-            <td>SAME AS BILLING</td>
-        </tr>';
-        $sales_quote_customer_contact_details = $this->common_model->select_one_record_with_company('address_category_contact_details', $this->session->userdata['logged_in']['company_id'], 'address_category_contact_id', $sales_quote_master_row->pm_1);
-        foreach ($sales_quote_customer_contact_details as $key => $sales_quote_customer_contact_details_row) {
-           $sales_quote_customer_contact_details_row->contact_name;
-        }
+                    if($sales_quote_master_row->_10k_flag==1){
+                      $html.= '<tr class="item">
+                                  <td>'.$i.'</td>             
+                                  <td style="border-right:1px solid #D9d9d9;">'.strtoupper ($sales_quote_master_row->product_name).'</td>
+                                  <td style="border-right:1px solid #D9d9d9;text-align: right;">10,000</td>              
+                                  <td style="border-right:1px solid #D9d9d9;text-align: right;">&#8377;'.($sales_quote_master_row->_10k_quoted_price<>0 ? number_format($sales_quote_master_row->_10k_quoted_price,2,'.','') : '').'</td>
+                                  <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;'.($sales_quote_master_row->_10k_quoted_contr<>0 ? number_format($sales_quote_master_row->_10k_quoted_contr,2,'.','') : '').'</td>
+                                  <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;'.($sales_quote_master_row->_10k_cost<>0 ? number_format($sales_quote_master_row->_10k_cost,2,'.','') : '').'</td>
+                                  <td style="text-align: right;">'.money_format('%.0n',(10000*$sales_quote_master_row->_10k_quoted_price)).'/-</td>
+                                </tr>';
+                      $total_quantity+=10000;
+                      $total_net_value+=(10000*$sales_quote_master_row->_10k_quoted_price);
+                      $i++;
+                    }
+                     
+                    if($sales_quote_master_row->_25k_flag==1){
+                        $html.= '<tr class="item">
+                                    <td>'.$i.'</td>
+                                    <td style="border-right:1px solid #D9d9d9;">'.strtoupper ($sales_quote_master_row->product_name).'</td>             
+                                    <td style="border-right:1px solid #D9d9d9;text-align: right;">25,000</td>
+                                    <td style="border-right:1px solid #D9d9d9;text-align: right;">&#8377;'.($sales_quote_master_row->_25k_quoted_price<>0 ? number_format($sales_quote_master_row->_25k_quoted_price,2,'.','') : '').'</td>  
+                                    <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;'.($sales_quote_master_row->_25k_quoted_contr<>0 ? number_format($sales_quote_master_row->_25k_quoted_contr,2,'.','') : '').'</td>
+                                    <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;'.($sales_quote_master_row->_25k_cost<>0 ? number_format($sales_quote_master_row->_25k_cost,2,'.','') : '').'</td>              
+                                    <td style="text-align: right;">'.money_format('%.0n',(25000*$sales_quote_master_row->_25k_quoted_price)).'/-</td>
+                                  </tr>';
+                      $total_quantity+=25000;
+                      $total_net_value+=(25000*$sales_quote_master_row->_25k_quoted_price);
+                      $i++;
+                    }
 
-        $html.='<tr class="item">
-            <td><b>NAME</b></td>
-           
-            <td style="border-right:1px solid #D9d9d9;">
-            '.$sales_quote_customer_contact_details_row->contact_name.'</td>
-            <td><b>NAME</b></td>
-           
-            <td>-</td>
-        </tr>
-        <tr class="item">
-            <td><b>CONTACT NO</b></td>
-         
-            <td style="border-right:1px solid #D9d9d9;">
-               '.$sales_quote_master_row->company_contact_no.'
+                    if($sales_quote_master_row->_50k_flag==1){
+                        $html.= '<tr class="item">
+                                  <td>'.$i.'</td>
+                                  <td style="border-right:1px solid #D9d9d9;">'.strtoupper ($sales_quote_master_row->product_name).'</td>
+                                  <td style="border-right:1px solid #D9d9d9;text-align: right;">50,000</td>
+                                  <td style="border-right:1px solid #D9d9d9;text-align: right;">&#8377;'.($sales_quote_master_row->_50k_quoted_price<>0 ? number_format($sales_quote_master_row->_50k_quoted_price,2,'.','') : '').'</td> 
+                                  <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;'.($sales_quote_master_row->_50k_quoted_contr<>0 ? number_format($sales_quote_master_row->_50k_quoted_contr,2,'.','') : '').'</td>
+                                  <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;'.($sales_quote_master_row->_50k_cost<>0 ? number_format($sales_quote_master_row->_50k_cost,2,'.','') : '').'</td>               
+                                  <td style="text-align: right;">'.money_format('%.0n',(50000*$sales_quote_master_row->_50k_quoted_price)).'/-</td>
+                                </tr>';
+                        $total_quantity+=50000;
+                        $total_net_value+=(50000*$sales_quote_master_row->_50k_quoted_price);
+                      $i++;
+                    }
 
-            </td>
-            <td><b>CONTACT NO</b></td>
-          
-            <td>-</td>
-        </tr>
-
-
-        <tr class="item">
-            <td><b>ADDRESS</b></td>
-           
-            <td style="border-right:1px solid #D9d9d9;">
-                ' .$sales_quote_master_row->address.'
-
-            </td>
-            <td><b>ADDRESS</b></td>
-         
-            <td>-</td>
-        </tr>
-
-        <tr class="item">
-            <td><b>EMAIL</b></td>
-           
-            <td style="border-right:1px solid #D9d9d9;">
-
-                '.strtoupper($sales_quote_master_row->company_email).'
-
-            </td>
-            <td><b>EMAIL</b></td>
-     
-            <td>-</td>
-        </tr>
-
-        <tr class="item">
-            <td><b>STATE</b></td>
-          
-            <td style="border-right:1px solid #D9d9d9;">
-                '.strtoupper($this->common_model->get_state_name($sales_quote_master_row->state, $this->session->userdata['logged_in']['company_id'])).'
-            </td>
-            <td><b>STATE</b></td>
-           
-            <td>-</td>
-        </tr>
-
-        <tr class="item">
-            <td><b>COUNTRY</b></td>
- 
-            <td style="border-right:1px solid #D9d9d9;">'. $sales_quote_master_row->lang_country_name.'
-
-            </td>
-            <td><b>COUNTRY</b></td>
-           
-            <td>-</td>
-        </tr>
-
-        <tr class="item last">
-            <td><b>PAYMENT TERM</b></td>
-          
-            <td style="border-right:1px solid #D9d9d9;">'. $sales_quote_master_row->credit_days.' Days
-
-            </td>
-            <td><b></b></td>
-          
-            <td></td>
-        </tr>
-           <tr>
-                <td width="15%"><b>Date of Enquiry</b></td>
-                <td width="35%">' . $this->common_model->view_date($sales_quote_master_row->quotation_date, $this->session->userdata['logged_in']['company_id']). ' </td>
-                <td width="15%"><b></b></td>
-                <td width="35%"></td>
-                </tr>
-               </table>
-                  
-               <table width="100%" cellpadding="3" cellspacing="0" style="margin-top: 10px;">
-                <tr class="heading">
-                  <td width="100%" colspan="7" style="background-color:#dffcfc !important;"><b>PRODUCT SPECIFICATION</td>
-                </tr>
-
-                <tr class="heading">
-                  <td width="33%" colspan="2" style="background-color:#dffcfc;"><b>TUBE</td>
-                   <td width="33%" colspan="2" style="background-color:#dffcfc;"><b>CAP</td>
-                   <td width="34%" colspan="2" style="background-color:#dffcfc;"><b>DECORATIVE ELEMENTS</td>   
-                </tr>
-
-                <tr class="item">
-                  <td width="15%"><b>TUBE DIA X LENGTH</b></td>
-                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->sleeve_diameter. ' X ' . $sales_quote_master_row->sleeve_length . 'MM</td>
-                  <td width="15%"><b>CAP TYPE</b></td>
-                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->cap_type. '</td>
-                  <td width="15%" ><b>SPECIAL INK</b></td>
-                  <td width="19%" >' . $sales_quote_master_row->special_ink . '</td>
-                </tr>
-
-                <tr class="item">
-                  <td width="15%"><b>TUBE LAYER</b></td>
-                  <td width="18%"style="border-right:1px solid #D9d9d9;">' .($sales_quote_master_row->layer == '1' ? 'MONO LAYER' : ($sales_quote_master_row->layer == '7' ? 'SPRING' : ($sales_quote_master_row->layer == '5' ? 'MULTI LAYER' : ($sales_quote_master_row->layer == '2' ? '2 LAYER' : ($sales_quote_master_row->layer == '3' ? '3 LAYER' : '-'))))) . '</td>
-                  <td width="15%"><b>CAP COLOR</b></td>
-                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->cap_color . '</td>
-                  <td width="15%"><b>SHOULDER FOIL</b></td>
-                  <td width="19%">' . $sales_quote_master_row->shoulder_foil. '</td>
-                </tr>
-
-                <tr class="item">
-                  <td width="15%"><b>TUBE COLOR</b></td>
-                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->tube_color. '</td>
-                  <td width="15%"><b>CAP FINISH</b></td>
-                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->cap_finish . '</td>
-                  <td width="15%"><b>CAP FOIL</b></td>
-                  <td width="19%">' . $sales_quote_master_row->cap_foil . '</td>
-                </tr>
-
-                <tr class="item">
-                  <td width="15%"><b>TUBE PRINT TYPE</b></td>
-                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->print_type . '</td>
-                  <td width="15%"><b>CAP DIA</b></td>
-                  <td width="18%"style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->cap_dia. '</td>
-                  <td width="15%"><b>CAP SHRINK SLEEVE</b></td>
-                  <td width="19%">' .$sales_quote_master_row->cap_shrink_sleeve . '</td>
-                </tr>
-
-                <tr class="item">
-                  <td width="15%"><b>TUBE LACQUER </b></td>
-                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->tube_lacquer . '</td>
-                  <td width="15%"><b>CAP ORIFICE</b></td>
-                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->cap_orifice. '</td>
-                  <td width="15%"><b>CAP METALIZATION</b></td>
-                  <td width="19%">' . $sales_quote_master_row->cap_metalization . '</td>
-                  
-                </tr>
-
-                <tr class="item">
-                  <td width="15%"><b>SHOULDER </b></td>
-                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->shoulder_type . '</td>
-                  <td width="15%"><b></b></td>
-                  <td width="18%" style="border-right:1px solid #D9d9d9;"></td>
-                  <td width="15%"><b>TUBE FOIL</b></td>
-                  <td width="19%">' . $sales_quote_master_row->tube_foil . '</td>
-                </tr>
-
-                <tr class="item">
-                  <td width="15%"><b>SHOULDER ORIFACE </b></td>
-                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->shoulder_orifice. '</td>
-                  <td width="15%"><b></b></td>
-                  <td width="18%" style="border-right:1px solid #D9d9d9;"> </td>
-                  <td width="15%"><b></b></td>
-                  <td width="19%"></td>
-                </tr>
-
-                <tr class="item last">
-                  <td width="15%"><b>SHOULDER COLOR </b></td>
-                  <td width="18%" style="border-right:1px solid #D9d9d9;">' . $sales_quote_master_row->shoulder_color. '</td>
-                  <td width="15%"><b></b></td>
-                  <td width="18%"></td>
-                  <td width="15%"></td>
-                  <td width="19%"></td>
-                </tr>
-                </table>
-          
-        <table cellpadding="4" cellspacing="0" style="border:1px solid #D9d9d9;">
-            <tr class="heading">
-            <td width="5%" style="background-color:#dffcfc;"><b>SR NO</td>
-            <td width="45%" style="background-color:#dffcfc;"><b>PRODUCT NAME</td>
-            <td width="12%" style="background-color:#dffcfc; text-align: right;"><b>QUANTITY</td>
-            <td width="12%" style="background-color:#dffcfc; text-align: right;"><b>UNIT PRICE</td>
-            <td width="20%" style="background-color:#dffcfc; text-align:right;"><b>NET AMOUNT</td>
-
-        </tr>';
-        $i = 1;
-        $total_quantity = 0;
-        $total_net_value = 0;
-        $total_amount = 0;
-        
+                    if($sales_quote_master_row->_100k_flag==1){
+                        $html.= '<tr class="item">
+                                    <td>'.$i.'</td>
+                                    <td style="border-right:1px solid #D9d9d9;">'.strtoupper ($sales_quote_master_row->product_name).'</td>                
+                                    <td style="border-right:1px solid #D9d9d9;text-align: right;">1,00,000</td>
+                                    <td style="border-right:1px solid #D9d9d9;text-align: right;">&#8377;'.($sales_quote_master_row->_100k_quoted_price<>0 ? number_format($sales_quote_master_row->_100k_quoted_price,2,'.','') : '').'</td> 
+                                    <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;'.($sales_quote_master_row->_100k_quoted_contr<>0 ? number_format($sales_quote_master_row->_100k_quoted_contr,2,'.','') : '').'</td>
+                                    <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;'.($sales_quote_master_row->_100k_cost<>0 ? number_format($sales_quote_master_row->_100k_cost,2,'.','') : '').'</td>              
+                                    <td style="border-right:1px solid #D9d9d9;text-align: right;">'.money_format('%.0n',(100000*$sales_quote_master_row->_100k_quoted_price)).'/-</td>
+                                  </tr>';
+                        $total_quantity+=100000;
+                        $total_net_value+=(100000*$sales_quote_master_row->_100k_quoted_price);
+                        $i++;
+                    }
 
 
-        if ($sales_quote_master_row->_5k_flag == 1) {
-            $html.= '<tr class="item">
-                <td>' . $i . '</td>
-                <td style="border-right:1px solid #D9d9d9;">' . strtoupper($sales_quote_master_row->product_name) . '</td>
-                <td style="border-right:1px solid #D9d9d9; text-align: right;">5,000</td>                               
-                <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;' . ($sales_quote_master_row->_5k_quoted_price <> 0 ? number_format($sales_quote_master_row->_5k_quoted_price, 2, '.', '') : '') . '</td>
-                <td style="text-align: right;">' . money_format('%.0n', (5000 * $sales_quote_master_row->_5k_quoted_price)) . '/-</td>    
-            </tr>';
-            $total_quantity += 5000;
-            $total_net_value += (5000 * $sales_quote_master_row->_5k_quoted_price);
-            $i++;
-        }
-        if ($sales_quote_master_row->_10k_flag == 1) {
-            $html.= '<tr class="item">
-                <td>' . $i . '</td>             
-                <td style="border-right:1px solid #D9d9d9;">' . strtoupper($sales_quote_master_row->product_name) . '</td>
-                <td style="border-right:1px solid #D9d9d9;text-align: right;">10,000</td>              
-                <td style="border-right:1px solid #D9d9d9;text-align: right;">&#8377;' . ($sales_quote_master_row->_10k_quoted_price <> 0 ? number_format($sales_quote_master_row->_10k_quoted_price, 2, '.', '') : '') . '</td>
-                <td style="text-align: right;">' . money_format('%.0n', (10000 * $sales_quote_master_row->_10k_quoted_price)) . '/-</td>
-            </tr>';
-            $total_quantity += 10000;
-            $total_net_value += (10000 * $sales_quote_master_row->_10k_quoted_price);
+                    if($sales_quote_master_row->free_flag==1){
+                        $html.= '<tr class="item">
+                                  <td>'.$i.'</td>
+                                  <td style="border-right:1px solid #D9d9d9;">'.strtoupper ($sales_quote_master_row->product_name).'</td>                
+                                  <td style="border-right:1px solid #D9d9d9;text-align: right;">'.$free_qty_.'</td>
+                                  <td style="border-right:1px solid #D9d9d9;text-align: right;">&#8377;'.($sales_quote_master_row->free_quoted_price<>0 ? number_format($sales_quote_master_row->free_quoted_price,2,'.','') : '').'</td> 
+                                  <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;'.($sales_quote_master_row->free_quoted_contr<>0 ? number_format($sales_quote_master_row->free_quoted_contr,2,'.','') : '').'</td>
+                                  <td style="border-right:1px solid #D9d9d9; text-align: right;">&#8377;'.($sales_quote_master_row->free_cost<>0 ? number_format($sales_quote_master_row->free_cost,2,'.','') : '').'</td>              
+                                  <td style="border-right:1px solid #D9d9d9;text-align: right;">'.money_format('%.0n',($free_qty_*$sales_quote_master_row->free_quoted_price)).'/-</td>
+                                </tr>';
+                          $total_quantity+=$free_qty_;
+                          $total_net_value+=($free_qty_*$sales_quote_master_row->free_quoted_price);
+                          $i++;
+                    }
+                       
+                   $html.= '
+                      <tr class="item">
+                        <td></td> 
+                        <td><b>FREIGHT - '.(($sales_quote_master_row->freight== 0) ? 'NA' : 'ADDED IN UNIT RATE').'</b></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr class="item">
+                        <td colspan="2" style="border-right:1px solid #D9d9d9;text-align: right;"><b>TOTAL</b></td>
+                        <td style="border-right:1px solid #D9d9d9;"><b>'.money_format('%!.0n',$total_quantity).'</b></td>
+                        <td></td>
+                        <td></td>
+                        <td style="border-right:1px solid #D9d9d9;text-align: right;"><b>NET AMOUNT</b></td>
+                        <td style="text-align: right;"><b>'.money_format('%.0n',$total_net_value).'/-'.'</b></td>
+                      </tr>
+                      <tr class="item">
+                        <td colspan="6" style="border-right:1px solid #D9d9d9;text-align: right;"><b>GST 18%</b></td>
+                        <td style="text-align: right;"><b>'.money_format('%.0n',($total_net_value/100)*18).'/-'.'</b></td>
+                      </tr>
+                      <tr class="item last">
+                        <td colspan="6" style="border-right:1px solid #D9d9d9;text-align: right;"><b>GROSS AMOUNT</b></td>
+                        <td style="text-align: right;"><b>'.money_format('%.0n',($total_net_value+(($total_net_value/100)*18))).'/-'.'</b></td>
+                      </tr>
+                    </table>';
 
-            $i++;
-        }
+                    $html.= '<br/>
 
-        if ($sales_quote_master_row->_25k_flag == 1) {
+                    <table cellpadding="10" cellspacing="0" style="border:1px solid #D9d9d9;">
+                    <tr class="heading">
+                      <td colspan="10" style="border-right:1px solid #D9d9d9;background:#dffcfc;font-weight: bold;text-align: center;">RM COST/TUBE</td>
+                    </tr>
+                    <tr class="heading">
+                      <td colspan="2" width="14%" style="border-right:1px solid #D9d9d9;font-weight: bold;text-align: center;background:#dffcfc;" >RM</td>
+                      <td colspan="2" width="14%" style="border-right:1px solid #D9d9d9;font-weight: bold;text-align: center;background:#dffcfc;">CONSUMABLE</td>          
+                      <td colspan="2" width="14%" style="border-right:1px solid #D9d9d9;font-weight: bold;text-align: center;background:#dffcfc;">PACKING</td>
+                      <td colspan="2" width="14%" style="border-right:1px solid #D9d9d9;font-weight: bold;text-align: center;background:#dffcfc;">STORES & SPARES</td>             
+                    </tr>
 
-            $html.= '<tr class="item">
-                <td>' . $i . '</td>
-                <td style="border-right:1px solid #D9d9d9;">' . strtoupper($sales_quote_master_row->product_name). '</td>             
-                <td style="border-right:1px solid #D9d9d9;text-align: right;">25,000</td>
-                <td style="border-right:1px solid #D9d9d9;text-align: right;">&#8377;' . ($sales_quote_master_row->_25k_quoted_price <> 0 ? number_format($sales_quote_master_row->_25k_quoted_price, 2, '.', '') : '') . '</td>                
-                <td style="text-align: right;">' . money_format('%.0n', (25000 * $sales_quote_master_row->_25k_quoted_price)) . '/-</td>
-            </tr>';
-            $total_quantity += 25000;
-            $total_net_value += (25000 * $sales_quote_master_row->_25k_quoted_price);
-            $i++;
-        }
+                    <tr class="item">
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Tube</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->sleeve_per_cost.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Screen Flexo</td>      
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->screen_flexo_consumable_view.'</td>      
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Packing Box</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->total_box_rate.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Local</td>      
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->stores_spares_local_view.'</td>      
+                    </tr>
+                    <tr class="item">
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Shoulder</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->shoulder_cost.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Offset</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->offset_consumable_view.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Liners</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->liner_gm_per_tube.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Import</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->stores_spares_import_view.'</td>
+                    </tr>
+                    <tr class="item">
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Cap</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->cap_cost_per_tube.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Decoseam</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->spring_consumable_view.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Export Packing</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->export_packing.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"></td>
+                    </tr>
+                    <tr class="item">
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Lacquer</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->lacquer_cost_per_tube.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Hygenic Consumable</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->hygenic_consumable_view.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Shrink Flim</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->packing_shrink_flim.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"></td>
+                    </tr>
+                    <tr class="item">
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Tube Foil</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->tube_foil_cost_per_tube.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Other Consumable</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->other_consumable_view.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Corrugated Sheet</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->packing_corrugated_sheet.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"></td>
+                    </tr>
+                    <tr class="item">
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Offset Ink</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->offset_cost_per_tube.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Offset Plate</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->offset_plate_cost_per_tube.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Bopp Tape</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->packing_bopp_tape.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"></td>
+                    </tr>
+                    <tr class="item">
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Screen+FlexoInk</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->screen_flexo_cost_per_tube.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Screen +ve Film</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->screen_film_cost_per_tube.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Stickers</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->packing_stickers.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"></td>
+                    </tr>
+                    <tr class="item">
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Special Ink</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->special_ink_cost_per_tube.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Flexo Plate</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->flexo_plate_cost_per_tube.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Other Packing Material</td>
+                      <td width="6%" style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->other_packing_material.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"></td>
+                    </tr>
+                    <tr class="item">
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Label</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->label_cost_per_tube.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"></td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"></td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"></td>
+                    </tr>
+                    <tr class="item">
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Shoulder Foil</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->shoulder_foil_cost_per_tube.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"></td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"></td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"></td>
+                    </tr>
+                    <tr class="item">
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Shrink Sleeve</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->cap_shrink_sleeve_cost_per_tube.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"></td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"></td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"></td>
+                    </tr>
+                    <tr class="item">
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Metalization</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->cap_metalization_cost_view.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"></td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"></td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"></td>
+                    </tr>
+                    <tr class="item">
+                      <td width="14%" style="border-right:1px solid #D9d9d9;">Cap foil</td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;">'.$sales_quote_master_row->cap_foil_cost_view.'</td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"></td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"></td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"></td>
+                    </tr>
 
-         if ($sales_quote_master_row->_50k_flag == 1) {
-          $html.= '<tr class="item">
-                <td>' . $i . '</td>
-                <td style="border-right:1px solid #D9d9d9;">' . strtoupper($sales_quote_master_row->product_name). '</td>
-                <td style="border-right:1px solid #D9d9d9;text-align: right;">50,000</td>
-                <td style="border-right:1px solid #D9d9d9;text-align: right;">&#8377;' . ($sales_quote_master_row->_50k_quoted_price <> 0 ? number_format($sales_quote_master_row->_50k_quoted_price, 2, '.', '') : '') . '</td>                
-                <td style="text-align: right;">' . money_format('%.0n', (50000 * $sales_quote_master_row->_50k_quoted_price)) . '/-</td>
-            </tr>';
-            $total_quantity += 50000;
-            $total_net_value += (50000 * $sales_quote_master_row->_50k_quoted_price);
-            $i++;
-        }
+                    <tr class="item">
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"><b>TOTAL</b></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"><b>'.$sales_quote_master_row->total_rm_cost_per_tube.'</b></td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"><b>'.$sales_quote_master_row->total_consummable_cost_per_tube.'</b></td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"><b>'.$sales_quote_master_row->total_packing_cost_per_tube.'</b></td>
+                      <td width="14%" style="border-right:1px solid #D9d9d9;"></td>
+                      <td width="6%"  style="border-right:1px solid #D9d9d9;text-align:right;background:#f5fff6;"><b>'.$sales_quote_master_row->total_stores_cost_per_tube.'</b></td>
+                    </tr>
+                    <tr class="heading">
+                      <td colspan ="10" style="border-right:1px solid #D9d9d9;color:#000;font-size:12px;background:#dffcfc;"><b>RM + Consumable + Packing + Stores & Spares + Other Cost (TOTAL):<span style="text-decoration:underline;"> '.$sales_quote_master_row->total_cost_per_tube.'</span> </b></td>
+                    </tr>
+                  </table>
+                  <br/>
+                    <table cellpadding="6" cellspacing="0" style="border:1px solid #D9d9d9;">
+                      <tr class="heading">
+                        <td width="100%" colspan="7" style="border-bottom:1px solid #D9d9d9;background:#dffcfc;font-weight: bold;text-align: center;"><b>PRODUCT SPECIFICATION</td>
+                      </tr>
 
-         if ($sales_quote_master_row->_100k_flag == 1) {
-            $html.= '<tr class="item">
-                <td>' . $i . '</td>
-                <td style="border-right:1px solid #D9d9d9;">' . strtoupper($sales_quote_master_row->product_name) . '</td>                
-                <td style="border-right:1px solid #D9d9d9;text-align: right;">1,00,000</td>
-                <td style="border-right:1px solid #D9d9d9;text-align: right;">&#8377;' . ($sales_quote_master_row->_100k_quoted_price <> 0 ? number_format($sales_quote_master_row->_100k_quoted_price, 2, '.', '') : '') . '</td>                
-                <td style="border-right:1px solid #D9d9d9;text-align: right;">' . money_format('%.0n', (100000 * $sales_quote_master_row->_100k_quoted_price)) . '/-</td>
-            </tr>';
-            $total_quantity += 100000;
-            $total_net_value += (100000 * $sales_quote_master_row->_100k_quoted_price);
-            $i++;
-        }
+                      <tr class="heading">
+                        <td width="35%" colspan="2" style="text-align:center;background:#dffcfc;"><b>TUBE</td>
+                        <td width="33%" colspan="2" style="border-right:1px solid #D9d9d9;text-align:center;background:#dffcfc;"><b>CAP</td>
+                        <td width="33%" colspan="2" style="text-align:center;background:#dffcfc;"><b>DECORATIVE ELEMENTS</td>   
+                      </tr>
 
-         if ($sales_quote_master_row->free_flag == 1) {
-            $html.= '<tr class="item">
-                <td>' . $i . '</td>
-                <td style="border-right:1px solid #D9d9d9;">' . strtoupper($sales_quote_master_row->product_name). '</td>               
-                <td style="border-right:1px solid #D9d9d9;text-align: right;">' . money_format('%!.0n', $sales_quote_master_row->free_quantity) . '</td>
-               <td style="border-right:1px solid #D9d9d9;text-align: right;">&#8377;' . ($sales_quote_master_row->_free_quoted_price <> 0 ? number_format($sales_quote_master_row->_free_quoted_price, 2, '.', '') : '') . '</td> 
-                <td style="text-align: right;">' . money_format('%.0n', ($sales_quote_master_row->free_quantity * $sales_quote_master_row->_free_quoted_price)) . '/-</td>
-            </tr>';
-            $total_quantity += $sales_quote_master_row->free_quantity;
-            $total_net_value += ($sales_quote_master_row->free_quantity * $sales_quote_master_row->_free_quoted_price);
-            $i++;
-        }
-        $freight_1= ($sales_quote_master_row->freight == 0) ? 'NA' : 'ADDED IN UNIT RATE';
-        $total_quantity_1= money_format('%!.0n', $total_quantity);
-        $total_net_value_1=money_format('%.0n', $total_net_value);
-        $total_net_value_2=money_format('%.0n', ($total_net_value / 100) * 18);
-        $gross_amount=money_format('%.0n', ($total_net_value + (($total_net_value / 100) * 18)));
-      
+                      <tr class="item">
+                        <td width="16%"><b>TUBE DIA X LENGTH</b></td>
+                        <td width="17%"style="border-right:1px solid #D9d9d9;">'.$tube_dia_length.'</td>
+                        <td width="15%"><b>CAP TYPE</b></td>
+                        <td width="18%" style="border-right:1px solid #D9d9d9;">'.$cap_types.'</td>
+                        <td width="15%" ><b>SPECIAL INK</b></td>
+                        <td width="18%" >'.$special_ink.'</td>
+                      </tr>
 
-       
+                      <tr class="item">
+                        <td width="16%"><b>TUBE LAYER</b></td>
+                        <td width="17%"style="border-right:1px solid #D9d9d9;">'.$tube_layer.'</td>
+                        <td width="15%"><b>CAP COLOR</b></td>
+                        <td width="18%"style="border-right:1px solid #D9d9d9;">'.$cap_color.'</td>
+                        <td width="15%"><b>SHOULDER FOIL</b></td>
+                        <td width="18%">'.$shoulder_foil.'</td>
+                      </tr>
 
-        $html.='<tr class="item">
-            <td style="border-right:1px solid #D9d9d9;"></td>
-            <td><b>FREIGHT - '.$freight_1.'</b></td>
-            <td> </td>
-            <td></td>
-            <td></td>
-        </tr>
-      <tr class="item">
-            <td colspan="2" style="border-right:1px solid #D9d9d9;text-align: right;"><b>TOTAL</b></td>
-            <td style="border-right:1px solid #D9d9d9; text-align:right;"><b>'.$total_quantity_1.'</b></td>
-            <td style="border-right:1px solid #D9d9d9;text-align: right;"><b>NET AMOUNT</b></td>
-            <td style="text-align:right"><b>'.$total_net_value_1.'/-</b></td>
-        </tr>
-        <tr class="item">
-            <td colspan="4" style="border-right:1px solid #D9d9d9;text-align: right;"><b>GST 18%</b></td>
-            <td style="text-align: right;"><b>'.$total_net_value_2.'/-</b></td>
-        </tr>
-        <tr class="item last">
-            <td colspan="4" style="border-right:1px solid #D9d9d9;text-align: right;"><b>GROSS AMOUNT</b></td>
-            <td style="text-align: right;"><b>'.$gross_amount.'/-</b></td>
-        </tr>
-    </table>
+                      <tr class="item">
+                        <td width="16%"><b>TUBE COLOR</b></td>
+                        <td width="17%"style="border-right:1px solid #D9d9d9;">'.$tube_color.'</td>
+                        <td width="15%"><b>CAP FINISH</b></td>
+                        <td width="18%"style="border-right:1px solid #D9d9d9;">'.$cap_finishes.'</td>
+                        <td width="15%"><b>CAP FOIL</b></td>
+                        <td width="18%">'.$cap_foil.'</td>
+                      </tr>
 
-    <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;">
+                      <tr class="item">
+                        <td width="16%"><b>TUBE PRINT TYPE</b></td>
+                        <td width="17%" style="border-right:1px solid #D9d9d9;">'.$print_type.'</td>
+                        <td width="15%"><b>CAP DIA</b></td>
+                        <td width="18%"style="border-right:1px solid #D9d9d9;">'.$cap_dias.'</td>
+                        <td width="15%"><b>CAP SHRINK SLEEVE</b></td>
+                        <td width="18%">'.$cap_shrink_sleeve.'</td>
+                      </tr>
 
-        <tr class="heading">
-            <td colspan="7" style="background-color:#dffcfc;"><b>TERMS AND CONDITIONS </b></td>
-            <!-- <td style="border-right:1px solid #D9d9d9;"></td>
-                <td><b>REMARK</b></td> -->
-        </tr>
-        <td width="5%" style="font-size: 11px; text-transform: uppercase;line-height: 15px;border-right:1px solid #D9d9d9;">
-            <ol>
-                <li>The above Rates are basic rate/ex-factory.</li>
-                <li>Supply will be done from Silvassa Factory.</li>
-                <li><b>Excise duty shall be charged @ I GST of 18% </b></li>
-                <li><b>Delivery Lead Time: 4-6 Weeks from date of PO or Receipt of artwork approval whichever is Later </b></li>
-                <li>Freight: On Parties A/c.</li>
-                <li>Quotation Validity: 60 Days.</li>
-                <li>Compatibility & Stability of the tube is not our responsibility.</li>
-                <li>*Tubes are manufactured under Air Conditioner rooms.</li>
-                <li><b> 10% +/- variation in the ordered quantity is to be accepted.</b></li>
-                <li>Rates are subject to change depending upon change in the final artwork.</li>
-                <li>Insurance – On Parties Account.</li>
-                <li>Preferable Transporter to be suggested by Party.</li>
+                      <tr class="item">
+                        <td width="16%"><b>TUBE LACQUER </b></td>
+                        <td width="17%" style="border-right:1px solid #D9d9d9;">'.$tube_lacquer.'</td>
+                        <td width="15%"><b>CAP ORIFICE</b></td>
+                        <td width="18%" style="border-right:1px solid #D9d9d9;">'.$cap_orifice.'</td>
+                        <td width="15%"><b>CAP METALIZATION</b></td>
+                        <td width="18%">'.$cap_metalization.'</td>
+                        
+                      </tr>
 
+                      <tr class="item">
+                        <td width="16%"><b>SHOULDER </b></td>
+                        <td width="17%" style="border-right:1px solid #D9d9d9;">'.$shoulder_type.'</td>
+                        <td width="15%"><b></b></td>
+                        <td width="18%" style="border-right:1px solid #D9d9d9;"></td>
+                        <td width="15%"><b>TUBE FOIL</b></td>
+                        <td width="18%">'.$tube_foil.'</td>
+                      </tr>
 
-            </ol>
-        </td>
+                      <tr class="item">
+                        <td width="16%"><b>SHOULDER ORIFACE </b></td>
+                        <td width="17%" style="border-right:1px solid #D9d9d9;">'.$shoulder_orifice.'</td>
+                        <td width="15%"><b></b></td>
+                        <td width="18%" style="border-right:1px solid #D9d9d9;"></td>
+                        <td width="15%"><b></b></td>
+                        <td width="18%"></td>
+                      </tr>
 
-
-    </table>
-    <br />
-    <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;">
-
-        <tr class="heading">
-            <td colspan="7"><b>IF YOU HAVE ANY QUESTIONS CONCERNING THIS QUOTATION CONTACT OR E-MAIL US : SALES@3D-NEOPAC.COM </b></td>
-        </tr>
-
-    </table>
-
-    <table width="100%" cellpadding="5" cellspacing="0">
-              <tr class="heading">
-                  <div class="printbtn">
+                      <tr class="item last">
+                        <td width="16%"><b>SHOULDER COLOR </b></td>
+                        <td width="17%" style="border-right:1px solid #D9d9d9;">'.$shoulder_color.'</td>
+                        <td width="15%"><b></b></td>
+                        <td width="18%">  </td>
+                        <td width="15%"></td>
+                        <td width="18%"></td>
+                      </tr>
+                    </table>
                     <br/>
-                    <br/>
-                    <button style="background-color:#00A300;">Procced</button>
+                    <table cellpadding="10" cellspacing="0" style="border:1px solid #D9d9d9;">
+                      <tr class="item last">
+                        <td style="width: 115px;"><b>REMARKS</b></td>
+                        <td style="border-right:1px solid #D9d9d9;"><span style="color:red;">'.$remarks.'</span></td>
+                      </tr>
+                    </table>
+
+                    <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;">
+                      <tr class="item last">
+                        <td style="width:100%;text-align: center;"><button style="border-radius: 8px;border: 2px solid green;padding: 10px;"><b><a style="color:green;text-decoration: none;" href="'.base_url('index.php/sales_quote/approval/' . substr($sales_quotation_no, 0, 13) . '/' . substr($sales_quotation_no, 16)) . '/' .$transaction_no . '" target="_blank"">APPROVAL</a></b></button></td>
+                      </tr>
+                    </table>
+
                   </div>
-                </td>
-              </tr>
-            </table>
-               </div>
+                </div>
               </div>
-            </div>
             </body>
           </html>';
-
-
+                       
                   $this->email->message($html);
-                 // echo $html;
-
-
                   $this->email->set_mailtype("html");
-
-
-
                   if ($this->email->send()) {
-                    $data['note'] = 'File Uploaded Succesfully!';
-                  } else {
-                    $data['error'] = 'Email send failed!';
+                    $data['note']= 'File Uploaded Succesfully!';
+                  } 
+                  else{
+                    $data['error']='Email send failed!';
                   }
+                    
 
+                  
                 }
 
-              endforeach;
-                
+                die(); 
 
-                if ($result_sales_quote_master) {
-                  $data['note'] = 'Data saved Successfully';
-                } else {
-                  $data['error'] = 'Error while saving data';
+                if($result_sales_quote_master){
+                  $data['note']='Data saved Successfully';
+                }else{
+                  $data['error']='Error while saving data';
                 }
-              }
+
+                //header("refresh:1;url=".base_url()."index.php/".$this->router->fetch_class());
+
+                $data['page_name']='Sales';
+                $data['module']=$this->common_model->select_active_module($this->session->userdata['logged_in']['user_id'],$this->session->userdata['logged_in']['company_id']);
+                $data['formrights']=$this->common_model->select_active_formrights_of_form($this->session->userdata['logged_in']['user_id'],$this->session->userdata['logged_in']['company_id'],1,$this->router->fetch_class());
+
+                $data['sleeve_dia']=$this->common_model->select_active_drop_down('sleeve_diameter_master',$this->session->userdata['logged_in']['company_id']);
+
+              $data['shoulder_types']=$this->common_model->select_active_drop_down('shoulder_types_master',$this->session->userdata['logged_in']['company_id']);
+
+              $data['shoulder_orifice']=$this->common_model->select_active_drop_down('shoulder_orifice_master',$this->session->userdata['logged_in']['company_id']);
+
+              //$data['print_type']=$this->common_model->select_active_distinct_drop_down('lacquer_types_master','printing_group',$this->session->userdata['logged_in']['company_id']);
+             // $data['print_type']=$this->common_model->select_active_drop_down('lacquer_types_master',$this->session->userdata['logged_in']['company_id']);
+
+              $data['print_type']=$this->common_model->select_active_distinct_drop_down('lacquer_types_master','print_type',$this->session->userdata['logged_in']['company_id']);
+              //echo $this->db->last_query();
+
+              $data['tube_color']=$this->common_model->select_active_drop_down('color_master',$this->session->userdata['logged_in']['company_id']);
+            
+              $data['cap_type']=$this->common_model->select_active_drop_down('cap_types_master',$this->session->userdata['logged_in']['company_id']);
+
+              $data['cap_finish']=$this->common_model->select_active_drop_down('cap_finish_master',$this->session->userdata['logged_in']['company_id']);
+              $data['cap_dia']=$this->common_model->select_active_drop_down('cap_diameter_master',$this->session->userdata['logged_in']['company_id']);
+              $data['cap_orifice']=$this->common_model->select_active_drop_down('cap_orifice_master',$this->session->userdata['logged_in']['company_id']);
+              $data['packing_box']=$this->article_model->spec_all_active_record_search('article','41',$this->session->userdata['logged_in']['company_id']);
+
+
+               $data['ldpe']=$this->article_model->spec_active_record_search('article','7',$this->session->userdata['logged_in']['company_id']);
+               $data['lldpe']=$this->article_model->spec_active_record_search('article','8',$this->session->userdata['logged_in']['company_id']);
+               $data['hdpe']=$this->article_model->spec_active_record_search('article','6',$this->session->userdata['logged_in']['company_id']);
+               $data['admer']=$this->article_model->spec_active_record_search('article','15',$this->session->userdata['logged_in']['company_id']);
+               $data['evoh']=$this->article_model->spec_active_record_search('article','16',$this->session->userdata['logged_in']['company_id']);
+               $data['masterbatch']=$this->article_model->spec_all_active_record_search('article','12',$this->session->userdata['logged_in']['company_id']);
+               $data['lacquer']=$this->article_model->spec_all_active_record_search('article','14',$this->session->userdata['logged_in']['company_id']);
+               $special_ink_data=array('ink_id'=>'4','archive'=>'0');
+               $data['special_ink']=$this->common_model->select_one_active_record_with_limit('ink_price_master',$this->session->userdata['logged_in']['company_id'],$special_ink_data,'apply_from_date desc','1','0');
+
+               $ink_data=array('ink_id'=>'2','archive'=>'0');
+               $data['offset']=$this->common_model->select_one_active_record_with_limit('ink_price_master',$this->session->userdata['logged_in']['company_id'],$ink_data,'apply_from_date desc','1','0');
+              $screen_data=array('ink_id'=>'3','archive'=>'0');
+               $data['screen']=$this->common_model->select_one_active_record_with_limit('ink_price_master',$this->session->userdata['logged_in']['company_id'],$screen_data,'apply_from_date desc','1','0');
+               $flexo_data=array('ink_id'=>'1','archive'=>'0');
+               $data['flexo']=$this->common_model->select_one_active_record_with_limit('ink_price_master',$this->session->userdata['logged_in']['company_id'],$flexo_data,'apply_from_date desc','1','0');
+               //echo $this->db->last_query();
+
+               $data['workprocedure_types_master']=$this->process_model->select_one_active_record('workprocedure_types_master',$this->session->userdata['logged_in']['company_id'],'workprocedure_types_master.work_proc_type_id','1');
+
+               //----Shoulder
+               $data['hdpe']=$this->article_model->spec_active_record_search('article','6',$this->session->userdata['logged_in']['company_id']);
+
+               $data['workprocedure']=$this->process_model->select_one_active_record('workprocedure_types_master',$this->session->userdata['logged_in']['company_id'],'workprocedure_types_master.work_proc_type_id','7');
+               
+               $data['workprocedure_label']=$this->process_model->select_one_active_record('workprocedure_types_master',$this->session->userdata['logged_in']['company_id'],'workprocedure_types_master.work_proc_type_id','5');
+               
+               $data['workprocedure_printing']=$this->process_model->select_one_active_record('workprocedure_types_master',$this->session->userdata['logged_in']['company_id'],'workprocedure_types_master.work_proc_type_id','3');
+
+              $data['approval_authority']=$this->common_model->select_one_active_approval_authority_record('authority_master',$this->session->userdata['logged_in']['company_id'],'authority_master.form_id','91');
+              $data['hot_foil']=$this->article_model->spec_all_active_record_search('article','71',$this->session->userdata['logged_in']['company_id']);
+              $data['cold_foil']=$this->article_model->spec_all_active_record_search('article','304',$this->session->userdata['logged_in']['company_id']);
+
+              $data['hot_foil']=$this->article_model->spec_all_active_record_search('article','71',$this->session->userdata['logged_in']['company_id']);
+              $data['cap_foil']=$this->article_model->spec_all_active_record_search('article','71',$this->session->userdata['logged_in']['company_id']);
+              $data['cap_shrink_sleeve']=$this->article_model->spec_all_active_record_search('article','213',$this->session->userdata['logged_in']['company_id']);
+
+              $dataa = array('process_id' =>'3');
+              $data['machine_type']=$this->common_model->select_active_records_where('coex_machine_master',$this->session->userdata['logged_in']['company_id'],$dataa);
              
-
-                $data['page_name'] = 'Sales';
-                $data['module'] = $this->common_model->select_active_module($this->session->userdata['logged_in']['user_id'], $this->session->userdata['logged_in']['company_id']);
-                $data['formrights'] = $this->common_model->select_active_formrights_of_form($this->session->userdata['logged_in']['user_id'], $this->session->userdata['logged_in']['company_id'], 1, $this->router->fetch_class());
-
-                $data['sleeve_dia'] = $this->common_model->select_active_drop_down('sleeve_diameter_master', $this->session->userdata['logged_in']['company_id']);
-
-                $data['shoulder_types'] = $this->common_model->select_active_drop_down('shoulder_types_master', $this->session->userdata['logged_in']['company_id']);
-
-                $data['shoulder_orifice'] = $this->common_model->select_active_drop_down('shoulder_orifice_master', $this->session->userdata['logged_in']['company_id']);
-
-                //$data['print_type']=$this->common_model->select_active_distinct_drop_down('lacquer_types_master','printing_group',$this->session->userdata['logged_in']['company_id']);
-                // $data['print_type']=$this->common_model->select_active_drop_down('lacquer_types_master',$this->session->userdata['logged_in']['company_id']);
-
-                $data['print_type'] = $this->common_model->select_active_distinct_drop_down('lacquer_types_master', 'print_type', $this->session->userdata['logged_in']['company_id']);
-                //echo $this->db->last_query();
-
-                $data['tube_color'] = $this->common_model->select_active_drop_down('color_master', $this->session->userdata['logged_in']['company_id']);
-
-                $data['cap_type'] = $this->common_model->select_active_drop_down('cap_types_master', $this->session->userdata['logged_in']['company_id']);
-
-                $data['cap_finish'] = $this->common_model->select_active_drop_down('cap_finish_master', $this->session->userdata['logged_in']['company_id']);
-                $data['cap_dia'] = $this->common_model->select_active_drop_down('cap_diameter_master', $this->session->userdata['logged_in']['company_id']);
-                $data['cap_orifice'] = $this->common_model->select_active_drop_down('cap_orifice_master', $this->session->userdata['logged_in']['company_id']);
-                $data['packing_box'] = $this->article_model->spec_all_active_record_search('article', '41', $this->session->userdata['logged_in']['company_id']);
-
-
-                $data['ldpe'] = $this->article_model->spec_active_record_search('article', '7', $this->session->userdata['logged_in']['company_id']);
-                $data['lldpe'] = $this->article_model->spec_active_record_search('article', '8', $this->session->userdata['logged_in']['company_id']);
-                $data['hdpe'] = $this->article_model->spec_active_record_search('article', '6', $this->session->userdata['logged_in']['company_id']);
-                $data['admer'] = $this->article_model->spec_active_record_search('article', '15', $this->session->userdata['logged_in']['company_id']);
-                $data['evoh'] = $this->article_model->spec_active_record_search('article', '16', $this->session->userdata['logged_in']['company_id']);
-                $data['masterbatch'] = $this->article_model->spec_all_active_record_search('article', '12', $this->session->userdata['logged_in']['company_id']);
-                $data['lacquer'] = $this->article_model->spec_all_active_record_search('article', '14', $this->session->userdata['logged_in']['company_id']);
-                $special_ink_data = array('ink_id' => '4', 'archive' => '0');
-                $data['special_ink'] = $this->common_model->select_one_active_record_with_limit('ink_price_master', $this->session->userdata['logged_in']['company_id'], $special_ink_data, 'apply_from_date desc', '1', '0');
-
-                $ink_data = array('ink_id' => '2', 'archive' => '0');
-                $data['offset'] = $this->common_model->select_one_active_record_with_limit('ink_price_master', $this->session->userdata['logged_in']['company_id'], $ink_data, 'apply_from_date desc', '1', '0');
-                $screen_data = array('ink_id' => '3', 'archive' => '0');
-                $data['screen'] = $this->common_model->select_one_active_record_with_limit('ink_price_master', $this->session->userdata['logged_in']['company_id'], $screen_data, 'apply_from_date desc', '1', '0');
-                $flexo_data = array('ink_id' => '1', 'archive' => '0');
-                $data['flexo'] = $this->common_model->select_one_active_record_with_limit('ink_price_master', $this->session->userdata['logged_in']['company_id'], $flexo_data, 'apply_from_date desc', '1', '0');
-                //echo $this->db->last_query();
-
-                $data['workprocedure_types_master'] = $this->process_model->select_one_active_record('workprocedure_types_master', $this->session->userdata['logged_in']['company_id'], 'workprocedure_types_master.work_proc_type_id', '1');
-
-                //----Shoulder
-                $data['hdpe'] = $this->article_model->spec_active_record_search('article', '6', $this->session->userdata['logged_in']['company_id']);
-
-                $data['workprocedure'] = $this->process_model->select_one_active_record('workprocedure_types_master', $this->session->userdata['logged_in']['company_id'], 'workprocedure_types_master.work_proc_type_id', '7');
-
-                $data['workprocedure_label'] = $this->process_model->select_one_active_record('workprocedure_types_master', $this->session->userdata['logged_in']['company_id'], 'workprocedure_types_master.work_proc_type_id', '5');
-
-                $data['workprocedure_printing'] = $this->process_model->select_one_active_record('workprocedure_types_master', $this->session->userdata['logged_in']['company_id'], 'workprocedure_types_master.work_proc_type_id', '3');
-
-                $data['approval_authority'] = $this->common_model->select_one_active_approval_authority_record('authority_master', $this->session->userdata['logged_in']['company_id'], 'authority_master.form_id', '91');
-                $data['hot_foil'] = $this->article_model->spec_all_active_record_search('article', '71', $this->session->userdata['logged_in']['company_id']);
-                $data['cold_foil'] = $this->article_model->spec_all_active_record_search('article', '304', $this->session->userdata['logged_in']['company_id']);
-
-                $data['hot_foil'] = $this->article_model->spec_all_active_record_search('article', '71', $this->session->userdata['logged_in']['company_id']);
-                $data['cap_foil'] = $this->article_model->spec_all_active_record_search('article', '71', $this->session->userdata['logged_in']['company_id']);
-                $data['cap_shrink_sleeve'] = $this->article_model->spec_all_active_record_search('article', '213', $this->session->userdata['logged_in']['company_id']);
-
-                $dataa = array('process_id' => '3');
-                $data['machine_type'] = $this->common_model->select_active_records_where('coex_machine_master', $this->session->userdata['logged_in']['company_id'], $dataa);
-
-
+               
                 $this->load->view('Home/header');
-                $this->load->view('Home/nav', $data);
+                $this->load->view('Home/nav',$data);
                 $this->load->view('Home/subnav');
                 $this->load->view('Loading/loading');
-                $this->load->view(ucwords($this->router->fetch_class()) . '/active-title', $data);
-                $this->load->view(ucwords($this->router->fetch_class()) . '/create-form', $data);
+                $this->load->view(ucwords($this->router->fetch_class()).'/active-title',$data);
+                $this->load->view(ucwords($this->router->fetch_class()).'/create-form',$data);
                 $this->load->view('Home/footer');
+
               }
-            } else {
-              $data['note'] = 'No rights Thanks';
+              
+            }else{
+              $data['note']='No rights Thanks';
               $this->load->view('Home/header');
-              $this->load->view('Home/nav', $data);
+              $this->load->view('Home/nav',$data);
               $this->load->view('Home/subnav');
-              $this->load->view('Error/error-title', $data);
+              $this->load->view('Error/error-title',$data);
               $this->load->view('Home/footer');
             }
-          }
+          }          
         }
       }
-    } else {
-      $data['note'] = 'No rights Thanks';
-      $data['page_name'] = 'home';
-      $data['module'] = $this->common_model->select_active_module($this->session->userdata['logged_in']['user_id'], $this->session->userdata['logged_in']['company_id']);
+    }
+    else{
+      $data['note']='No rights Thanks';
+      $data['page_name']='home';
+      $data['module']=$this->common_model->select_active_module($this->session->userdata['logged_in']['user_id'],$this->session->userdata['logged_in']['company_id']);
       $this->load->view('Home/header');
-      $this->load->view('Home/nav', $data);
+      $this->load->view('Home/nav',$data);
       $this->load->view('Home/subnav');
-      $this->load->view('Error/error-title', $data);
+      $this->load->view('Error/error-title',$data);
       $this->load->view('Home/footer');
     }
+
   }
 
   function price_revision_save()
@@ -4302,7 +4447,7 @@ class Sales_quote extends CI_Controller
                   $config['smtp_port'] = 465;
                   $this->load->library('email', $config);
                   $this->email->from("auto.mailer@3d-neopac.com");
-                  $this->email->to("vaibhav.singh@3d-neopac.com,soumen.nandan@3d-neopac.com,vishal.gupta@3d-neopac.com ,shailendra.singh@3d-neopac.com ,erp@3d-neopac.com");
+                  $this->email->to("ankit.shukla@3d-neopac.com");
                   $this->email->cc($employee_row->mailbox);
                   $this->email->subject("" . $this->input->post('quotation_no') . ' REV' . $this->input->post('version_no') . " is Approved");
                   $this->email->message("Dear Sales Team, The subjected Quote has been Approved");
@@ -4358,9 +4503,210 @@ class Sales_quote extends CI_Controller
     }
   }
 
-  function modify()
-  {
+  function notapproved(){
+       
+    $data['page_name']='Sales';
+    $data['module']=$this->common_model->select_active_module($this->session->userdata['logged_in']['user_id'],$this->session->userdata['logged_in']['company_id']);
 
+    if($data['module']!=FALSE){
+      foreach ($data['module'] as $module_row) {
+        if($module_row->module_name==='Sales'){
+          $data['formrights']=$this->common_model->select_active_formrights_of_form($this->session->userdata['logged_in']['user_id'],$this->session->userdata['logged_in']['company_id'],1,$this->router->fetch_class());
+
+          foreach ($data['formrights'] as $formrights_row) {
+            if($formrights_row->modify==1){ 
+
+              $data['page_name']='Sales';
+              $data['module']=$this->common_model->select_active_module($this->session->userdata['logged_in']['user_id'],$this->session->userdata['logged_in']['company_id']);
+              $data['formrights']=$this->common_model->select_active_formrights_of_form($this->session->userdata['logged_in']['user_id'],$this->session->userdata['logged_in']['company_id'],1,$this->router->fetch_class());        
+        
+             // -----------------
+              $data['sales_quote_master']=$this->sales_quote_model->select_one_active_record_where('sales_quote_master',$this->session->userdata['logged_in']['company_id'],'sales_quote_master.quotation_no',$this->uri->segment(3),'sales_quote_master.version_no',$this->uri->segment(4));
+
+
+              $customer_no = '';
+              foreach ($data['sales_quote_master'] as $key => $row) {
+                $customer_no = $row->customer_no;
+              }
+
+              $data_search = array('adr_category_id' => $customer_no, 'archive' => 0);
+              $data['purchase_manager'] = $this->common_model->select_active_records_where('address_category_contact_details', $this->session->userdata['logged_in']['company_id'], $data_search);
+
+              $this->load->view('Home/header');
+              $this->load->view('Home/nav',$data);
+              $this->load->view('Home/subnav');
+              $this->load->view(ucwords($this->router->fetch_class()).'/active-title',$data);
+              $this->load->view(ucwords($this->router->fetch_class()).'/notapproved-form',$data);
+              $this->load->view('Home/footer');
+            }else{
+              $data['note']='No rights Thanks';
+              $this->load->view('Home/header');
+              $this->load->view('Home/nav',$data);
+              $this->load->view('Home/subnav');
+              $this->load->view('Error/error-title',$data);
+              $this->load->view('Home/footer');
+            }
+          }          
+        }
+      }
+    }
+    else{
+      $data['note']='No rights Thanks';
+      $data['page_name']='home';
+      $data['module']=$this->common_model->select_active_module($this->session->userdata['logged_in']['user_id'],$this->session->userdata['logged_in']['company_id']);
+      $this->load->view('Home/header');
+      $this->load->view('Home/nav',$data);
+      $this->load->view('Home/subnav');
+      $this->load->view('Error/error-title',$data);
+      $this->load->view('Home/footer');
+    }
+  }
+
+  function notapproved_update(){    
+    $data['page_name']='Sales';
+    $data['module']=$this->common_model->select_active_module($this->session->userdata['logged_in']['user_id'],$this->session->userdata['logged_in']['company_id']);
+    if($data['module']!=FALSE){
+      foreach ($data['module'] as $module_row) {
+        if($module_row->module_name==='Sales'){
+
+          $data['formrights']=$this->common_model->select_active_formrights_of_form($this->session->userdata['logged_in']['user_id'],$this->session->userdata['logged_in']['company_id'],1,$this->router->fetch_class());
+
+          foreach ($data['formrights'] as $formrights_row) {
+          if($formrights_row->modify==1){        
+
+            if($this->form_validation->run()==FALSE){
+
+            $data['page_name']='Sales';
+            $data['module']=$this->common_model->select_active_module($this->session->userdata['logged_in']['user_id'],$this->session->userdata['logged_in']['company_id']);
+            $data['formrights']=$this->common_model->select_active_formrights_of_form($this->session->userdata['logged_in']['user_id'],$this->session->userdata['logged_in']['company_id'],1,$this->router->fetch_class());
+
+            $data['sales_quote_master']=$this->sales_quote_model->select_one_active_record_where('sales_quote_master',$this->session->userdata['logged_in']['company_id'],'sales_quote_master.quotation_no',$this->input->post('quotation_no'),'sales_quote_master.version_no',$this->input->post('version_no'));
+            //echo $this->db->last_query();  
+
+
+            $this->load->view('Home/header');
+            $this->load->view('Home/nav',$data);
+            $this->load->view('Home/subnav');
+            $this->load->view(ucwords($this->router->fetch_class()).'/active-title',$data);
+            $this->load->view(ucwords($this->router->fetch_class()).'/notapproved-form',$data);
+            $this->load->view('Home/footer');
+            }else{
+
+            $rejected_reason = $this->input->post('rejected_reason');
+
+            $unapproval_data=array(
+                'rejected_reason'=> $rejected_reason
+              );
+
+            $result_update = $this->common_model->update_one_active_record_where('sales_quote_master', $approval_data, 'sales_quote_master.quotation_no', $this->input->post('quotation_no'), 'sales_quote_master.version_no', $this->input->post('version_no'), $this->session->userdata['logged_in']['company_id']); 
+
+            $data = array('status' => '99');
+            $result = $this->common_model->update_one_active_record_where('followup', $data, 'record_no', $this->input->post('record_no'), 'transaction_no', $this->input->post('transaction_no'), $this->session->userdata['logged_in']['company_id']);
+            
+            $data=array('pending_flag'=>'0','final_approval_flag'=>'0');
+
+            $result = $this->common_model->update_one_active_record_where('sales_quote_master', $data, 'sales_quote_master.quotation_no', $this->input->post('quotation_no'), 'sales_quote_master.version_no', $this->input->post('version_no'), $this->session->userdata['logged_in']['company_id']);
+
+            $data['followup'] = $this->common_model->select_one_active_record_nonlanguage_without_archive('followup', $this->session->userdata['logged_in']['company_id'], 'record_no', $this->input->post('record_no'));
+
+            if($data['followup']==FALSE){
+              $transaction_no=1;
+              $status=1;
+            }else{
+              $i=1;
+              foreach ($data['followup'] as $followup_row){
+                $transaction_no=$followup_row->transaction_no;
+                $status=1;
+                $contact_person_id=$followup_row->contact_person_id;
+                $i++;
+              }
+              $transaction_no=$i;
+            }
+              
+            $data=array('company_id'=>$this->session->userdata['logged_in']['company_id'],
+                  'user_id'=>$contact_person_id,
+                  'form_id'=>'91',
+                  'transaction_no'=>$transaction_no,
+                  'status'=>'999',
+                  'followup_date'=>date('Y-m-d'),
+                  'approved_flag'=>'2',
+                  'approval_date'=>date('Y-m-d'),
+                  'contact_person_id'=>$this->session->userdata['logged_in']['user_id'],
+                  'record_no'=>$this->uri->segment('3').'@@@'.$this->uri->segment('4')
+                );
+            $result=$this->common_model->save('followup',$data);
+
+            if($result_update){
+              $data['note']='Rejected Transaction Successfully';
+            }else{
+              $data['error']='Error while Updating data';
+            }
+
+            header("refresh:1;url=".base_url()."index.php/".$this->router->fetch_class());
+
+            $data['employee']=$this->common_model->select_one_active_record('employee_master',$this->session->userdata['logged_in']['company_id'],'employee_id',$this->session->userdata['logged_in']['user_id']);
+
+            foreach ($data['employee'] as $employee_row){
+              $config['protocol'] = 'smtp';
+              $config['smtp_host'] = 'ssl://smtp.googlemail.com';
+              $config['smtp_port'] = 465;
+              $this->load->library('email', $config);
+              $this->email->from("auto.mailer@3d-neopac.com");
+              $this->email->to("ankit.shukla@3d-neopac.com");
+              //$this->email->cc($employee_row->mailbox);
+              $this->email->subject("".$this->input->post('quotation_no').' REV'.$this->input->post('version_no')." is Rejected");
+              $this->email->message($rejected_reason);
+
+              if ($this->email->send()) {
+                $data['note']='Rejected Transaction Completed';
+              } 
+            } 
+              
+            $data['followup_received'] = $this->sales_quote_followup_model->select_followup_received_records('followup', $this->session->userdata['logged_in']['company_id'], 'followup.user_id', $this->session->userdata['logged_in']['user_id'], 'status', '1', 'followup.form_id', '91');
+            $data['page_name'] = 'Followup';
+            $data['module'] = $this->common_model->select_active_module($this->session->userdata['logged_in']['user_id'], $this->session->userdata['logged_in']['company_id']);
+            $data['formrights'] = $this->common_model->select_active_formrights_of_form($this->session->userdata['logged_in']['user_id'], $this->session->userdata['logged_in']['company_id'], 7, $this->router->fetch_class());
+
+            $data['sales_quote_master'] = $this->sales_quote_model->select_one_active_record_where('sales_quote_master', $this->session->userdata['logged_in']['company_id'], 'sales_quote_master.quotation_no', $this->input->post('quotation_no'), 'sales_quote_master.version_no', $this->input->post('version_no'));
+
+            $data['page_name'] = 'Sales';
+            $data['module'] = $this->common_model->select_active_module($this->session->userdata['logged_in']['user_id'], $this->session->userdata['logged_in']['company_id']);
+            $data['formrights'] = $this->common_model->select_active_formrights_of_form($this->session->userdata['logged_in']['user_id'], $this->session->userdata['logged_in']['company_id'], 1, $this->router->fetch_class());
+            $dataa = array('process_id' => '3');
+            $data['machine_type'] = $this->common_model->select_active_records_where('coex_machine_master', $this->session->userdata['logged_in']['company_id'], $dataa);
+     
+            $this->load->view('Home/header');
+            $this->load->view('Home/nav',$data);
+            $this->load->view('Home/subnav');
+            $this->load->view('Loading/loading');
+            $this->load->view(ucwords($this->router->fetch_class()).'/active-title',$data);
+            $this->load->view(ucwords($this->router->fetch_class()).'/approval-form',$data);
+            $this->load->view('Home/footer');
+            }
+          }else{
+            $data['note']='No rights Thanks';
+            $this->load->view('Home/header');
+            $this->load->view('Home/nav',$data);
+            $this->load->view('Home/subnav');
+            $this->load->view('Error/error-title',$data);
+            $this->load->view('Home/footer');
+          }
+          }          
+        }
+      }
+    }else{
+      $data['note']='No rights Thanks';
+      $data['page_name']='home';
+      $data['module']=$this->common_model->select_active_module($this->session->userdata['logged_in']['user_id'],$this->session->userdata['logged_in']['company_id']);
+      $this->load->view('Home/header');
+      $this->load->view('Home/nav',$data);
+      $this->load->view('Home/subnav');
+      $this->load->view('Error/error-title',$data);
+      $this->load->view('Home/footer');
+    }
+  }
+
+  function modify(){
     $data['page_name'] = 'Sales';
     $data['module'] = $this->common_model->select_active_module($this->session->userdata['logged_in']['user_id'], $this->session->userdata['logged_in']['company_id']);
     //echo $this->db->last_query();

@@ -213,7 +213,7 @@ class Common_model extends CI_Model
 	public function table_record_count_where_pkey($table, $company, $pkey, $edit)
 	{
 		//$this->db->where('archive<>','1');
-		$this->db->where('company_id', $company);
+		//$this->db->where('company_id', $company);
 		$this->db->where($pkey, $edit);
 		$this->db->from($table);
 		$count = $this->db->count_all_results();

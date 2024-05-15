@@ -900,7 +900,7 @@ class Springtube_extrusion_wip extends CI_Controller {
                 $this->form_validation->set_rules('release_to_order_no','Release To Order' ,'required|trim|xss_clean|max_length[20]');
                 $this->form_validation->set_rules('release_article_no','Release To Article No' ,'callback_check_specification');
 
-                $this->form_validation->set_rules('expected_qty','Expected Qty' ,'required|trim|xss_clean|callback_wip_issue_jobcard_quantity_check');
+                $this->form_validation->set_rules('expected_qty','Expected Qty' ,'required|trim|xss_clean');
 
                 //$this->form_validation->set_rules('expected_qty','Expected Qty' ,'required|trim|xss_clean|max_length[50]|callback_printing_jobcard_quantity_check');
 
@@ -1270,9 +1270,10 @@ class Springtube_extrusion_wip extends CI_Controller {
                         ); 
 
 
-                        if($this->input->post('outsource')==1){
+                      if($this->input->post('outsource')==1){
 
                         //echo "outsource 456";
+                      $customer_arr = explode('//', $this->input->post('adr_company_id'));
 
                       $data_outsource_for_printing_insert=array(
                         'outsource_date'=>date('Y-m-d'),   
@@ -1288,12 +1289,13 @@ class Springtube_extrusion_wip extends CI_Controller {
                         'film_code'=>$release_to_film_code,
                         'cost_per_meter'=>$this->input->post('wip_cost_per_meter'),
                         'released_meters'=>$release_meters, 
+                        'outsource_customer_no' => $customer_arr[1],
                         'company_id'=>$this->session->userdata['logged_in']['company_id']                  
                         );
 
                       $result=$this->common_model->save('springtube_outsource_for_printing',$data_outsource_for_printing_insert);
 
-                       $count=$this->common_model->active_record_count_where_pkey('tally_stock_items_master',$this->session->userdata['logged_in']['company_id'],'part_no',$release_to_film_code);
+                       $count=$this->common_model->table_record_count_where_pkey('tally_stock_items_master',$this->session->userdata['logged_in']['company_id'],'part_no',$release_to_film_code);
                         if($count==0){
                           $data=array('name'=>$this->input->post('film_new_name'),
                           'part_no'=>$release_to_film_code,
@@ -1312,10 +1314,108 @@ class Springtube_extrusion_wip extends CI_Controller {
                           $this->common_model->save(' tally_stock_items_master',$data);
 
                         }
+                        
 
+                    if($sleeve_diameter=='35 MM'){
+                        $qty_sqm=$release_meters*0.244;
+                      }elseif($sleeve_diameter=='40 MM'){
+                        $qty_sqm=$release_meters*0.276;
+                      }else{
+                        $qty_sqm=$release_meters*0.340;
                       }
 
-                        //$result=$this->common_model->save('springtube_printing_wip_master_before',$data);
+                    if($qty_sqm<>0){$rate_qty = round(($release_meters*$this->input->post('wip_cost_per_meter'))/$qty_sqm,2);}else{$rate_qty=0;}
+
+                      $amount_qty = $qty_sqm*$rate_qty;   
+ 
+                      $filename = base_url('assets/img/logo.png');
+                      $smtp_user=$this->config->item('smtp_user');
+                      $smtp_pass=$this->config->item('smtp_pass');
+                      $config['protocol'] = 'smtp';
+                      $config['smtp_host'] = 'ssl://smtp.googlemail.com';
+                      $config['smtp_port'] = 465;
+                      $config['smtp_timeout'] = 60;
+                      $config['charset'] = 'utf-8';
+                      $config['mailtype'] = 'html';
+                      $config['validation'] = 'TRUE';
+                      $config['smtp_user']= 'auto.mailer@3d-neopac.com';
+                      $config['smtp_pass']='auto@2223';
+                      $config['newline']= "\r\n";
+                      $this->load->library('email', $config);
+                      $this->email->from("auto.mailer@3d-neopac.com");
+                      $this->email->to('ankit.shukla@3d-neopac.com,pravin.shinde@3d-neopac.com');
+                      //$this->email->cc($user_email);
+                      //$this->email->cc('ankit.shukla@3d-neopac.com');
+                      $this->email->subject("Material to be sent for external printing");
+                      $this->email->attach($filename);
+                      $cid = $this->email->attachment_cid($filename);
+
+                      $html = '<!DOCTYPE>
+                        <html>
+                        <head><title>Material To Be Sent For External Printing</title>
+                          <style>
+                            table{border:1px solid #ddd;border-collapse:collapse;font-size:10px;width:100%;color:black;font-family:verdana;}th{ border:1px solid #ddd;text-align: left;background-color:#DFFCFC;font-weight:bold;font-size:11px;}td{
+                              border:1px solid #ddd;text-align: left;font-size:11px;}.ui.teal.labels.label{background-color: #00b5ad!important;border-color: #00b5ad!important;color: #fff!important;}.invoice-box table {width: 100%;line-height: 12px;text-align: left;}.invoice-box table td {padding: 3px !important;}.invoice-box table tr td:nth-child(2) {text-align: center;}
+                          </style>
+                        </head>         
+                        <body>
+                        <div style="margin-top:5px;width:900px;margin:0px auto;background-color:#ddd;border:1px solid #ddd;font-family:verdana;">
+                          <div style="padding:3px;background-color: #f5f5f5">  
+                            <div style="margin-top:20px;>
+                              <table cellpadding="0" cellspacing="0" border="0">          
+                                  <tbody><tr>
+                                      <td class="title" width="5%">
+                                         <div style="text-align:center;"">
+                                          <img src="cid:'.$cid.'" style="max-width:130px;height:30px;"><br/>
+                                          <span style="font-size:10px;"><b>3D TECHNOPACK PVT LTD</b><br/>
+                                          SURVEY NO 8/1, VILLAGE ATHAL, SILVASSA, DADRA NAGAR HAVELI, PIN : 396230, INDIA</span>
+                                          </div>
+                                      </td>
+                                  </tr>                      
+                              </tbody>
+                              </table>
+                              <div class="ui teal labels" style="text-align: center;">
+                                <div class="ui label"  style="font-weight: 700;font-size: 12px;padding: 5px;color: #fff;background: #00b5ad;">Material To Be Sent For External Printing</div>
+                              </div>
+                              <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;">
+                                <tr class="heading">
+                                  <td><b>ORDER NO</td>
+                                  <td colspan="3" style="border-right:1px solid #D9d9d9;"><b>'.$this->input->post('release_to_order_no_1').'</b></td>                                               
+                                </tr>
+                                <tr class="heading">
+                                  <td><b>CUSTOMER NAME</b></td>
+                                  <td colspan="3">'.$this->input->post('adr_company_id').'</td>                        
+                                </tr>
+                                <tr class="item last">
+                                  <td><b>FILM CODE</b></td>
+                                  <td><b>QTY/SQM</b></td>
+                                  <td><b>UNIT RATE</b></td>
+                                  <td><b>AMOUNT</b></td>                        
+                                </tr> 
+                                <tr class="item last">
+                                  <td>'.$release_to_film_code.'</td>
+                                  <td>'.$qty_sqm.'</td>
+                                  <td>'.$rate_qty.'</td>
+                                  <td>'.$amount_qty.'</td>                        
+                                </tr>                            
+                              </table> 
+
+                            </div>
+                          </div>
+                        </div>
+                      </body>
+                    </html>';
+                       
+                          $this->email->message($html);
+                          $this->email->set_mailtype("html");
+                          if ($this->email->send()) {
+                            $data['note']= 'File Uploaded Succesfully!';
+                            //return 1;
+                          } 
+                          else{
+                            $data['error']='Email send failed!';
+                          } 
+                      }
 
                         $pending_ok_qty=$this->common_model->jobcard_meters_to_qty($jobcard_no,$pending_meters);
 
@@ -1341,8 +1441,6 @@ class Springtube_extrusion_wip extends CI_Controller {
                           'user_id'=>$this->session->userdata['logged_in']['user_id']                        
                         );
 
-                        //$result=$this->common_model->save('springtube_extrusion_wip_master',$data);
-
                         $data_wip_update=array(
                           'status'=>'1',
                           'release_to_order_no'=>$this->input->post('release_to_order_no_1'), 
@@ -1354,23 +1452,12 @@ class Springtube_extrusion_wip extends CI_Controller {
                           'release_remarks'=>$this->input->post('release_remarks') 
                         );
 
-                        //$result=$this->common_model->update_one_active_record('springtube_extrusion_wip_master',$data,'wip_id',$wip_id,$this->session->userdata['logged_in']['company_id']);
-
                         $trans_status=$this->springtube_extrusion_wip_model->wip_release_partially($data_wip_before_insert,$data_wip_insert,$data_wip_update,$wip_id);
 
                       }                    
 
-
-
                     }else{ 
-                    
-                      // FUll release to PRINTING WIP BEFORE PRINT--------------------
-
-                       //WIP Is releasing to Same SO----------------------
-
-                      //if(strpos($this->input->post('order_no'),"ST")==''){
-
-
+                  
                       if(substr($this->input->post('order_no'),0,2)!='ST'){
                           
                         $release_qty=$this->common_model->jobcard_meters_to_qty($jobcard_no,$release_meters);
@@ -1398,8 +1485,6 @@ class Springtube_extrusion_wip extends CI_Controller {
                           'ref_wip_id'=>$this->input->post('wip_id')
                         );                
 
-                        //$result=$this->common_model->save('springtube_printing_wip_master_before',$data);
-
                         $data_wip_update=array( 
                                     'status'=>'1',
                                     'release_to_order_no'=>$this->input->post('order_no'),
@@ -1410,7 +1495,6 @@ class Springtube_extrusion_wip extends CI_Controller {
                                     'next_process'=>'9',
                                     'release_remarks'=>$this->input->post('release_remarks')
                                   );
-                        //$result=$this->common_model->update_one_active_record('springtube_extrusion_wip_master',$data,'wip_id',$wip_id,$this->session->userdata['logged_in']['company_id']);
 
                         $trans_status=$this->springtube_extrusion_wip_model->wip_release_full($data_wip_before_insert,$data_wip_update,$wip_id);
                         
@@ -1448,6 +1532,7 @@ class Springtube_extrusion_wip extends CI_Controller {
                         if($this->input->post('outsource')==1){
 
                         //echo "outsource 123";
+                      $customer_arr1 = explode('//', $this->input->post('adr_company_id'));
 
                       $data_outsource_for_printing_insert=array(
                         'outsource_date'=>date('Y-m-d'),   
@@ -1463,12 +1548,13 @@ class Springtube_extrusion_wip extends CI_Controller {
                         'film_code'=>$release_to_film_code,
                         'cost_per_meter'=>$this->input->post('wip_cost_per_meter'),
                         'released_meters'=>$release_meters, 
+                        'outsource_customer_no' => $customer_arr1[1],
                         'company_id'=>$this->session->userdata['logged_in']['company_id']                  
                         );
 
                         $result=$this->common_model->save('springtube_outsource_for_printing',$data_outsource_for_printing_insert);
 
-                        $count=$this->common_model->active_record_count_where_pkey('tally_stock_items_master',$this->session->userdata['logged_in']['company_id'],'part_no',$release_to_film_code);
+                        $count=$this->common_model->table_record_count_where_pkey('tally_stock_items_master',$this->session->userdata['logged_in']['company_id'],'part_no',$release_to_film_code);
                         if($count==0){
 
                         $data=array('name'=>$this->input->post('film_new_name'),
@@ -1485,14 +1571,110 @@ class Springtube_extrusion_wip extends CI_Controller {
                         'transaction_date'=>date('Y-m-d'),
                         'appl_date'=>'01-07-2017');
 
-                        $this->common_model->save(' tally_stock_items_master',$data);
+                        $this->common_model->save('tally_stock_items_master',$data);
                         }
 
-                      }              
+                      if($sleeve_diameter=='35 MM'){
+                        $qty_sqm=$release_meters*0.244;
+                      }elseif($sleeve_diameter=='40 MM'){
+                        $qty_sqm=$release_meters*0.276;
+                      }else{
+                        $qty_sqm=$release_meters*0.340;
+                      }
 
-                        //$result=$this->common_model->save('springtube_printing_wip_master_before',$data);
-                         
-                        //$result=$this->common_model->save('springtube_extrusion_wip_master',$data);
+                    if($qty_sqm<>0){$rate_qty = round(($release_meters*$this->input->post('wip_cost_per_meter'))/$qty_sqm,2);}else{$rate_qty=0;}
+
+                      $amount_qty = $qty_sqm*$rate_qty;  
+ 
+                      $filename = base_url('assets/img/logo.png');
+                      $smtp_user=$this->config->item('smtp_user');
+                      $smtp_pass=$this->config->item('smtp_pass');
+                      $config['protocol'] = 'smtp';
+                      $config['smtp_host'] = 'ssl://smtp.googlemail.com';
+                      $config['smtp_port'] = 465;
+                      $config['smtp_timeout'] = 60;
+                      $config['charset'] = 'utf-8';
+                      $config['mailtype'] = 'html';
+                      $config['validation'] = 'TRUE';
+                      $config['smtp_user']= 'auto.mailer@3d-neopac.com';
+                      $config['smtp_pass']='auto@2223';
+                      $config['newline']= "\r\n";
+                      $this->load->library('email', $config);
+                      $this->email->from("auto.mailer@3d-neopac.com");
+                      $this->email->to('ankit.shukla@3d-neopac.com,,pravin.shinde@3d-neopac.com');
+                      //$this->email->cc($user_email);
+                      //$this->email->cc('ankit.shukla@3d-neopac.com');
+                      $this->email->subject("Material to be sent for external printing");
+                      $this->email->attach($filename);
+                      $cid = $this->email->attachment_cid($filename);
+
+                      $html = '<!DOCTYPE>
+                        <html>
+                        <head><title>Material To Be Sent For External Printing</title>
+                          <style>
+                            table{border:1px solid #ddd;border-collapse:collapse;font-size:10px;width:100%;color:black;font-family:verdana;}th{ border:1px solid #ddd;text-align: left;background-color:#DFFCFC;font-weight:bold;font-size:11px;}td{
+                              border:1px solid #ddd;text-align: left;font-size:11px;}.ui.teal.labels.label{background-color: #00b5ad!important;border-color: #00b5ad!important;color: #fff!important;}.invoice-box table {width: 100%;line-height: 12px;text-align: left;}.invoice-box table td {padding: 3px !important;}.invoice-box table tr td:nth-child(2) {text-align: center;}
+                          </style>
+                        </head>         
+                        <body>
+                        <div style="margin-top:5px;width:900px;margin:0px auto;background-color:#ddd;border:1px solid #ddd;font-family:verdana;">
+                          <div style="padding:3px;background-color: #f5f5f5">  
+                            <div style="margin-top:20px;>
+                              <table cellpadding="0" cellspacing="0" border="0">          
+                                  <tbody><tr>
+                                      <td class="title" width="5%">
+                                         <div style="text-align:center;"">
+                                          <img src="cid:'.$cid.'" style="max-width:130px;height:30px;"><br/>
+                                          <span style="font-size:10px;"><b>3D TECHNOPACK PVT LTD</b><br/>
+                                          SURVEY NO 8/1, VILLAGE ATHAL, SILVASSA, DADRA NAGAR HAVELI, PIN : 396230, INDIA</span>
+                                          </div>
+                                      </td>
+                                  </tr>                      
+                              </tbody>
+                              </table>
+                              <div class="ui teal labels" style="text-align: center;">
+                                <div class="ui label" style="font-weight: 700;font-size: 12px;padding: 5px;color: #fff;background: #00b5ad;">Material To Be Sent For External Printing</div>
+                              </div>
+                              <table cellpadding="5" cellspacing="0" style="border:1px solid #D9d9d9;">
+                                <tr class="heading">
+                                  <td><b>ORDER NO</td>
+                                  <td colspan="3" style="border-right:1px solid #D9d9d9;"><b>'.$this->input->post('release_to_order_no_1').'</b></td>                                               
+                                </tr>
+                                <tr class="heading">
+                                  <td><b>CUSTOMER NAME</b></td>
+                                  <td colspan="3">'.$this->input->post('adr_company_id').'</td>                        
+                                </tr>
+                                <tr class="item last">
+                                  <td><b>FILM CODE</b></td>
+                                  <td><b>QTY/SQM</b></td>
+                                  <td><b>UNIT RATE</b></td>
+                                  <td><b>AMOUNT</b></td>                        
+                                </tr> 
+                                <tr class="item last">
+                                  <td>'.$release_to_film_code.'</td>
+                                  <td>'.$qty_sqm.'</td>
+                                  <td>'.$rate_qty.'</td>
+                                  <td>'.$amount_qty.'</td>                        
+                                </tr>                            
+                              </table> 
+
+                            </div>
+                          </div>
+                        </div>
+                      </body>
+                    </html>';
+                       
+                          $this->email->message($html);
+                          $this->email->set_mailtype("html");
+                          if ($this->email->send()) {
+                            $data['note']= 'File Uploaded Succesfully!';
+                            //return 1;
+                          } 
+                          else{
+                            $data['error']='Email send failed!';
+                          } 
+
+                      }              
 
                         $data_wip_update=array(
                           'status'=>'1',

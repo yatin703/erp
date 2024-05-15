@@ -1869,7 +1869,7 @@ class Article extends CI_Controller
       $second_sub_group    = $this->input->post('second_sub_group');
       $article             = $this->input->post('article_name');
       $article_replaces    = str_replace(' ', '', $article);
-      $article_name        = preg_replace('/[^A-Za-z0-9 ]/', '', $article_replaces);
+      $article_name        = preg_replace('/[^A-Za-z0-9]/', '', $article_replaces);
 
       $result   = $this->article_model->get_inv_name($main_group, $sub_group, $second_sub_group, $article_name);
 

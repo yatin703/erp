@@ -49,6 +49,7 @@
 					<th style="text-align: center;">Reels (Nos)</th>
 					<!--<th>Ok Qty</th> -->
 					<th style="text-align: center;">Cost/Meter</th>
+					<th style="text-align: center;">Cost/SQM</th>
 					<th style="text-align: center;">WIP Cost</th>
 					<th>Film_code</th>
 					<th>From Process</th>
@@ -99,6 +100,21 @@
 							$bom_id='';
 							$bom_version_no='';
 							$total_order_quantity=0;
+
+
+							if($master_row->sleeve_dia=='35 MM'){
+                               
+                               $a=$master_row->total_ok_meters*0.244;
+                                 }
+                                 elseif($master_row->sleeve_dia=='40 MM'){
+
+                               $a=$master_row->total_ok_meters*0.276;
+
+                                 }else{
+
+                               $a=$master_row->total_ok_meters*0.340;
+
+                                 }
 
 							
 
@@ -178,7 +194,7 @@
 
 											//echo ($formrights_row->new==1 && $master_row->status==0 && $master_row->wip_cost_per_meter !=0 ? '<a href="'.base_url('index.php/'.$this->router->fetch_class().'/wip_release/'.$master_row->wip_id.'').'" target="_blank" class="ui small green label"  title="WIP Release">WIP Release</a>' : '');
 
-											echo ($formrights_row->new==1 && $master_row->status==0 && $master_row->wip_cost_per_meter !=0 ? '<a href="'.base_url('index.php/'.$this->router->fetch_class().'/wip_release/'.$master_row->wip_id.'').'" title="WIP Release"><i class="edit icon"></i></a>' : '');
+											echo ($formrights_row->new==1 && $master_row->status==0 && $master_row->wip_cost_per_meter !=0 ? '<a href="'.base_url('index.php/'.$this->router->fetch_class().'/wip_release/'.$master_row->wip_id.'').'" title="WIP Release" target="_blank"><i class="edit icon"></i></a>' : '');
 
 											// <a class="ui green label">Close JobCard</a>
 
@@ -218,8 +234,12 @@
 									<td class='positive' style='text-align:right;'><b>".number_format($master_row->total_ok_meters/$reel_length,2,'.',',')."</b></td>
 									<!--<td>".$master_row->ok_qty."</td>
 									-->
-									<td style='text-align:right;' ".($master_row->wip_cost_per_meter==0?"class='td_wip_cost'":"").">&#x20B9; ".$master_row->wip_cost_per_meter."</td>
-									<td style='text-align:right;'> &#x20B9; ".money_format('%!.0n',$master_row->wip_cost_per_meter*$master_row->total_ok_meters )."</td>
+									<td style='text-align:right;' ".($master_row->wip_cost_per_meter==0?"class='td_wip_cost'":"").">&#x20B9; ".$master_row->wip_cost_per_meter."</td>";
+								?>	
+									<td><?php echo ($a<>0 ? round(($master_row->total_ok_meters*$master_row->wip_cost_per_meter)/$a,2) : '0');  ?></td>
+                                <?php
+
+									echo"<td style='text-align:right;'> &#x20B9; ".money_format('%!.0n',$master_row->wip_cost_per_meter*$master_row->total_ok_meters )."</td>
 									<td><a href='".base_url('index.php/spring_film_specification/view/'.$film_spec_id.'/'.$film_spec_version)."' target='_blank'>".$master_row->film_code."
 									</td>
 									<td>";
@@ -257,7 +277,7 @@
 
 						}//master Foreach
 
-					echo"<tr style='font-weight:bold;'><td colspan='10' style='text-align:right;'><b>TOTAL</b></td><td class='positive' style='text-align:right;'><b>".money_format('%!.0n',$sum_total_ok_meters)."</b> <i> MTRS</i></td><td class='positive' style='text-align:right;'><b>".number_format($sum_reels,2,'.',',')."</b><i> NOS</i></td><td></td><td style='text-align:right;'> &#x20B9;".money_format('%!.0n',$sum_amount)."</td><td></td><td></td><td></td><td></td><td></td><td class='positive' style='text-align:right;'><b>".money_format('%!.0n',$sum_total_release_meters)."</b> <i>MTRS</i></td><td class='positive' style='text-align:right;'><b>".number_format($sum_reels_release,2,'.',',')."</b> <i> NOS</i></td> <td></td><td></td></tr>";	
+					echo"<tr style='font-weight:bold;'><td colspan='10' style='text-align:right;'><b>TOTAL</b></td><td class='positive' style='text-align:right;'><b>".money_format('%!.0n',$sum_total_ok_meters)."</b> <i> MTRS</i></td><td class='positive' style='text-align:right;'><b>".number_format($sum_reels,2,'.',',')."</b><i> NOS</i></td><td></td><td></td><td style='text-align:right;'> &#x20B9;".money_format('%!.0n',$sum_amount)."</td><td></td><td></td><td></td><td></td><td></td><td class='positive' style='text-align:right;'><b>".money_format('%!.0n',$sum_total_release_meters)."</b> <i>MTRS</i></td><td class='positive' style='text-align:right;'><b>".number_format($sum_reels_release,2,'.',',')."</b> <i> NOS</i></td> <td></td><td></td></tr>";	
 
 					}?>
 				</tbody>				
